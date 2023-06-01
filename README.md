@@ -3,7 +3,7 @@
 This is a GitHub Action that searches for pull requests/issues in a repository and measures
 the time to first response for each issue. It then calculates the average time
 to first response and writes the issues with their time to first response to a
-markdown file. The issues to search for can be filtered by using a search query.
+Markdown file. The issues to search for can be filtered by using a search query.
 
 To find syntax for search queries, check out the [documentation](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests).
 
