@@ -1,5 +1,7 @@
 # Issue Metrics Action
 
+[![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
+
 This is a GitHub Action that searches for pull requests/issues in a repository and measures
 the time to first response for each issue. It then calculates the average time
 to first response and writes the issues with their time to first response to a
