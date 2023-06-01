@@ -1,3 +1,17 @@
+"""Unit tests for the issue-metrics script.
+
+This module contains unit tests for the functions in the issue-metrics script.
+The tests use the unittest module and the MagicMock and patch classes from the
+unittest.mock module to mock the GitHub API and test the functions in isolation.
+
+Classes:
+    TestSearchIssues: Test the search_issues function.
+    TestAuthToGithub: Test the auth_to_github function.
+    TestMeasureTimeToFirstResponse: Test the measure_time_to_first_response function.
+    TestGetAverageTimeToFirstResponse: Test the get_average_time_to_first_response function.
+    TestWriteToMarkdown: Test the write_to_markdown function.
+
+"""
 import os
 import unittest
 from datetime import timedelta
@@ -53,8 +67,8 @@ class TestWriteToMarkdown(unittest.TestCase):
 
         """
         # Create a temporary file
-        with open("temp.md", "w") as f:
-            f.write("")
+        with open("temp.md", "w", encoding="utf-8") as file:
+            file.write("")
 
         # Call write_to_markdown with a list of issues and their time to first response
         issues_with_metrics = [
@@ -66,12 +80,12 @@ class TestWriteToMarkdown(unittest.TestCase):
         write_to_markdown(
             issues_with_metrics,
             average_time_to_first_response,
-            file=open("temp.md", "w"),
+            file=open("temp.md", "w", encoding="utf-8"),
         )
 
         # Check that the file contains the expected output
-        with open("temp.md", "r") as f:
-            output = f.read()
+        with open("temp.md", "r", encoding="utf-8") as file:
+            output = file.read()
         expected_output = (
             "# Issue Metrics\n\n"
             "Average time to first response: 1 day, 3:10:00\n"
