@@ -10,7 +10,7 @@ Functions:
     auth_to_github: Authenticate to the GitHub API.
     measure_time_to_first_response: Measure the time to first response for a GitHub issue.
     get_average_time_to_first_response: Calculate the average time to first response for
-    a list of issues. 
+    a list of issues.
     write_to_markdown: Write the issues with metrics to a markdown file.
 
 """
