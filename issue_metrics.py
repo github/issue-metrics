@@ -151,28 +151,32 @@ def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=
 
     Args:
         issues_with_metrics (list of tuple): A list of tuples containing a GitHub issue
-        and its time to first response.
+            and its time to first response.
         average_time_to_first_response (datetime.timedelta): The average time to first
-        response for the issues.
+            response for the issues.
         file (file object, optional): The file object to write to. If not provided,
-        a file named "issue_metrics.md" will be created.
+            a file named "issue_metrics.md" will be created.
 
     Returns:
         None.
 
     """
-    issues_with_metrics.sort(key=lambda x: x[1], reverse=True)
-    with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
-        file.write("# Issue Metrics\n\n")
-        file.write(
-            f"Average time to first response: {average_time_to_first_response}\n"
-        )
-        file.write(f"Number of issues: {len(issues_with_metrics)}\n\n")
-        file.write("| Title | URL | TTFR |\n")
-        file.write("| --- | --- | ---: |\n")
-        for title, url, ttfr in issues_with_metrics:
-            file.write(f"| {title} | {url} | {ttfr} |\n")
-    print("Wrote issue metrics to issue_metrics.md")
+    if not issues_with_metrics and not average_time_to_first_response:
+        with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
+            file.write("no issues found for the given search criteria\n\n")
+    else:
+        issues_with_metrics.sort(key=lambda x: x[1], reverse=True)
+        with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
+            file.write("# Issue Metrics\n\n")
+            file.write(
+                f"Average time to first response: {average_time_to_first_response}\n"
+            )
+            file.write(f"Number of issues: {len(issues_with_metrics)}\n\n")
+            file.write("| Title | URL | TTFR |\n")
+            file.write("| --- | --- | ---: |\n")
+            for title, url, ttfr in issues_with_metrics:
+                file.write(f"| {title} | {url} | {ttfr} |\n")
+        print("Wrote issue metrics to issue_metrics.md")
 
 
 def main():
@@ -208,7 +212,11 @@ def main():
 
     # Search for issues
     issues = search_issues(repo_url, issue_search_query, github_connection)
+    if len(issues.items) <= 0:
+        print("No issues found")
+        write_to_markdown(None, None)
 
+        return
     # Find the time to first response
     issues_with_ttfr = measure_time_to_first_response(issues)
     average_time_to_first_response = get_average_time_to_first_response(
