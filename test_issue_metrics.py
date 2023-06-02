@@ -12,16 +12,17 @@ Classes:
         get_average_time_to_first_response function.
     TestWriteToMarkdown: A class containing unit tests for the write_to_markdown function.
 """
-import unittest
 import os
+import unittest
+from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
-from datetime import timedelta, datetime
+
 import issue_metrics
 from issue_metrics import (
-    search_issues,
     auth_to_github,
-    measure_time_to_first_response,
     get_average_time_to_first_response,
+    measure_time_to_first_response,
+    search_issues,
     write_to_markdown,
 )
 
