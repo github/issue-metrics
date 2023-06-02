@@ -43,7 +43,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         REPOSITORY_URL: https://github.com/owner/repo
-        ISSUE_SEARCH_QUERY: "is:issue closed:2023-05-01..2023-05-31 reason:completed"
+        ISSUE_SEARCH_QUERY: 'is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
@@ -60,7 +60,9 @@ jobs:
 # Issue Metrics
 
 Average time to first response: 2 days, 3:30:00
-Number of issues: 2
+Number of issues that remain open: 0
+Number of issues closed: 2
+Total number of issues created: 2
 
 | Title | URL | TTFR |
 | --- | --- | ---: |
