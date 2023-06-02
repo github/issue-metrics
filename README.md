@@ -16,15 +16,14 @@ If you need support using this project or have questions about it, please [open 
 ## Use as a GitHub Action
 
 1. Create a repository to host this GitHub Action or select an existing repository.
-1. Create the env values from the sample workflow below (GH_TOKEN, ORGANIZATION) with your information as repository secrets. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
-Note: Your GitHub token will need to have read/write access to all the repositories in the organization that you want evaluated
-1. Copy the below example workflow to your repository and put it in the `.github/workflows/` directory with the file extension `.yml` (ie. `.github/workflows/stale_repos.yml`)
+1. Create the env values from the sample workflow below (GH_TOKEN, REPOSITORY_URL, ISSUE_SEARCH_QUERY) with your information as repository secrets. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+Note: Your GitHub token will need to have read/write access to the repository in the organization that you want evaluated
+1. Copy the below example workflow to your repository and put it in the `.github/workflows/` directory with the file extension `.yml` (ie. `.github/workflows/issue-metrics.yml`)
 
 ### Example workflow
 
 ```yaml
-name: stale repo identifier
-
+name: Monthly issue metrics
 on:
   workflow_dispatch:
   schedule:
@@ -43,19 +42,19 @@ jobs:
       uses: docker://ghcr.io/github/issue-metrics:v1
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        ORGANIZATION: ${{ secrets.ORGANIZATION }}
-        INACTIVE_DAYS: 365
+        REPOSITORY_URL: https://github.com/owner/repo
+        ISSUE_SEARCH_QUERY: "is:issue closed:2023-05-01..2023-05-31 reason:completed"
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
-        title: Stale repository report
+        title: Monthly issue metrics report
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 
 ```
 
-### Example stale_repos.md output
+### Example issue_metrics.md output
 
 ```markdown
 # Issue Metrics
@@ -75,7 +74,7 @@ Number of issues: 2
 1. Copy `.env-example` to `.env`
 1. Fill out the `.env` file with a _token_ from a user that has access to the organization to scan (listed below). Tokens should have admin:org or read:org access.
 1. Fill out the `.env` file with the _repository_url_ of the repository to scan
-1. Fill out the `.env` file with the _search_query_ to filter issues by
+1. Fill out the `.env` file with the _issue_search_query_ to filter issues by
 1. `pip install -r requirements.txt`
 1. Run `python3 ./issue_metrics.py`, which will output issue metrics data
 
