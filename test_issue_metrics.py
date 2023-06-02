@@ -221,6 +221,7 @@ class TestMain(unittest.TestCase):
 
     Methods:
         test_main: Test that main runs without errors.
+        test_main_no_issues_found: Test that main handles when no issues are found
 
     """
 
@@ -248,10 +249,13 @@ class TestMain(unittest.TestCase):
         mock_auth_to_github.return_value = mock_connection
 
         # Set up the mock search_issues function
-        mock_issues = [
-            MagicMock(title="Issue 1"),
-            MagicMock(title="Issue 2"),
-        ]
+        mock_issues = MagicMock(
+            items=[
+                MagicMock(title="Issue 1"),
+                MagicMock(title="Issue 2"),
+            ]
+        )
+
         mock_search_issues.return_value = mock_issues
 
         # Set up the mock measure_time_to_first_response function
@@ -280,6 +284,37 @@ class TestMain(unittest.TestCase):
 
         # Remove the markdown file created by main
         os.remove("issue_metrics.md")
+
+    @patch("issue_metrics.auth_to_github")
+    @patch("issue_metrics.search_issues")
+    @patch("issue_metrics.write_to_markdown")
+    @patch.dict(
+        os.environ,
+        {
+            "ISSUE_SEARCH_QUERY": "is:open",
+            "REPOSITORY_URL": "https://github.com/user/repo",
+        },
+    )
+    def test_main_no_issues_found(
+        self,
+        mock_write_to_markdown,
+        mock_search_issues,
+        mock_auth_to_github,
+    ):
+        """Test that main writes 'No issues found' to the
+        console and calls write_to_markdown with None."""
+
+        # Set up the mock GitHub connection object
+        mock_connection = MagicMock()
+        mock_auth_to_github.return_value = mock_connection
+
+        # Set up the mock search_issues function to return an empty list of issues
+        mock_issues = MagicMock(items=[])
+        mock_search_issues.return_value = mock_issues
+
+        # Call main and check that it writes 'No issues found'
+        issue_metrics.main()
+        mock_write_to_markdown.assert_called_once_with(None, None)
 
 
 if __name__ == "__main__":
