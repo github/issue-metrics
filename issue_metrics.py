@@ -146,7 +146,49 @@ def get_average_time_to_first_response(issues):
     return timedelta(seconds=average_seconds_to_first_response)
 
 
-def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=None):
+def get_number_of_issues_open(issues):
+    """Get the number of issues that were opened.
+
+    Args:
+        issues (list of github3.Issue): A list of GitHub issues.
+
+    Returns:
+        int: The number of issues that were opened.
+
+    """
+    num_issues_opened = 0
+    for issue in issues:
+        if issue.state == "open":
+            num_issues_opened += 1
+
+    return num_issues_opened
+
+
+def get_number_of_issues_closed(issues):
+    """Get the number of issues that were closed.
+
+    Args:
+        issues (list of github3.Issue): A list of GitHub issues.
+
+    Returns:
+        int: The number of issues that were closed.
+
+    """
+    num_issues_closed = 0
+    for issue in issues:
+        if issue.state == "closed":
+            num_issues_closed += 1
+
+    return num_issues_closed
+
+
+def write_to_markdown(
+    issues_with_metrics,
+    average_time_to_first_response,
+    num_issues_opened,
+    num_issues_closed,
+    file=None,
+):
     """Write the issues with metrics to a markdown file.
 
     Args:
@@ -156,12 +198,19 @@ def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=
             response for the issues.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
+        num_issues_opened (int): The number of issues that remain opened.
+        num_issues_closed (int): The number of issues that were closed.
 
     Returns:
         None.
 
     """
-    if not issues_with_metrics and not average_time_to_first_response:
+    if (
+        not issues_with_metrics
+        and not average_time_to_first_response
+        and not num_issues_opened
+        and not num_issues_closed
+    ):
         with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
             file.write("no issues found for the given search criteria\n\n")
     else:
@@ -171,7 +220,11 @@ def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=
             file.write(
                 f"Average time to first response: {average_time_to_first_response}\n"
             )
-            file.write(f"Number of issues: {len(issues_with_metrics)}\n\n")
+            file.write(f"Number of issues that remain open: {num_issues_opened}\n")
+            file.write(f"Number of issues closed: {num_issues_closed}\n")
+            file.write(
+                f"Total number of issues created: {len(issues_with_metrics)}\n\n"
+            )
             file.write("| Title | URL | TTFR |\n")
             file.write("| --- | --- | ---: |\n")
             for title, url, ttfr in issues_with_metrics:
@@ -214,17 +267,24 @@ def main():
     issues = search_issues(repo_url, issue_search_query, github_connection)
     if len(issues.items) <= 0:
         print("No issues found")
-        write_to_markdown(None, None)
+        write_to_markdown(None, None, None, None)
 
         return
-    # Find the time to first response
+    # Find the time to first response, average, open, and closed issues
     issues_with_ttfr = measure_time_to_first_response(issues)
     average_time_to_first_response = get_average_time_to_first_response(
         issues_with_ttfr
     )
+    num_issues_open = get_number_of_issues_open(issues)
+    num_issues_closed = get_number_of_issues_closed(issues)
 
     # Write the results to a markdown file
-    write_to_markdown(issues_with_ttfr, average_time_to_first_response)
+    write_to_markdown(
+        issues_with_ttfr,
+        average_time_to_first_response,
+        num_issues_open,
+        num_issues_closed,
+    )
 
 
 if __name__ == "__main__":
