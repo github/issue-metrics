@@ -57,13 +57,25 @@ jobs:
 
 ### Example stale_repos.md output
 
-TODO
+```markdown
+# Issue Metrics
+
+Average time to first response: 2 days, 3:30:00
+Number of issues: 2
+
+| Title | URL | TTFR |
+| --- | --- | ---: |
+| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 4:30:00 |
+| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 2:30:00 |
+
+```
 
 ## Local usage without Docker
 
 1. Copy `.env-example` to `.env`
 1. Fill out the `.env` file with a _token_ from a user that has access to the organization to scan (listed below). Tokens should have admin:org or read:org access.
-TODO: Make sure this is accurate
+1. Fill out the `.env` file with the _repository_url_ of the repository to scan
+1. Fill out the `.env` file with the _search_query_ to filter issues by
 1. `pip install -r requirements.txt`
 1. Run `python3 ./issue_metrics.py`, which will output issue metrics data
 

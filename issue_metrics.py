@@ -1,5 +1,22 @@
+"""A script for measuring time to first response for GitHub issues.
+
+This script uses the GitHub API to search for issues in a repository and measure
+the time to first response for each issue. It then calculates the average time
+to first response and writes the issues with their time to first response to a
+markdown file.
+
+Functions:
+    search_issues: Search for issues in a GitHub repository.
+    auth_to_github: Authenticate to the GitHub API.
+    measure_time_to_first_response: Measure the time to first response for a GitHub issue.
+    get_average_time_to_first_response: Calculate the average time to first response for
+    a list of issues.
+    write_to_markdown: Write the issues with metrics to a markdown file.
+
+"""
+
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from os.path import dirname, join
 from urllib.parse import urlparse
 
@@ -13,24 +30,25 @@ def search_issues(repository_url, issue_search_query, github_connection):
 
     Args:
         repository_url (str): The URL of the repository to search in.
+            ie https://github.com/user/repo
         issue_search_query (str): The search query to use for finding issues.
         github_connection (github3.GitHub): A connection to the GitHub API.
 
     Returns:
         List[github3.issues.Issue]: A list of issues that match the search query.
     """
+    print("Searching for issues...")
     # Parse the repository owner and name from the URL
     parsed_url = urlparse(repository_url)
     path = parsed_url.path.strip("/")
-
+    print(f"parsing URL: {repository_url}")
     # Split the path into owner and repo
     owner, repo = path.split("/")
-
-    # Get the repository object
-    repo = github_connection.repository(owner, repo)  # type: ignore
+    print(f"owner: {owner}, repo: {repo}")
 
     # Search for issues that match the query
-    issues = repo.search_issues(issue_search_query)  # type: ignore
+    full_query = f"repo:{owner}/{repo} {issue_search_query}"
+    issues = github_connection.search_issues(full_query)  # type: ignore
 
     # Print the issue titles
     for issue in issues:
@@ -59,8 +77,8 @@ def measure_time_to_first_response(issues):
         issues (list of github3.Issue): A list of GitHub issues.
 
     Returns:
-        list of github3.Issue: A list of GitHub issues with the time to first response
-        added as an attribute.
+        list of tuple: A list of tuples containing a GitHub issue
+        title, url, and its time to first response.
 
     Raises:
         TypeError: If the input is not a list of GitHub issues.
@@ -69,22 +87,31 @@ def measure_time_to_first_response(issues):
     issues_with_metrics = []
     for issue in issues:
         # Get the first comment
-        first_comment = issue.comments()[0]  # type: ignore
+        if issue.comments <= 0:
+            first_comment_time = None
+            time_to_first_response = None
+        else:
+            comments = issue.issue.comments(
+                number=1, sort="created", direction="asc"
+            )  # type: ignore
+            for comment in comments:
+                # Get the created_at time for the first comment
+                first_comment_time = comment.created_at  # type: ignore
 
-        # Get the created_at time for the first comment
-        first_comment_time = datetime.fromisoformat(first_comment.created_at)  # type: ignore
+            # Get the created_at time for the issue
+            issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
-        # Get the created_at time for the issue
-        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
-
-        # Calculate the time between the issue and the first comment
-        time_to_first_response = first_comment_time - issue_time
-
-        # Add the time to the issue
-        issue.time_to_first_response = time_to_first_response
+            # Calculate the time between the issue and the first comment
+            time_to_first_response = first_comment_time - issue_time  # type: ignore
 
         # Add the issue to the list of issues with metrics
-        issues_with_metrics.append(issue)
+        issues_with_metrics.append(
+            [
+                issue.title,
+                issue.html_url,
+                time_to_first_response,
+            ]
+        )
 
     return issues_with_metrics
 
@@ -97,7 +124,7 @@ def get_average_time_to_first_response(issues):
         first response added as an attribute.
 
     Returns:
-        datetime.timedelta: The average time to first response for the issues.
+        datetime.timedelta: The average time to first response for the issues in seconds.
 
     Raises:
         TypeError: If the input is not a list of GitHub issues.
@@ -105,13 +132,18 @@ def get_average_time_to_first_response(issues):
     """
     total_time_to_first_response = 0
     for issue in issues:
-        total_time_to_first_response += issue.time_to_first_response.total_seconds()
+        total_time_to_first_response += issue[2].total_seconds()
 
-    average_time_to_first_response = total_time_to_first_response / len(
+    average_seconds_to_first_response = total_time_to_first_response / len(
         issues
     )  # type: ignore
 
-    return average_time_to_first_response
+    # Print the average time to first response converting seconds to a readable time format
+    print(
+        f"Average time to first response: {timedelta(seconds=average_seconds_to_first_response)}"
+    )
+
+    return timedelta(seconds=average_seconds_to_first_response)
 
 
 def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=None):
@@ -136,10 +168,10 @@ def write_to_markdown(issues_with_metrics, average_time_to_first_response, file=
             f"Average time to first response: {average_time_to_first_response}\n"
         )
         file.write(f"Number of issues: {len(issues_with_metrics)}\n\n")
-        file.write("| Issue | TTFR |\n")
-        file.write("| --- | ---: |\n")
-        for issue, ttfr in issues_with_metrics:
-            file.write(f"| {issue} | {ttfr} |\n")
+        file.write("| Title | URL | TTFR |\n")
+        file.write("| --- | --- | ---: |\n")
+        for title, url, ttfr in issues_with_metrics:
+            file.write(f"| {title} | {url} | {ttfr} |\n")
     print("Wrote issue metrics to issue_metrics.md")
 
 
@@ -170,24 +202,18 @@ def main():
     if not issue_search_query:
         raise ValueError("ISSUE_SEARCH_QUERY environment variable not set")
 
-    issue_search_query = os.getenv("REPOSITORY_URL")
-    if not issue_search_query:
+    repo_url = os.getenv("REPOSITORY_URL")
+    if not repo_url:
         raise ValueError("REPOSITORY_URL environment variable not set")
 
     # Search for issues
-    issues = search_issues(issue_search_query, issue_search_query, github_connection)
-
-    # Print the number of issues found
-    print(f"Found {len(issues)} issues")
+    issues = search_issues(repo_url, issue_search_query, github_connection)
 
     # Find the time to first response
     issues_with_ttfr = measure_time_to_first_response(issues)
     average_time_to_first_response = get_average_time_to_first_response(
         issues_with_ttfr
     )
-
-    # Print the average time to first response
-    print(f"Average time to first response: {average_time_to_first_response}")
 
     # Write the results to a markdown file
     write_to_markdown(issues_with_ttfr, average_time_to_first_response)
