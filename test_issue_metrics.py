@@ -163,6 +163,52 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
         )
 
 
+class TestGetNumberOfIssuesOpened(unittest.TestCase):
+    """Test case class for the get_number_of_issues_opened function in the issue_metrics module.
+
+    This class contains test cases for the get_number_of_issues_opened function,
+        which calculates the number of open issues in a list of GitHub issues.
+
+    """
+
+    def test_get_number_of_issues_opened(self):
+        """Test that get_number_of_issues_opened returns the correct number of open issues."""
+        # Set up the mock issues
+        mock_issues = [
+            MagicMock(state="open"),
+            MagicMock(state="closed"),
+            MagicMock(state="open"),
+        ]
+
+        # Call get_number_of_issues_opened and check that it returns the
+        # correct number of open issues
+        num_issues_opened = issue_metrics.get_number_of_issues_open(mock_issues)
+        self.assertEqual(num_issues_opened, 2)
+
+
+class TestGetNumberOfIssuesClosed(unittest.TestCase):
+    """Test case class for the get_number_of_issues_closeded function in the issue_metrics module.
+
+    This class contains test cases for the get_number_of_issues_closed function,
+        which calculates the number of open issues in a list of GitHub issues.
+
+    """
+
+    def test_get_number_of_issues_closed(self):
+        """Test that get_number_of_issues_closed returns the correct number of closed issues."""
+        # Set up the mock issues
+        mock_issues = [
+            MagicMock(state="open"),
+            MagicMock(state="closed"),
+            MagicMock(state="open"),
+        ]
+
+        # Call get_number_of_issues_opened and check that it returns the
+        # correct number of open issues
+        num_issues_closed = issue_metrics.get_number_of_issues_closed(mock_issues)
+        self.assertEqual(num_issues_closed, 1)
+
+
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
 
@@ -192,8 +238,15 @@ class TestWriteToMarkdown(unittest.TestCase):
 
         # Call write_to_markdown with the list of issues and the average time to first response
         average_time_to_first_response = timedelta(days=1, hours=3, minutes=10)
+        num_issues_open = 1
+        num_issues_closed = 2
+
         write_to_markdown(
-            issues_with_metrics, average_time_to_first_response, file=None
+            issues_with_metrics,
+            average_time_to_first_response,
+            num_issues_open,
+            num_issues_closed,
+            file=None,
         )
 
         # Check that the function writes the correct markdown file
@@ -202,7 +255,9 @@ class TestWriteToMarkdown(unittest.TestCase):
         expected_content = (
             "# Issue Metrics\n\n"
             "Average time to first response: 1 day, 3:10:00\n"
-            "Number of issues: 3\n\n"
+            "Number of issues that remain open: 1\n"
+            "Number of issues closed: 2\n"
+            "Total number of issues created: 3\n\n"
             "| Title | URL | TTFR |\n"
             "| --- | --- | ---: |\n"
             "| Issue 3 | https://github.com/user/repo/issues/3 | 0:30:00 |\n"
@@ -314,7 +369,7 @@ class TestMain(unittest.TestCase):
 
         # Call main and check that it writes 'No issues found'
         issue_metrics.main()
-        mock_write_to_markdown.assert_called_once_with(None, None)
+        mock_write_to_markdown.assert_called_once_with(None, None, None, None)
 
 
 if __name__ == "__main__":
