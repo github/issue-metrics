@@ -7,6 +7,8 @@ the time to first response for each issue. It then calculates the average time
 to first response and writes the issues with their time to first response to a
 Markdown file. The issues to search for can be filtered by using a search query.
 
+This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repo. 
+
 To find syntax for search queries, check out the [documentation](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests).
 
 ## Support
