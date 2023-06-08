@@ -86,6 +86,16 @@ class TestAuthToGithub(unittest.TestCase):
         self.assertEqual(github_connection, mock_gh)
         mock_login.assert_called_once_with(token="test_token")
 
+    def test_auth_to_github_no_token(self):
+        """Test that auth_to_github raises a ValueError if GH_TOKEN is not set."""
+        # Unset the GH_TOKEN environment variable
+        if "GH_TOKEN" in os.environ:
+            del os.environ["GH_TOKEN"]
+
+        # Call auth_to_github and check that it raises a ValueError
+        with self.assertRaises(ValueError):
+            issue_metrics.auth_to_github()
+
 
 class TestMeasureTimeToFirstResponse(unittest.TestCase):
     """Test the measure_time_to_first_response function."""
@@ -123,6 +133,30 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         self.assertEqual(len(issues_with_metrics), 2)
         self.assertEqual(issues_with_metrics[0][2], timedelta(days=1))
         self.assertEqual(issues_with_metrics[1][2], timedelta(days=1))
+
+    def test_measure_time_to_first_response_no_comments(self):
+        """Test that measure_time_to_first_response returns empty for an issue with no comments."""
+        # Set up mock issues with no comments
+        mock_issue1 = MagicMock(
+            comments=0,
+            created_at="2023-01-01T00:00:00Z",
+        )
+
+        mock_issue2 = MagicMock(
+            comments=0,
+            created_at="2023-01-01T00:00:00Z",
+        )
+
+        mock_issues = [mock_issue1, mock_issue2]
+
+        # Call measure_time_to_first_response and check that it returns None
+        time_to_first_response = issue_metrics.measure_time_to_first_response(
+            mock_issues
+        )
+
+        self.assertEqual(len(time_to_first_response), 2)
+        self.assertEqual(time_to_first_response[0][2], None)
+        self.assertEqual(time_to_first_response[1][2], None)
 
 
 class TestGetAverageTimeToFirstResponse(unittest.TestCase):

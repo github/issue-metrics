@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+disable=
+	redefined-argument-from-local,
