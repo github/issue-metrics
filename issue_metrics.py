@@ -61,12 +61,10 @@ def auth_to_github():
     """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
     token = os.getenv("GH_TOKEN")
     if token:
-        github_connection = github3.login(token=os.getenv("GH_TOKEN"))
+        github_connection = github3.login(token=token)
     else:
         raise ValueError("GH_TOKEN environment variable not set")
 
-    if not github_connection:
-        raise ValueError("Unable to authenticate to GitHub")
     return github_connection  # type: ignore
 
 

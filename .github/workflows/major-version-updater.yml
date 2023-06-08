@@ -1,0 +1,28 @@
+---
+    name: Major Version Updater
+    # Whenever a new release is made, push a major version tag
+    on:
+      release:
+        types: [ published ]
+    
+    jobs:
+      update-major-version-tag:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Repo
+            uses: actions/checkout@v3
+    
+          - name: version
+            id: version
+            run: |
+              tag=${GITHUB_REF/refs\/tags\//}
+              version=${tag#v}
+              major=${version%%.*}
+              echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+              echo "version=${version}" >> "$GITHUB_OUTPUT"
+              echo "major=${major}" >> "$GITHUB_OUTPUT"
+    
+          - name: force update major tag
+            run: |
+              git tag v${{ steps.version.outputs.major }}
+              git push origin refs/tags/v${{ steps.version.outputs.major }} -f
