@@ -4,8 +4,8 @@
 
 This is a GitHub Action that searches for pull requests/issues in a repository and measures
 the time to first response for each issue. It then calculates the average time
-to first response and writes the issues with their time to first response to a
-Markdown file. The issues to search for can be filtered by using a search query.
+to first response and writes the issues with their time to first response and time to close
+to a Markdown file. The issues to search for can be filtered by using a search query.
 
 This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repository.
 
@@ -19,7 +19,7 @@ If you need support using this project or have questions about it, please [open 
 
 1. Create a repository to host this GitHub Action or select an existing repository.
 1. Create the env values from the sample workflow below (GH_TOKEN, REPOSITORY_URL, ISSUE_SEARCH_QUERY) with your information as repository secrets. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
-Note: Your GitHub token will need to have read/write access to the repository in the organization that you want evaluated
+Note: Your GitHub token will need to have read access to the repository in the organization that you want evaluated
 1. Copy the below example workflow to your repository and put it in the `.github/workflows/` directory with the file extension `.yml` (ie. `.github/workflows/issue-metrics.yml`)
 
 ### Example workflow
@@ -61,15 +61,19 @@ jobs:
 ```markdown
 # Issue Metrics
 
-Average time to first response: 2 days, 3:30:00
-Number of issues that remain open: 0
-Number of issues closed: 2
-Total number of issues created: 2
+| Metric | Value |
+| --- | ---: |
+| Average time to first response | 0:50:44.666667 |
+| Average time to close | 6 days, 7:08:52 |
+| Number of issues that remain open | 2 |
+| Number of issues closed | 1 |
+| Total number of issues created | 3 |
 
-| Title | URL | TTFR |
-| --- | --- | ---: |
-| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 4:30:00 |
-| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 2:30:00 |
+| Title | URL | Time to first response | Time to close 
+| --- | --- | ---: | ---: |
+| Issue Title 1 | https://github.com/user/repo/issues/1 | 0:00:41 | 6 days, 7:08:52 |
+| Issue Title 2 | https://github.com/user/repo/issues/2 | 0:05:26 | None |
+| Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 | None |
 
 ```
 
