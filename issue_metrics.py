@@ -1,16 +1,18 @@
-"""A script for measuring time to first response for GitHub issues.
+"""A script for measuring time to first response and time to close for GitHub issues.
 
 This script uses the GitHub API to search for issues in a repository and measure
-the time to first response for each issue. It then calculates the average time
-to first response and writes the issues with their time to first response to a
-markdown file.
+the time to first response and time to close for each issue. It then calculates
+the average time to first response and time to close and writes the issues with
+their metrics to a markdown file.
 
 Functions:
     search_issues: Search for issues in a GitHub repository.
     auth_to_github: Authenticate to the GitHub API.
     measure_time_to_first_response: Measure the time to first response for a GitHub issue.
     get_average_time_to_first_response: Calculate the average time to first response for
-    a list of issues.
+        a list of issues.
+    measure_time_to_close: Measure the time to close for a GitHub issue.
+    get_average_time_to_close: Calculate the average time to close for a list of issues.
     write_to_markdown: Write the issues with metrics to a markdown file.
 
 """
@@ -68,72 +70,78 @@ def auth_to_github():
     return github_connection  # type: ignore
 
 
-def measure_time_to_first_response(issues):
-    """Measure the time to first response for each issue.
+def measure_time_to_first_response(issue):
+    """Measure the time to first response for a single issue.
 
     Args:
-        issues (list of github3.Issue): A list of GitHub issues.
+        issue (issue): A GitHub issue.
 
     Returns:
-        list of tuple: A list of tuples containing a GitHub issue
-        title, url, and its time to first response.
-
-    Raises:
-        TypeError: If the input is not a list of GitHub issues.
+        time to first response (datetime.timedelta): The time to first response for the issue.
 
     """
-    issues_with_metrics = []
-    for issue in issues:
-        # Get the first comment
-        if issue.comments <= 0:
-            first_comment_time = None
-            time_to_first_response = None
-        else:
-            comments = issue.issue.comments(
-                number=1, sort="created", direction="asc"
-            )  # type: ignore
-            for comment in comments:
-                # Get the created_at time for the first comment
-                first_comment_time = comment.created_at  # type: ignore
+    # Get the first comment
+    if issue.comments <= 0:
+        first_comment_time = None
+        time_to_first_response = None
+    else:
+        comments = issue.issue.comments(
+            number=1, sort="created", direction="asc"
+        )  # type: ignore
+        for comment in comments:
+            # Get the created_at time for the first comment
+            first_comment_time = comment.created_at  # type: ignore
 
-            # Get the created_at time for the issue
-            issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+        # Get the created_at time for the issue
+        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
-            # Calculate the time between the issue and the first comment
-            time_to_first_response = first_comment_time - issue_time  # type: ignore
+        # Calculate the time between the issue and the first comment
+        time_to_first_response = first_comment_time - issue_time  # type: ignore
 
-        # Add the issue to the list of issues with metrics
-        issues_with_metrics.append(
-            [
-                issue.title,
-                issue.html_url,
-                time_to_first_response,
-            ]
-        )
+    return time_to_first_response
 
-    return issues_with_metrics
+
+def measure_time_to_close(issue):
+    """Measure the time it takes to close an issue.
+
+    Args:
+        issue (github3.Issue): A GitHub issue.
+
+    Returns:
+        datetime.timedelta: The time it takes to close the issue.
+
+    """
+    if issue.state != "closed":
+        raise ValueError("Issue must be closed to measure time to close.")
+
+    closed_at = datetime.fromisoformat(issue.closed_at)
+    created_at = datetime.fromisoformat(issue.created_at)
+
+    time_to_close = closed_at - created_at
+
+    return time_to_close
 
 
 def get_average_time_to_first_response(issues):
     """Calculate the average time to first response for a list of issues.
 
     Args:
-        issues (list of github3.Issue): A list of GitHub issues with the time to
-        first response added as an attribute.
+        issues (IssueWithMetrics): A list of GitHub issues with metrics attached.
 
     Returns:
         datetime.timedelta: The average time to first response for the issues in seconds.
 
-    Raises:
-        TypeError: If the input is not a list of GitHub issues.
-
     """
     total_time_to_first_response = 0
+    none_count = 0
     for issue in issues:
-        total_time_to_first_response += issue[2].total_seconds()
+        if issue.time_to_first_response:
+            total_time_to_first_response += issue.time_to_first_response.total_seconds()
+        else:
+            none_count += 1
 
-    average_seconds_to_first_response = total_time_to_first_response / len(
-        issues
+    average_seconds_to_first_response = total_time_to_first_response / (
+        len(issues) - none_count
     )  # type: ignore
 
     # Print the average time to first response converting seconds to a readable time format
@@ -144,45 +152,10 @@ def get_average_time_to_first_response(issues):
     return timedelta(seconds=average_seconds_to_first_response)
 
 
-def get_number_of_issues_open(issues):
-    """Get the number of issues that were opened.
-
-    Args:
-        issues (list of github3.Issue): A list of GitHub issues.
-
-    Returns:
-        int: The number of issues that were opened.
-
-    """
-    num_issues_opened = 0
-    for issue in issues:
-        if issue.state == "open":
-            num_issues_opened += 1
-
-    return num_issues_opened
-
-
-def get_number_of_issues_closed(issues):
-    """Get the number of issues that were closed.
-
-    Args:
-        issues (list of github3.Issue): A list of GitHub issues.
-
-    Returns:
-        int: The number of issues that were closed.
-
-    """
-    num_issues_closed = 0
-    for issue in issues:
-        if issue.state == "closed":
-            num_issues_closed += 1
-
-    return num_issues_closed
-
-
 def write_to_markdown(
     issues_with_metrics,
     average_time_to_first_response,
+    average_time_to_close,
     num_issues_opened,
     num_issues_closed,
     file=None,
@@ -190,10 +163,10 @@ def write_to_markdown(
     """Write the issues with metrics to a markdown file.
 
     Args:
-        issues_with_metrics (list of tuple): A list of tuples containing a GitHub issue
-            and its time to first response.
+        issues_with_metrics (IssueWithMetrics): A list of GitHub issues with metrics
         average_time_to_first_response (datetime.timedelta): The average time to first
             response for the issues.
+        average_time_to_close (datetime.timedelta): The average time to close for the issues.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
         num_issues_opened (int): The number of issues that remain opened.
@@ -206,28 +179,73 @@ def write_to_markdown(
     if (
         not issues_with_metrics
         and not average_time_to_first_response
+        and not average_time_to_close
         and not num_issues_opened
         and not num_issues_closed
     ):
         with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
             file.write("no issues found for the given search criteria\n\n")
     else:
-        issues_with_metrics.sort(key=lambda x: x[1], reverse=True)
+        # Sort the issues by time to first response
+        issues_with_metrics.sort(key=lambda x: x.time_to_first_response)
         with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
             file.write("# Issue Metrics\n\n")
+            file.write("| Metric | Value |\n")
+            file.write("| --- | ---: |\n")
             file.write(
-                f"Average time to first response: {average_time_to_first_response}\n"
+                f"| Average time to first response | {average_time_to_first_response} |\n"
             )
-            file.write(f"Number of issues that remain open: {num_issues_opened}\n")
-            file.write(f"Number of issues closed: {num_issues_closed}\n")
+            file.write(f"| Average time to close | {average_time_to_close} |\n")
+            file.write(f"| Number of issues that remain open | {num_issues_opened} |\n")
+            file.write(f"| Number of issues closed | {num_issues_closed} |\n")
             file.write(
-                f"Total number of issues created: {len(issues_with_metrics)}\n\n"
+                f"| Total number of issues created | {len(issues_with_metrics)} |\n\n"
             )
-            file.write("| Title | URL | TTFR |\n")
-            file.write("| --- | --- | ---: |\n")
-            for title, url, ttfr in issues_with_metrics:
-                file.write(f"| {title} | {url} | {ttfr} |\n")
+            file.write("| Title | URL | Time to first response | Time to close \n")
+            file.write("| --- | --- | ---: | ---: |\n")
+            for issue in issues_with_metrics:
+                file.write(
+                    f"| "
+                    f"{issue.title} | "
+                    f"{issue.html_url} | "
+                    f"{issue.time_to_first_response} |"
+                    f" {issue.time_to_close} |"
+                    f"\n"
+                )
         print("Wrote issue metrics to issue_metrics.md")
+
+
+def get_average_time_to_close(issues_with_metrics):
+    """Calculate the average time to close for a list of issues.
+
+    Args:
+        issues_with_metrics (list): A list of issues with metrics.
+        Each issue should be a issue_with_metrics tuple.
+
+    Returns:
+        datetime.timedelta: The average time to close for the issues.
+
+    """
+    # Filter out issues with no time to close
+    issues_with_time_to_close = [
+        issue for issue in issues_with_metrics if issue.time_to_close is not None
+    ]
+
+    # Calculate the total time to close for all issues
+    total_time_to_close = sum(
+        [issue.time_to_close for issue in issues_with_time_to_close], timedelta()
+    )
+
+    # Calculate the average time to close
+    num_issues_with_time_to_close = len(issues_with_time_to_close)
+    if num_issues_with_time_to_close > 0:
+        average_time_to_close = total_time_to_close / num_issues_with_time_to_close
+    else:
+        average_time_to_close = None
+
+    # Print the average time to close converting seconds to a readable time format
+    print(f"Average time to close: {average_time_to_close}")
+    return average_time_to_close
 
 
 def main():
@@ -235,8 +253,8 @@ def main():
 
     This function authenticates to GitHub, searches for issues using the
     ISSUE_SEARCH_QUERY environment variable, measures the time to first response
-    for each issue, calculates the average time to first response, and writes the
-    results to a markdown file.
+    and close for each issue, calculates the average time to first response,
+    and writes the results to a markdown file.
 
     Raises:
         ValueError: If the ISSUE_SEARCH_QUERY environment variable is not set.
@@ -253,6 +271,57 @@ def main():
     github_connection = auth_to_github()
 
     # Get the environment variables for use in the script
+    issue_search_query, repo_url = get_env_vars()
+
+    # Search for issues
+    issues = search_issues(repo_url, issue_search_query, github_connection)
+    if len(issues.items) <= 0:
+        print("No issues found")
+        write_to_markdown(None, None, None, None, None)
+        return
+
+    # Find the time to first response, time to close, average, open, and closed issues
+    issues_with_metrics = []
+    num_issues_open = 0
+    num_issues_closed = 0
+
+    for issue in issues:
+        issue_with_metrics = IssueWithMetrics(
+            issue.title,  # type: ignore
+            issue.html_url,  # type: ignore
+            None,
+            None,
+        )
+        issue_with_metrics.time_to_first_response = measure_time_to_first_response(
+            issue
+        )
+        if issue.state == "closed":  # type: ignore
+            issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
+        if issue.state == "open":  # type: ignore
+            num_issues_open += 1
+        if issue.state == "closed":  # type: ignore
+            num_issues_closed += 1
+        issues_with_metrics.append(issue_with_metrics)
+
+    average_time_to_first_response = get_average_time_to_first_response(
+        issues_with_metrics
+    )
+    average_time_to_close = None
+    if num_issues_closed > 0:
+        average_time_to_close = get_average_time_to_close(issues_with_metrics)
+
+    # Write the results to a markdown file
+    write_to_markdown(
+        issues_with_metrics,
+        average_time_to_first_response,
+        average_time_to_close,
+        num_issues_open,
+        num_issues_closed,
+    )
+
+
+def get_env_vars():
+    """Get the environment variables for use in the script."""
     issue_search_query = os.getenv("ISSUE_SEARCH_QUERY")
     if not issue_search_query:
         raise ValueError("ISSUE_SEARCH_QUERY environment variable not set")
@@ -260,29 +329,19 @@ def main():
     repo_url = os.getenv("REPOSITORY_URL")
     if not repo_url:
         raise ValueError("REPOSITORY_URL environment variable not set")
+    return issue_search_query, repo_url
 
-    # Search for issues
-    issues = search_issues(repo_url, issue_search_query, github_connection)
-    if len(issues.items) <= 0:
-        print("No issues found")
-        write_to_markdown(None, None, None, None)
 
-        return
-    # Find the time to first response, average, open, and closed issues
-    issues_with_ttfr = measure_time_to_first_response(issues)
-    average_time_to_first_response = get_average_time_to_first_response(
-        issues_with_ttfr
-    )
-    num_issues_open = get_number_of_issues_open(issues)
-    num_issues_closed = get_number_of_issues_closed(issues)
+class IssueWithMetrics:
+    """A class to represent a GitHub issue with metrics."""
 
-    # Write the results to a markdown file
-    write_to_markdown(
-        issues_with_ttfr,
-        average_time_to_first_response,
-        num_issues_open,
-        num_issues_closed,
-    )
+    def __init__(
+        self, title, html_url, time_to_first_response=None, time_to_close=None
+    ):
+        self.title = title
+        self.html_url = html_url
+        self.time_to_first_response = time_to_first_response
+        self.time_to_close = time_to_close
 
 
 if __name__ == "__main__":
