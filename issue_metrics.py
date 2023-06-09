@@ -187,7 +187,9 @@ def write_to_markdown(
             file.write("no issues found for the given search criteria\n\n")
     else:
         # Sort the issues by time to first response
-        issues_with_metrics.sort(key=lambda x: x.time_to_first_response)
+        issues_with_metrics.sort(
+            key=lambda x: x.time_to_first_response or timedelta.max
+        )
         with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
             file.write("# Issue Metrics\n\n")
             file.write("| Metric | Value |\n")
