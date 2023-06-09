@@ -74,7 +74,7 @@ def measure_time_to_first_response(issue):
     """Measure the time to first response for a single issue.
 
     Args:
-        issue (issue): A list of GitHub issues.
+        issue (issue): A GitHub issue.
 
     Returns:
         time to first response (datetime.timedelta): The time to first response for the issue.
@@ -271,13 +271,7 @@ def main():
     github_connection = auth_to_github()
 
     # Get the environment variables for use in the script
-    issue_search_query = os.getenv("ISSUE_SEARCH_QUERY")
-    if not issue_search_query:
-        raise ValueError("ISSUE_SEARCH_QUERY environment variable not set")
-
-    repo_url = os.getenv("REPOSITORY_URL")
-    if not repo_url:
-        raise ValueError("REPOSITORY_URL environment variable not set")
+    issue_search_query, repo_url = get_env_vars()
 
     # Search for issues
     issues = search_issues(repo_url, issue_search_query, github_connection)
@@ -292,9 +286,12 @@ def main():
     num_issues_closed = 0
 
     for issue in issues:
-        issue_with_metrics = IssueWithMetrics()
-        issue_with_metrics.title = issue.title  # type: ignore
-        issue_with_metrics.html_url = issue.html_url  # type: ignore
+        issue_with_metrics = IssueWithMetrics(
+            issue.title,  # type: ignore
+            issue.html_url,  # type: ignore
+            None,
+            None,
+        )
         issue_with_metrics.time_to_first_response = measure_time_to_first_response(
             issue
         )
@@ -323,13 +320,28 @@ def main():
     )
 
 
+def get_env_vars():
+    """Get the environment variables for use in the script."""
+    issue_search_query = os.getenv("ISSUE_SEARCH_QUERY")
+    if not issue_search_query:
+        raise ValueError("ISSUE_SEARCH_QUERY environment variable not set")
+
+    repo_url = os.getenv("REPOSITORY_URL")
+    if not repo_url:
+        raise ValueError("REPOSITORY_URL environment variable not set")
+    return issue_search_query, repo_url
+
+
 class IssueWithMetrics:
     """A class to represent a GitHub issue with metrics."""
 
-    title = ""
-    html_url = ""
-    time_to_first_response = None
-    time_to_close = None
+    def __init__(
+        self, title, html_url, time_to_first_response=None, time_to_close=None
+    ):
+        self.title = title
+        self.html_url = html_url
+        self.time_to_first_response = time_to_first_response
+        self.time_to_close = time_to_close
 
 
 if __name__ == "__main__":

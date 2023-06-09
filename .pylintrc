@@ -2,3 +2,4 @@
 disable=
 	redefined-argument-from-local,
 	too-many-arguments,
+	too-few-public-methods,
