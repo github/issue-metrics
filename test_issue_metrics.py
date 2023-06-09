@@ -330,7 +330,7 @@ class TestGetEnvVars(unittest.TestCase):
     def test_get_env_vars(self):
         """Test that the function correctly retrieves the environment variables."""
         # Set the environment variables
-        os.environ["ISSUE_SEARCH_QUERY"] = "is:issue is:open"
+        os.environ["SEARCH_QUERY"] = "is:issue is:open"
         os.environ["REPOSITORY_URL"] = "https://github.com/user/repo"
 
         # Call the function and check the result
@@ -340,9 +340,9 @@ class TestGetEnvVars(unittest.TestCase):
 
     def test_get_env_vars_missing_query(self):
         """Test that the function raises a ValueError
-        if the ISSUE_SEARCH_QUERY environment variable is not set."""
-        # Unset the ISSUE_SEARCH_QUERY environment variable
-        os.environ.pop("ISSUE_SEARCH_QUERY", None)
+        if the SEARCH_QUERY environment variable is not set."""
+        # Unset the SEARCH_QUERY environment variable
+        os.environ.pop("SEARCH_QUERY", None)
 
         # Call the function and check that it raises a ValueError
         with self.assertRaises(ValueError):
@@ -379,7 +379,7 @@ class TestMain(unittest.TestCase):
     @patch.dict(
         os.environ,
         {
-            "ISSUE_SEARCH_QUERY": "is:open",
+            "SEARCH_QUERY": "is:open",
             "REPOSITORY_URL": "https://github.com/user/repo",
         },
     )
@@ -438,7 +438,7 @@ class TestMain(unittest.TestCase):
     @patch.dict(
         os.environ,
         {
-            "ISSUE_SEARCH_QUERY": "is:open",
+            "SEARCH_QUERY": "is:open",
             "REPOSITORY_URL": "https://github.com/user/repo",
         },
     )

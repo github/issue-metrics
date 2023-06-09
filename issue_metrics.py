@@ -26,14 +26,14 @@ import github3
 from dotenv import load_dotenv
 
 
-def search_issues(repository_url, issue_search_query, github_connection):
+def search_issues(repository_url, search_query, github_connection):
     """
     Searches for issues in a GitHub repository that match the given search query.
 
     Args:
         repository_url (str): The URL of the repository to search in.
             ie https://github.com/user/repo
-        issue_search_query (str): The search query to use for finding issues.
+        search_query (str): The search query to use for finding issues.
         github_connection (github3.GitHub): A connection to the GitHub API.
 
     Returns:
@@ -49,7 +49,7 @@ def search_issues(repository_url, issue_search_query, github_connection):
     print(f"owner: {owner}, repo: {repo}")
 
     # Search for issues that match the query
-    full_query = f"repo:{owner}/{repo} {issue_search_query}"
+    full_query = f"repo:{owner}/{repo} {search_query}"
     issues = github_connection.search_issues(full_query)  # type: ignore
 
     # Print the issue titles
@@ -254,12 +254,12 @@ def main():
     """Run the issue-metrics script.
 
     This function authenticates to GitHub, searches for issues using the
-    ISSUE_SEARCH_QUERY environment variable, measures the time to first response
+    SEARCH_QUERY environment variable, measures the time to first response
     and close for each issue, calculates the average time to first response,
     and writes the results to a markdown file.
 
     Raises:
-        ValueError: If the ISSUE_SEARCH_QUERY environment variable is not set.
+        ValueError: If the SEARCH_QUERY environment variable is not set.
         ValueError: If the REPOSITORY_URL environment variable is not set.
     """
 
@@ -273,10 +273,10 @@ def main():
     github_connection = auth_to_github()
 
     # Get the environment variables for use in the script
-    issue_search_query, repo_url = get_env_vars()
+    search_query, repo_url = get_env_vars()
 
     # Search for issues
-    issues = search_issues(repo_url, issue_search_query, github_connection)
+    issues = search_issues(repo_url, search_query, github_connection)
     if len(issues.items) <= 0:
         print("No issues found")
         write_to_markdown(None, None, None, None, None)
@@ -324,14 +324,14 @@ def main():
 
 def get_env_vars():
     """Get the environment variables for use in the script."""
-    issue_search_query = os.getenv("ISSUE_SEARCH_QUERY")
-    if not issue_search_query:
-        raise ValueError("ISSUE_SEARCH_QUERY environment variable not set")
+    search_query = os.getenv("SEARCH_QUERY")
+    if not search_query:
+        raise ValueError("SEARCH_QUERY environment variable not set")
 
     repo_url = os.getenv("REPOSITORY_URL")
     if not repo_url:
         raise ValueError("REPOSITORY_URL environment variable not set")
-    return issue_search_query, repo_url
+    return search_query, repo_url
 
 
 class IssueWithMetrics:
