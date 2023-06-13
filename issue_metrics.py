@@ -30,6 +30,7 @@ from dotenv import load_dotenv
 # IssueWithMetrics is a type alias for a GitHub issue with metrics attached.
 IssueWithMetrics = github3.issues.Issue
 
+
 def search_issues(
     repository_url: str,
     search_query: str,
@@ -70,7 +71,7 @@ def search_issues(
 def auth_to_github() -> github3.GitHub | None:
     """
     Connect to GitHub.com or GitHub Enterprise, depending on env variables.
-    
+
     Returns:
         github3.GitHub: A github api connection.
     """
