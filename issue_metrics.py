@@ -68,7 +68,12 @@ def search_issues(
 
 
 def auth_to_github() -> github3.GitHub | None:
-    """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
+    """
+    Connect to GitHub.com or GitHub Enterprise, depending on env variables.
+    
+    Returns:
+        github3.GitHub: A github api connection.
+    """
     token = os.getenv("GH_TOKEN")
     if token:
         github_connection = github3.login(token=token)
@@ -82,7 +87,7 @@ def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     """Measure the time to first response for a single issue.
 
     Args:
-        issue (issue): A GitHub issue.
+        issue (github3.issues.Issue): A GitHub issue.
 
     Returns:
         time to first response (datetime.timedelta): The time to first response for the issue.
@@ -134,7 +139,7 @@ def get_average_time_to_first_response(issues: List[IssueWithMetrics]) -> timede
     """Calculate the average time to first response for a list of issues.
 
     Args:
-        issues (IssueWithMetrics): A list of GitHub issues with metrics attached.
+        issues (List[IssueWithMetrics]): A list of GitHub issues with metrics attached.
 
     Returns:
         datetime.timedelta: The average time to first response for the issues in seconds.
@@ -229,8 +234,8 @@ def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> ti
     """Calculate the average time to close for a list of issues.
 
     Args:
-        issues_with_metrics (list): A list of issues with metrics.
-        Each issue should be a issue_with_metrics tuple.
+        issues_with_metrics (List[IssueWithMetrics]): A list of issues with metrics.
+            Each issue should be a issue_with_metrics tuple.
 
     Returns:
         datetime.timedelta: The average time to close for the issues.
@@ -330,8 +335,14 @@ def main():
     )
 
 
-def get_env_vars():
-    """Get the environment variables for use in the script."""
+def get_env_vars() -> tuple[str, str]:
+    """
+    Get the environment variables for use in the script.
+
+    Returns:
+        str: the search query used to filter issues and prs
+        str: the full url of the repo to search
+    """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
         raise ValueError("SEARCH_QUERY environment variable not set")
