@@ -21,12 +21,20 @@ import os
 from datetime import datetime, timedelta
 from os.path import dirname, join
 from urllib.parse import urlparse
+from typing import List
 
 import github3
 from dotenv import load_dotenv
 
 
-def search_issues(repository_url, search_query, github_connection):
+# IssueWithMetrics is a type alias for a GitHub issue with metrics attached.
+IssueWithMetrics = github3.issues.Issue
+
+def search_issues(
+    repository_url: str,
+    search_query: str,
+    github_connection: github3.GitHub
+) -> List[github3.issues.Issue]:
     """
     Searches for issues in a GitHub repository that match the given search query.
 
@@ -59,7 +67,7 @@ def search_issues(repository_url, search_query, github_connection):
     return issues
 
 
-def auth_to_github():
+def auth_to_github() -> github3.GitHub | None:
     """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
     token = os.getenv("GH_TOKEN")
     if token:
@@ -70,7 +78,7 @@ def auth_to_github():
     return github_connection  # type: ignore
 
 
-def measure_time_to_first_response(issue):
+def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     """Measure the time to first response for a single issue.
 
     Args:
@@ -101,7 +109,7 @@ def measure_time_to_first_response(issue):
     return time_to_first_response
 
 
-def measure_time_to_close(issue):
+def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
     """Measure the time it takes to close an issue.
 
     Args:
@@ -122,7 +130,7 @@ def measure_time_to_close(issue):
     return time_to_close
 
 
-def get_average_time_to_first_response(issues):
+def get_average_time_to_first_response(issues: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to first response for a list of issues.
 
     Args:
@@ -153,13 +161,13 @@ def get_average_time_to_first_response(issues):
 
 
 def write_to_markdown(
-    issues_with_metrics,
-    average_time_to_first_response,
-    average_time_to_close,
-    num_issues_opened,
-    num_issues_closed,
-    file=None,
-):
+    issues_with_metrics: List[IssueWithMetrics],
+    average_time_to_first_response: timedelta,
+    average_time_to_close: timedelta,
+    num_issues_opened: int,
+    num_issues_closed: int,
+    file=None
+) -> None:
     """Write the issues with metrics to a markdown file.
 
     Args:
@@ -217,7 +225,7 @@ def write_to_markdown(
         print("Wrote issue metrics to issue_metrics.md")
 
 
-def get_average_time_to_close(issues_with_metrics):
+def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to close for a list of issues.
 
     Args:
