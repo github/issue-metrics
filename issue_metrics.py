@@ -68,15 +68,17 @@ def search_issues(
     return issues
 
 
-def auth_to_github() -> github3.GitHub | None:
+
+def auth_to_github():
+    """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
+    
     """
     Connect to GitHub.com or GitHub Enterprise, depending on env variables.
 
     Returns:
         github3.GitHub: A github api connection.
     """
-    token = os.getenv("GH_TOKEN")
-    if token:
+    if token := os.getenv("GH_TOKEN"):
         github_connection = github3.login(token=token)
     else:
         raise ValueError("GH_TOKEN environment variable not set")
@@ -97,7 +99,7 @@ def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     # Get the first comment
     if issue.comments <= 0:
         first_comment_time = None
-        time_to_first_response = None
+        return None
     else:
         comments = issue.issue.comments(
             number=1, sort="created", direction="asc"
@@ -110,9 +112,7 @@ def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
         issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
         # Calculate the time between the issue and the first comment
-        time_to_first_response = first_comment_time - issue_time  # type: ignore
-
-    return time_to_first_response
+        return first_comment_time - issue_time
 
 
 def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
@@ -131,9 +131,7 @@ def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
     closed_at = datetime.fromisoformat(issue.closed_at)
     created_at = datetime.fromisoformat(issue.created_at)
 
-    time_to_close = closed_at - created_at
-
-    return time_to_close
+    return closed_at - created_at
 
 
 def get_average_time_to_first_response(issues: List[IssueWithMetrics]) -> timedelta:
@@ -249,7 +247,8 @@ def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> ti
 
     # Calculate the total time to close for all issues
     total_time_to_close = sum(
-        [issue.time_to_close for issue in issues_with_time_to_close], timedelta()
+        (issue.time_to_close for issue in issues_with_time_to_close),
+        timedelta(),
     )
 
     # Calculate the average time to close
@@ -313,10 +312,10 @@ def main():
         )
         if issue.state == "closed":  # type: ignore
             issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
-        if issue.state == "open":  # type: ignore
-            num_issues_open += 1
-        if issue.state == "closed":  # type: ignore
+        if issue.state == "closed":
             num_issues_closed += 1
+        elif issue.state == "open":
+            num_issues_open += 1
         issues_with_metrics.append(issue_with_metrics)
 
     average_time_to_first_response = get_average_time_to_first_response(
@@ -348,10 +347,10 @@ def get_env_vars() -> tuple[str, str]:
     if not search_query:
         raise ValueError("SEARCH_QUERY environment variable not set")
 
-    repo_url = os.getenv("REPOSITORY_URL")
-    if not repo_url:
+    if repo_url := os.getenv("REPOSITORY_URL"):
+        return search_query, repo_url
+    else:
         raise ValueError("REPOSITORY_URL environment variable not set")
-    return search_query, repo_url
 
 
 class IssueWithMetrics:
