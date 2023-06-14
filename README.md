@@ -22,6 +22,16 @@ If you need support using this project or have questions about it, please [open 
 Note: Your GitHub token will need to have read access to the repository in the organization that you want evaluated
 1. Copy the below example workflow to your repository and put it in the `.github/workflows/` directory with the file extension `.yml` (ie. `.github/workflows/issue-metrics.yml`)
 
+### Configuration
+
+Below are the allowed configuration options:
+
+| field                 | required | default | description |
+|-----------------------|----------|---------|-------------|
+| `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
+| `REPOSITORY_URL`      | true     |         | The repository to scan for issues. |
+| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs |
+
 ### Example workflow
 
 ```yaml
@@ -35,13 +45,11 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
     
+    steps:
+
     - name: Run issue-metrics tool
-      uses: docker://ghcr.io/github/issue-metrics:v1
+      uses: github/issue-metrics@v1
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         REPOSITORY_URL: https://github.com/owner/repo
@@ -57,7 +65,7 @@ jobs:
 ```
 
 ## SEARCH_QUERY: Issues or Pull Requests? Open or closed?
-This action can be configured to run metrics on pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Here are some search query examples:
+This action can be configured to run metrics on pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in [the search documentation](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests). Here are some search query examples:
 
 Issues opened in May 2023:
 - `is:issue created:2023-05-01..2023-05-31`
@@ -92,11 +100,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
     
     - name: Run issue-metrics tool for issues and prs opened in May 2023
-      uses: docker://ghcr.io/github/issue-metrics:v1
+      uses: github/issue-metrics:v1
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         REPOSITORY_URL: https://github.com/owner/repo
@@ -110,7 +116,7 @@ jobs:
         assignees: <YOUR_GITHUB_HANDLE_HERE>
     
     - name: Run issue-metrics tool for issues and prs closed in May 2023
-      uses: docker://ghcr.io/github/issue-metrics:v1
+      uses: github/issue-metrics:v1
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         REPOSITORY_URL: https://github.com/owner/repo
