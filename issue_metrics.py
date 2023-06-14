@@ -24,11 +24,11 @@ from urllib.parse import urlparse
 from typing import List
 
 import github3
-from dotenv import load_dotenv
-
 
 # IssueWithMetrics is a type alias for a GitHub issue with metrics attached.
-IssueWithMetrics = github3.issues.Issue
+from github3.issues.issue import Issue as IssueWithMetrics
+from dotenv import load_dotenv
+
 
 
 def search_issues(
