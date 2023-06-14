@@ -24,6 +24,7 @@ from issue_metrics import (
     get_average_time_to_close,
     get_average_time_to_first_response,
     get_env_vars,
+    get_per_issue_metrics,
     measure_time_to_close,
     measure_time_to_first_response,
     search_issues,
@@ -462,6 +463,89 @@ class TestMain(unittest.TestCase):
         # Call main and check that it writes 'No issues found'
         issue_metrics.main()
         mock_write_to_markdown.assert_called_once_with(None, None, None, None, None)
+
+
+class TestGetPerIssueMetrics(unittest.TestCase):
+    """Test suite for the get_per_issue_metrics function."""
+
+    def test_get_per_issue_metrics(self):
+        """Test that the function correctly calculates the metrics for a list of GitHub issues."""
+        # Create mock data
+        mock_issue1 = MagicMock(
+            title="Issue 1",
+            html_url="https://github.com/user/repo/issues/1",
+            state="open",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+        )
+
+        mock_comment1 = MagicMock()
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
+        mock_issue1.issue.comments.return_value = [mock_comment1]
+
+        mock_issue2 = MagicMock(
+            title="Issue 2",
+            html_url="https://github.com/user/repo/issues/2",
+            state="closed",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+            closed_at="2023-01-04T00:00:00Z",
+        )
+
+        mock_comment2 = MagicMock()
+        mock_comment2.created_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
+        mock_issue2.issue.comments.return_value = [mock_comment2]
+        issues = [
+            mock_issue1,
+            mock_issue2,
+        ]
+
+        # Call the function and check the result
+        with unittest.mock.patch(
+            "issue_metrics.measure_time_to_first_response",
+            measure_time_to_first_response,
+        ), unittest.mock.patch(
+            "issue_metrics.measure_time_to_close", measure_time_to_close
+        ):
+            (
+                result_issues_with_metrics,
+                result_num_issues_open,
+                result_num_issues_closed,
+            ) = get_per_issue_metrics(issues)
+        expected_issues_with_metrics = [
+            IssueWithMetrics(
+                "Issue 1",
+                "https://github.com/user/repo/issues/1",
+                timedelta(days=1),
+                None,
+            ),
+            IssueWithMetrics(
+                "Issue 2",
+                "https://github.com/user/repo/issues/2",
+                timedelta(days=2),
+                timedelta(days=3),
+            ),
+        ]
+        expected_num_issues_open = 1
+        expected_num_issues_closed = 1
+        self.assertEqual(result_num_issues_open, expected_num_issues_open)
+        self.assertEqual(result_num_issues_closed, expected_num_issues_closed)
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_first_response,
+            expected_issues_with_metrics[0].time_to_first_response,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_close,
+            expected_issues_with_metrics[0].time_to_close,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[1].time_to_first_response,
+            expected_issues_with_metrics[1].time_to_first_response,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[1].time_to_close,
+            expected_issues_with_metrics[1].time_to_close,
+        )
 
 
 if __name__ == "__main__":
