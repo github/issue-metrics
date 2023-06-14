@@ -20,13 +20,28 @@ Functions:
 import os
 from datetime import datetime, timedelta
 from os.path import dirname, join
+from typing import List
 from urllib.parse import urlparse
 
 import github3
 from dotenv import load_dotenv
 
 
-def search_issues(repository_url, search_query, github_connection):
+class IssueWithMetrics:
+    """A class to represent a GitHub issue with metrics."""
+
+    def __init__(
+        self, title, html_url, time_to_first_response=None, time_to_close=None
+    ):
+        self.title = title
+        self.html_url = html_url
+        self.time_to_first_response = time_to_first_response
+        self.time_to_close = time_to_close
+
+
+def search_issues(
+    repository_url: str, search_query: str, github_connection: github3.GitHub
+) -> List[github3.issues.Issue]:
     """
     Searches for issues in a GitHub repository that match the given search query.
 
@@ -60,9 +75,13 @@ def search_issues(repository_url, search_query, github_connection):
 
 
 def auth_to_github():
-    """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
-    token = os.getenv("GH_TOKEN")
-    if token:
+    """
+    Connect to GitHub.com or GitHub Enterprise, depending on env variables.
+
+    Returns:
+        github3.GitHub: A github api connection.
+    """
+    if token := os.getenv("GH_TOKEN"):
         github_connection = github3.login(token=token)
     else:
         raise ValueError("GH_TOKEN environment variable not set")
@@ -70,11 +89,11 @@ def auth_to_github():
     return github_connection  # type: ignore
 
 
-def measure_time_to_first_response(issue):
+def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     """Measure the time to first response for a single issue.
 
     Args:
-        issue (issue): A GitHub issue.
+        issue (github3.issues.Issue): A GitHub issue.
 
     Returns:
         time to first response (datetime.timedelta): The time to first response for the issue.
@@ -82,26 +101,23 @@ def measure_time_to_first_response(issue):
     """
     # Get the first comment
     if issue.comments <= 0:
-        first_comment_time = None
-        time_to_first_response = None
-    else:
-        comments = issue.issue.comments(
-            number=1, sort="created", direction="asc"
-        )  # type: ignore
-        for comment in comments:
-            # Get the created_at time for the first comment
-            first_comment_time = comment.created_at  # type: ignore
+        return None
 
-        # Get the created_at time for the issue
-        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+    comments = issue.issue.comments(
+        number=1, sort="created", direction="asc"
+    )  # type: ignore
+    for comment in comments:
+        # Get the created_at time for the first comment
+        first_comment_time = comment.created_at  # type: ignore
 
-        # Calculate the time between the issue and the first comment
-        time_to_first_response = first_comment_time - issue_time  # type: ignore
+    # Get the created_at time for the issue
+    issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
-    return time_to_first_response
+    # Calculate the time between the issue and the first comment
+    return first_comment_time - issue_time
 
 
-def measure_time_to_close(issue):
+def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
     """Measure the time it takes to close an issue.
 
     Args:
@@ -117,16 +133,14 @@ def measure_time_to_close(issue):
     closed_at = datetime.fromisoformat(issue.closed_at)
     created_at = datetime.fromisoformat(issue.created_at)
 
-    time_to_close = closed_at - created_at
-
-    return time_to_close
+    return closed_at - created_at
 
 
-def get_average_time_to_first_response(issues):
+def get_average_time_to_first_response(issues: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to first response for a list of issues.
 
     Args:
-        issues (IssueWithMetrics): A list of GitHub issues with metrics attached.
+        issues (List[IssueWithMetrics]): A list of GitHub issues with metrics attached.
 
     Returns:
         datetime.timedelta: The average time to first response for the issues in seconds.
@@ -153,13 +167,13 @@ def get_average_time_to_first_response(issues):
 
 
 def write_to_markdown(
-    issues_with_metrics,
-    average_time_to_first_response,
-    average_time_to_close,
-    num_issues_opened,
-    num_issues_closed,
+    issues_with_metrics: List[IssueWithMetrics],
+    average_time_to_first_response: timedelta,
+    average_time_to_close: timedelta,
+    num_issues_opened: int,
+    num_issues_closed: int,
     file=None,
-):
+) -> None:
     """Write the issues with metrics to a markdown file.
 
     Args:
@@ -217,12 +231,12 @@ def write_to_markdown(
         print("Wrote issue metrics to issue_metrics.md")
 
 
-def get_average_time_to_close(issues_with_metrics):
+def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to close for a list of issues.
 
     Args:
-        issues_with_metrics (list): A list of issues with metrics.
-        Each issue should be a issue_with_metrics tuple.
+        issues_with_metrics (List[IssueWithMetrics]): A list of issues with metrics.
+            Each issue should be a issue_with_metrics tuple.
 
     Returns:
         datetime.timedelta: The average time to close for the issues.
@@ -235,7 +249,8 @@ def get_average_time_to_close(issues_with_metrics):
 
     # Calculate the total time to close for all issues
     total_time_to_close = sum(
-        [issue.time_to_close for issue in issues_with_time_to_close], timedelta()
+        (issue.time_to_close for issue in issues_with_time_to_close),
+        timedelta(),
     )
 
     # Calculate the average time to close
@@ -299,10 +314,9 @@ def main():
         )
         if issue.state == "closed":  # type: ignore
             issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
-        if issue.state == "open":  # type: ignore
-            num_issues_open += 1
-        if issue.state == "closed":  # type: ignore
             num_issues_closed += 1
+        elif issue.state == "open":
+            num_issues_open += 1
         issues_with_metrics.append(issue_with_metrics)
 
     average_time_to_first_response = get_average_time_to_first_response(
@@ -322,28 +336,22 @@ def main():
     )
 
 
-def get_env_vars():
-    """Get the environment variables for use in the script."""
+def get_env_vars() -> tuple[str, str]:
+    """
+    Get the environment variables for use in the script.
+
+    Returns:
+        str: the search query used to filter issues and prs
+        str: the full url of the repo to search
+    """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
         raise ValueError("SEARCH_QUERY environment variable not set")
 
-    repo_url = os.getenv("REPOSITORY_URL")
-    if not repo_url:
-        raise ValueError("REPOSITORY_URL environment variable not set")
-    return search_query, repo_url
+    if repo_url := os.getenv("REPOSITORY_URL"):
+        return search_query, repo_url
 
-
-class IssueWithMetrics:
-    """A class to represent a GitHub issue with metrics."""
-
-    def __init__(
-        self, title, html_url, time_to_first_response=None, time_to_close=None
-    ):
-        self.title = title
-        self.html_url = html_url
-        self.time_to_first_response = time_to_first_response
-        self.time_to_close = time_to_close
+    raise ValueError("REPOSITORY_URL environment variable not set")
 
 
 if __name__ == "__main__":
