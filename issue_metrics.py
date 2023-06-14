@@ -21,12 +21,21 @@ import os
 from datetime import datetime, timedelta
 from os.path import dirname, join
 from urllib.parse import urlparse
+from typing import List
 
 import github3
+
+# IssueWithMetrics is a type alias for a GitHub issue with metrics attached.
+from github3.issues.issue import Issue as IssueWithMetrics
 from dotenv import load_dotenv
 
 
-def search_issues(repository_url, search_query, github_connection):
+
+def search_issues(
+    repository_url: str,
+    search_query: str,
+    github_connection: github3.GitHub
+) -> List[github3.issues.Issue]:
     """
     Searches for issues in a GitHub repository that match the given search query.
 
@@ -59,8 +68,16 @@ def search_issues(repository_url, search_query, github_connection):
     return issues
 
 
+
 def auth_to_github():
     """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
+    
+    """
+    Connect to GitHub.com or GitHub Enterprise, depending on env variables.
+
+    Returns:
+        github3.GitHub: A github api connection.
+    """
     if token := os.getenv("GH_TOKEN"):
         github_connection = github3.login(token=token)
     else:
@@ -69,11 +86,11 @@ def auth_to_github():
     return github_connection  # type: ignore
 
 
-def measure_time_to_first_response(issue):
+def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     """Measure the time to first response for a single issue.
 
     Args:
-        issue (issue): A GitHub issue.
+        issue (github3.issues.Issue): A GitHub issue.
 
     Returns:
         time to first response (datetime.timedelta): The time to first response for the issue.
@@ -98,7 +115,7 @@ def measure_time_to_first_response(issue):
         return first_comment_time - issue_time
 
 
-def measure_time_to_close(issue):
+def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
     """Measure the time it takes to close an issue.
 
     Args:
@@ -117,11 +134,11 @@ def measure_time_to_close(issue):
     return closed_at - created_at
 
 
-def get_average_time_to_first_response(issues):
+def get_average_time_to_first_response(issues: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to first response for a list of issues.
 
     Args:
-        issues (IssueWithMetrics): A list of GitHub issues with metrics attached.
+        issues (List[IssueWithMetrics]): A list of GitHub issues with metrics attached.
 
     Returns:
         datetime.timedelta: The average time to first response for the issues in seconds.
@@ -148,13 +165,13 @@ def get_average_time_to_first_response(issues):
 
 
 def write_to_markdown(
-    issues_with_metrics,
-    average_time_to_first_response,
-    average_time_to_close,
-    num_issues_opened,
-    num_issues_closed,
-    file=None,
-):
+    issues_with_metrics: List[IssueWithMetrics],
+    average_time_to_first_response: timedelta,
+    average_time_to_close: timedelta,
+    num_issues_opened: int,
+    num_issues_closed: int,
+    file=None
+) -> None:
     """Write the issues with metrics to a markdown file.
 
     Args:
@@ -212,12 +229,12 @@ def write_to_markdown(
         print("Wrote issue metrics to issue_metrics.md")
 
 
-def get_average_time_to_close(issues_with_metrics):
+def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> timedelta:
     """Calculate the average time to close for a list of issues.
 
     Args:
-        issues_with_metrics (list): A list of issues with metrics.
-        Each issue should be a issue_with_metrics tuple.
+        issues_with_metrics (List[IssueWithMetrics]): A list of issues with metrics.
+            Each issue should be a issue_with_metrics tuple.
 
     Returns:
         datetime.timedelta: The average time to close for the issues.
@@ -318,8 +335,14 @@ def main():
     )
 
 
-def get_env_vars():
-    """Get the environment variables for use in the script."""
+def get_env_vars() -> tuple[str, str]:
+    """
+    Get the environment variables for use in the script.
+
+    Returns:
+        str: the search query used to filter issues and prs
+        str: the full url of the repo to search
+    """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
         raise ValueError("SEARCH_QUERY environment variable not set")
