@@ -20,21 +20,27 @@ Functions:
 import os
 from datetime import datetime, timedelta
 from os.path import dirname, join
-from urllib.parse import urlparse
 from typing import List
+from urllib.parse import urlparse
 
 import github3
-
-# IssueWithMetrics is a type alias for a GitHub issue with metrics attached.
-from github3.issues.issue import Issue as IssueWithMetrics
 from dotenv import load_dotenv
 
 
+class IssueWithMetrics:
+    """A class to represent a GitHub issue with metrics."""
+
+    def __init__(
+        self, title, html_url, time_to_first_response=None, time_to_close=None
+    ):
+        self.title = title
+        self.html_url = html_url
+        self.time_to_first_response = time_to_first_response
+        self.time_to_close = time_to_close
+
 
 def search_issues(
-    repository_url: str,
-    search_query: str,
-    github_connection: github3.GitHub
+    repository_url: str, search_query: str, github_connection: github3.GitHub
 ) -> List[github3.issues.Issue]:
     """
     Searches for issues in a GitHub repository that match the given search query.
@@ -68,10 +74,7 @@ def search_issues(
     return issues
 
 
-
 def auth_to_github():
-    """Connect to GitHub.com or GitHub Enterprise, depending on env variables."""
-    
     """
     Connect to GitHub.com or GitHub Enterprise, depending on env variables.
 
@@ -98,21 +101,20 @@ def measure_time_to_first_response(issue: github3.issues.Issue) -> timedelta:
     """
     # Get the first comment
     if issue.comments <= 0:
-        first_comment_time = None
         return None
-    else:
-        comments = issue.issue.comments(
-            number=1, sort="created", direction="asc"
-        )  # type: ignore
-        for comment in comments:
-            # Get the created_at time for the first comment
-            first_comment_time = comment.created_at  # type: ignore
 
-        # Get the created_at time for the issue
-        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+    comments = issue.issue.comments(
+        number=1, sort="created", direction="asc"
+    )  # type: ignore
+    for comment in comments:
+        # Get the created_at time for the first comment
+        first_comment_time = comment.created_at  # type: ignore
 
-        # Calculate the time between the issue and the first comment
-        return first_comment_time - issue_time
+    # Get the created_at time for the issue
+    issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+
+    # Calculate the time between the issue and the first comment
+    return first_comment_time - issue_time
 
 
 def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:
@@ -170,7 +172,7 @@ def write_to_markdown(
     average_time_to_close: timedelta,
     num_issues_opened: int,
     num_issues_closed: int,
-    file=None
+    file=None,
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -312,7 +314,6 @@ def main():
         )
         if issue.state == "closed":  # type: ignore
             issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
-        if issue.state == "closed":
             num_issues_closed += 1
         elif issue.state == "open":
             num_issues_open += 1
@@ -349,20 +350,8 @@ def get_env_vars() -> tuple[str, str]:
 
     if repo_url := os.getenv("REPOSITORY_URL"):
         return search_query, repo_url
-    else:
-        raise ValueError("REPOSITORY_URL environment variable not set")
 
-
-class IssueWithMetrics:
-    """A class to represent a GitHub issue with metrics."""
-
-    def __init__(
-        self, title, html_url, time_to_first_response=None, time_to_close=None
-    ):
-        self.title = title
-        self.html_url = html_url
-        self.time_to_first_response = time_to_first_response
-        self.time_to_close = time_to_close
+    raise ValueError("REPOSITORY_URL environment variable not set")
 
 
 if __name__ == "__main__":
