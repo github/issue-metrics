@@ -265,6 +265,45 @@ def get_average_time_to_close(issues_with_metrics: List[IssueWithMetrics]) -> ti
     return average_time_to_close
 
 
+def get_per_issue_metrics(
+    issues: List[github3.issues.Issue],
+) -> tuple[List[IssueWithMetrics], int, int]:
+    """
+    Calculate the metrics for each issue in a list of GitHub issues.
+
+    Args:
+        issues (List[github3.issues.Issue]): A list of GitHub issues.
+
+    Returns:
+        tuple[List[IssueWithMetrics], int, int]: A tuple containing a
+            list of IssueWithMetrics objects, the number of open issues,
+            and the number of closed issues.
+
+    """
+    issues_with_metrics = []
+    num_issues_open = 0
+    num_issues_closed = 0
+
+    for issue in issues:
+        issue_with_metrics = IssueWithMetrics(
+            issue.title,  # type: ignore
+            issue.html_url,  # type: ignore
+            None,
+            None,
+        )
+        issue_with_metrics.time_to_first_response = measure_time_to_first_response(
+            issue
+        )
+        if issue.state == "closed":  # type: ignore
+            issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
+            num_issues_closed += 1
+        elif issue.state == "open":
+            num_issues_open += 1
+        issues_with_metrics.append(issue_with_metrics)
+
+    return issues_with_metrics, num_issues_open, num_issues_closed
+
+
 def main():
     """Run the issue-metrics script.
 
@@ -297,27 +336,9 @@ def main():
         write_to_markdown(None, None, None, None, None)
         return
 
-    # Find the time to first response, time to close, average, open, and closed issues
-    issues_with_metrics = []
-    num_issues_open = 0
-    num_issues_closed = 0
-
-    for issue in issues:
-        issue_with_metrics = IssueWithMetrics(
-            issue.title,  # type: ignore
-            issue.html_url,  # type: ignore
-            None,
-            None,
-        )
-        issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-            issue
-        )
-        if issue.state == "closed":  # type: ignore
-            issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
-            num_issues_closed += 1
-        elif issue.state == "open":
-            num_issues_open += 1
-        issues_with_metrics.append(issue_with_metrics)
+    issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
+        issues
+    )
 
     average_time_to_first_response = get_average_time_to_first_response(
         issues_with_metrics
