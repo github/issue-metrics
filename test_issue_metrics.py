@@ -501,10 +501,10 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        with unittest.mock.patch(
+        with unittest.mock.patch(  # type:ignore
             "issue_metrics.measure_time_to_first_response",
             measure_time_to_first_response,
-        ), unittest.mock.patch(
+        ), unittest.mock.patch(  # type:ignore
             "issue_metrics.measure_time_to_close", measure_time_to_close
         ):
             (
