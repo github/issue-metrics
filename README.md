@@ -11,6 +11,13 @@ This action was developed by the GitHub OSPO for our own use and developed in a 
 
 To find syntax for search queries, check out the [documentation](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests).
 
+## Example use cases
+
+- As a maintainer, I want to see metrics for issues and pull requests on the repository I maintain in order to ensure I am giving them the proper amount of attention.
+- As a first responder on a repository, I want to ensure that users are getting contact from me in a reasonable amount of time.
+- As an OSPO, I want to see how many open source repository requests are open/closed, and metrics for how long it takes to get through the open source process.
+- As a product development team, I want to see metrics around how long pull request reviews are taking, so that we can reflect on that data during retrospectives.
+
 ## Support
 
 If you need support using this project or have questions about it, please [open up an issue in this repository](https://github.com/github/issue-metrics/issues). Requests made directly to GitHub staff or support team will be redirected here to open an issue. GitHub SLA's and support/services contracts do not apply to this repository.
