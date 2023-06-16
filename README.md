@@ -32,7 +32,10 @@ Below are the allowed configuration options:
 | `REPOSITORY_URL`      | true     |         | The repository to scan for issues. |
 | `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs |
 
-### Example workflow
+### Example workflows
+
+#### Calculated Time Example
+This workflow searches for the issues created last month, and generates an issue with metrics.
 
 ```yaml
 name: Monthly issue metrics
@@ -40,6 +43,59 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '3 2 1 * *'
+
+jobs:
+  build:
+    name: issue metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - name: Get dates for last month
+      shell: bash
+      run: |
+        # Get the current date
+        current_date=$(date +'%Y-%m-%d')
+
+        # Calculate the previous month
+        previous_date=$(date -d "$current_date -1 month" +'%Y-%m-%d')
+
+        # Extract the year and month from the previous date
+        previous_year=$(date -d "$previous_date" +'%Y')
+        previous_month=$(date -d "$previous_date" +'%m')
+
+        # Calculate the first day of the previous month
+        first_day=$(date -d "$previous_year-$previous_month-01" +'%Y-%m-%d')
+
+        # Calculate the last day of the previous month
+        last_day=$(date -d "$first_day +1 month -1 day" +'%Y-%m-%d')
+
+        echo "$first_day..$last_day"
+        echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+
+    - name: Run issue-metrics tool
+      uses: github/issue-metrics@v1
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        REPOSITORY_URL: https://github.com/owner/repo
+        SEARCH_QUERY: 'is:issue created:${{ env.last_month }} -reason:"not planned"'
+
+    - name: Create issue
+      uses: peter-evans/create-issue-from-file@v4
+      with:
+        title: Monthly issue metrics report
+        content-filepath: ./issue_metrics.md
+        assignees: <YOUR_GITHUB_HANDLE_HERE>
+
+```
+
+#### Fixed Time Example
+This workflow searches for the issues created between 2023-05-01..2023-05-31, and generates an issue with metrics.
+
+```yaml
+name: Monthly issue metrics
+on:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -85,7 +141,7 @@ Both issues and pull requests opened in May 2023:
 Both issues and pull requests closed in May 2023 (may have been open in May or earlier):
 - `closed:2023-05-01..2023-05-31`
 
-OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for an or pattern), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this: 
+OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this: 
 
 ```yaml
 name: Monthly issue metrics
