@@ -96,8 +96,6 @@ This workflow searches for the issues created between 2023-05-01..2023-05-31, an
 name: Monthly issue metrics
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '3 2 1 * *'
 
 jobs:
   build:
