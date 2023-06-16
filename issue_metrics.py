@@ -277,7 +277,7 @@ def get_average_time_to_close(
 
 def get_per_issue_metrics(
     issues: List[github3.issues.Issue],  # type: ignore
-) -> tuple[List[IssueWithMetrics], int, int]:
+) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue in a list of GitHub issues.
 
