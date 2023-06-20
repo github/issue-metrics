@@ -101,25 +101,41 @@ def measure_time_to_first_response(
         Union[timedelta, None]: The time to first response for the issue.
 
     """
-    # Get the first comment
-    if issue.comments <= 0:
-        return None
+    first_review_comment_time = None
+    first_comment_time = None
+    earliest_response = None
 
+    # Get the first comment time
     comments = issue.issue.comments(
         number=1, sort="created", direction="asc"
     )  # type: ignore
-
-    # Get the created_at time for the first comment
-    first_comment_time = None
     for comment in comments:
-        first_comment_time = comment.created_at  # type: ignore
+        first_comment_time = comment.created_at
 
-    # Get the created_at time for the issue
+    # Check if the issue is actually a pull request
+    # so we may also get the first review comment time
+    if issue.issue.pull_request_urls:
+        pull_request = issue.issue.pull_request()
+        review_comments = pull_request.reviews(number=1)  # type: ignore
+        for review_comment in review_comments:
+            first_review_comment_time = review_comment.submitted_at
+
+    # Figure out the earliest response timestamp
+    if first_comment_time and first_review_comment_time:
+        earliest_response = min(first_comment_time, first_review_comment_time)
+    elif first_comment_time:
+        earliest_response = first_comment_time
+    elif first_review_comment_time:
+        earliest_response = first_review_comment_time
+    else:
+        return None
+
+    # Get the created_at time for the issue so we can calculate the time to first response
     issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
     # Calculate the time between the issue and the first comment
-    if first_comment_time and issue_time:
-        return first_comment_time - issue_time
+    if earliest_response and issue_time:
+        return earliest_response - issue_time
 
     return None
 
