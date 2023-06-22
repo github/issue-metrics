@@ -32,14 +32,16 @@ def get_all_discussions(repo_url: str, token: str):
         repository(owner: $owner, name: $repo) {
             discussions(first: 100) {
                 nodes {
-                    id
                     title
                     url
                     createdAt
-                    updatedAt
-                    author {
-                        login
+                    comments(first: 1) {
+                        nodes {
+                            createdAt
+                        }
                     }
+                    answerChosenAt
+                    closedAt
                 }
             }
         }

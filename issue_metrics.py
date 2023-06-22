@@ -87,48 +87,60 @@ def auth_to_github() -> github3.GitHub:
 
 
 def measure_time_to_first_response(
-    issue: github3.issues.Issue,  # type: ignore
+    issue: Union[github3.issues.Issue, None],  # type: ignore
+    discussion: Union[dict, None],
 ) -> Union[timedelta, None]:
-    """Measure the time to first response for a single issue.
+    """Measure the time to first response for a single issue or a discussion.
 
     Args:
-        issue (github3.issues.Issue): A GitHub issue.
+        issue (Union[github3.issues.Issue, None]): A GitHub issue.
+        discussion (Union[dict, None]): A GitHub discussion.
 
     Returns:
-        Union[timedelta, None]: The time to first response for the issue.
+        Union[timedelta, None]: The time to first response for the issue/discussion.
 
     """
     first_review_comment_time = None
     first_comment_time = None
     earliest_response = None
+    issue_time = None
 
     # Get the first comment time
-    comments = issue.issue.comments(
-        number=1, sort="created", direction="asc"
-    )  # type: ignore
-    for comment in comments:
-        first_comment_time = comment.created_at
+    if issue:
+        comments = issue.issue.comments(
+            number=1, sort="created", direction="asc"
+        )  # type: ignore
+        for comment in comments:
+            first_comment_time = comment.created_at
 
-    # Check if the issue is actually a pull request
-    # so we may also get the first review comment time
-    if issue.issue.pull_request_urls:
-        pull_request = issue.issue.pull_request()
-        review_comments = pull_request.reviews(number=1)  # type: ignore
-        for review_comment in review_comments:
-            first_review_comment_time = review_comment.submitted_at
+        # Check if the issue is actually a pull request
+        # so we may also get the first review comment time
+        if issue.issue.pull_request_urls:
+            pull_request = issue.issue.pull_request()
+            review_comments = pull_request.reviews(number=1)  # type: ignore
+            for review_comment in review_comments:
+                first_review_comment_time = review_comment.submitted_at
 
-    # Figure out the earliest response timestamp
-    if first_comment_time and first_review_comment_time:
-        earliest_response = min(first_comment_time, first_review_comment_time)
-    elif first_comment_time:
-        earliest_response = first_comment_time
-    elif first_review_comment_time:
-        earliest_response = first_review_comment_time
+        # Figure out the earliest response timestamp
+        if first_comment_time and first_review_comment_time:
+            earliest_response = min(first_comment_time, first_review_comment_time)
+        elif first_comment_time:
+            earliest_response = first_comment_time
+        elif first_review_comment_time:
+            earliest_response = first_review_comment_time
+        else:
+            return None
+
+        # Get the created_at time for the issue so we can calculate the time to first response
+        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+
+    if discussion and len(discussion["comments"]["nodes"]) > 0:
+        earliest_response = datetime.fromisoformat(
+            discussion["comments"]["nodes"][0]["createdAt"]
+        )
+        issue_time = datetime.fromisoformat(discussion["createdAt"])
     else:
         return None
-
-    # Get the created_at time for the issue so we can calculate the time to first response
-    issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
     # Calculate the time between the issue and the first comment
     if earliest_response and issue_time:
@@ -137,23 +149,35 @@ def measure_time_to_first_response(
     return None
 
 
-def measure_time_to_close(issue: github3.issues.Issue) -> timedelta:  # type: ignore
-    """Measure the time it takes to close an issue.
+def measure_time_to_close(
+    issue: Union[github3.issues.Issue, None], discussion: Union[dict, None]  # type: ignore
+) -> Union[timedelta, None]:
+    """Measure the time it takes to close an issue or discussion.
 
     Args:
-        issue (github3.Issue): A GitHub issue.
+        issue (Union[github3.issues.Issue, None]): A GitHub issue.
+        discussion (Union[dict, None]): A GitHub discussion.
 
     Returns:
-        datetime.timedelta: The time it takes to close the issue.
+        Union[datetime.timedelta, None]: The time it takes to close the issue.
 
     """
-    if issue.state != "closed":
-        raise ValueError("Issue must be closed to measure time to close.")
+    closed_at, created_at = None, None
+    if issue:
+        if issue.state != "closed":
+            return None
+        closed_at = datetime.fromisoformat(issue.closed_at)
+        created_at = datetime.fromisoformat(issue.created_at)
 
-    closed_at = datetime.fromisoformat(issue.closed_at)
-    created_at = datetime.fromisoformat(issue.created_at)
+    if discussion:
+        if discussion["closedAt"] is None:
+            return None
+        closed_at = datetime.fromisoformat(discussion["closedAt"])
+        created_at = datetime.fromisoformat(discussion["createdAt"])
 
-    return closed_at - created_at
+    if closed_at and created_at:
+        return closed_at - created_at
+    return None
 
 
 def get_average_time_to_first_response(
@@ -290,6 +314,7 @@ def get_average_time_to_close(
 
 def get_per_issue_metrics(
     issues: List[github3.issues.Issue],  # type: ignore
+    discussions: bool = False,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue in a list of GitHub issues.
@@ -308,20 +333,36 @@ def get_per_issue_metrics(
     num_issues_closed = 0
 
     for issue in issues:
-        issue_with_metrics = IssueWithMetrics(
-            issue.title,  # type: ignore
-            issue.html_url,  # type: ignore
-            None,
-            None,
-        )
-        issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-            issue
-        )
-        if issue.state == "closed":  # type: ignore
-            issue_with_metrics.time_to_close = measure_time_to_close(issue)  # type: ignore
-            num_issues_closed += 1
-        elif issue.state == "open":
-            num_issues_open += 1
+        if discussions:
+            issue_with_metrics = IssueWithMetrics(
+                issue["title"],
+                issue["url"],
+                None,
+                None,
+            )
+            issue_with_metrics.time_to_first_response = measure_time_to_first_response(
+                None, issue
+            )
+            if issue["closedAt"]:
+                issue_with_metrics.time_to_close = measure_time_to_close(None, issue)
+                num_issues_closed += 1
+            else:
+                num_issues_open += 1
+        else:
+            issue_with_metrics = IssueWithMetrics(
+                issue.title,  # type: ignore
+                issue.html_url,  # type: ignore
+                None,
+                None,
+            )
+            issue_with_metrics.time_to_first_response = measure_time_to_first_response(
+                issue, None
+            )
+            if issue.state == "closed":  # type: ignore
+                issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
+                num_issues_closed += 1
+            elif issue.state == "open":
+                num_issues_open += 1
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed
@@ -371,7 +412,8 @@ def main():
             return
 
     issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
-        issues
+        issues,
+        discussions="type:discussions" in search_query,
     )
 
     average_time_to_first_response = get_average_time_to_first_response(
