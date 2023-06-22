@@ -21,10 +21,12 @@ import os
 from datetime import datetime, timedelta
 from os.path import dirname, join
 from typing import List, Union
-from urllib.parse import urlparse
 
 import github3
 from dotenv import load_dotenv
+
+from discussions import get_all_discussions
+from common import parse_repository_url
 
 
 class IssueWithMetrics:
@@ -56,12 +58,7 @@ def search_issues(
     """
     print("Searching for issues...")
     # Parse the repository owner and name from the URL
-    parsed_url = urlparse(repository_url)
-    path = parsed_url.path.strip("/")
-    print(f"parsing URL: {repository_url}")
-    # Split the path into owner and repo
-    owner, repo = path.split("/")
-    print(f"owner: {owner}, repo: {repo}")
+    owner, repo = parse_repository_url(repository_url)
 
     # Search for issues that match the query
     full_query = f"repo:{owner}/{repo} {search_query}"
@@ -356,13 +353,22 @@ def main():
     env_vars = get_env_vars()
     search_query = env_vars[0]
     repo_url = env_vars[1]
+    token = env_vars[2]
 
     # Search for issues
-    issues = search_issues(repo_url, search_query, github_connection)
-    if len(issues.items) <= 0:
-        print("No issues found")
-        write_to_markdown(None, None, None, None, None)
-        return
+    # If type:discussions is in the search_query, search for discussions using get_all_discussions()
+    if "type:discussions" in search_query:
+        issues = get_all_discussions(repo_url, token)
+        if len(issues) <= 0:
+            print("No discussions found")
+            write_to_markdown(None, None, None, None, None)
+            return
+    else:
+        issues = search_issues(repo_url, search_query, github_connection)
+        if len(issues.items) <= 0:
+            print("No issues found")
+            write_to_markdown(None, None, None, None, None)
+            return
 
     issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
         issues
@@ -385,20 +391,25 @@ def main():
     )
 
 
-def get_env_vars() -> tuple[str, str]:
+def get_env_vars() -> tuple[str, str, str]:
     """
     Get the environment variables for use in the script.
 
     Returns:
         str: the search query used to filter issues and prs
         str: the full url of the repo to search
+        str: the github token used to authenticate to github.com
     """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
         raise ValueError("SEARCH_QUERY environment variable not set")
 
+    token = os.getenv("GH_TOKEN")
+    if not token:
+        raise ValueError("GITHUB_TOKEN environment variable not set")
+
     if repo_url := os.getenv("REPOSITORY_URL"):
-        return search_query, repo_url
+        return search_query, repo_url, token
 
     raise ValueError("REPOSITORY_URL environment variable not set")
 
