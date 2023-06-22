@@ -2,8 +2,8 @@
 This module provides functions for working with discussions in a GitHub repository.
 
 Functions:
-    get_all_discussions(repo_url: str, token: str) -> List[Dict]:
-        Get a list of all discussions in a GitHub repository.
+    get_discussions(repo_url: str, token: str, search_query: str) -> List[Dict]:
+        Get a list of discussions in a GitHub repository that match the search query.
 
 """
 import requests
@@ -11,45 +11,49 @@ import requests
 from common import parse_repository_url
 
 
-def get_all_discussions(repo_url: str, token: str):
-    """Get a list of all discussions in a GitHub repository.
+def get_discussions(repo_url: str, token: str, search_query: str):
+    """Get a list of discussions in a GitHub repository that match the search query.
 
     Args:
-        repo_url (str): The URL of the repository to search in.
-            ie https://github.com/user/repo
+        repo_url (str): The URL of the GitHub repository.
         token (str): A personal access token for GitHub.
+        search_query (str): The search query to filter discussions by.
 
     Returns:
-        list: A list of all discussions in the repository.
+        list: A list of discussions in the repository that match the search query.
 
     """
-    # Parse the repository owner and name from the URL
-    owner, repo = parse_repository_url(repo_url)
-
     # Construct the GraphQL query
     query = """
-    query($owner: String!, $repo: String!) {
-        repository(owner: $owner, name: $repo) {
-            discussions(first: 100) {
-                nodes {
-                    title
-                    url
-                    createdAt
-                    comments(first: 1) {
-                        nodes {
-                            createdAt
+    query($query: String!) {
+        search(query: $query, type: DISCUSSION, first: 100) {
+            edges {
+                node {
+                    ... on Discussion {
+                        title
+                        url
+                        createdAt
+                        comments(first: 1) {
+                            nodes {
+                                createdAt
+                            }
                         }
+                        answerChosenAt
+                        closedAt
                     }
-                    answerChosenAt
-                    closedAt
                 }
             }
         }
     }
     """
 
+    # Add in the repo URL to the search query
+    owner, repo = parse_repository_url(repo_url)
+    search_query = f"repo:{owner}/{repo} {search_query}"
+    # Remove the type:discussions filter from the search query
+    search_query = search_query.replace("type:discussions ", "")
     # Set the variables for the GraphQL query
-    variables = {"owner": owner, "repo": repo}
+    variables = {"query": search_query}
 
     # Send the GraphQL request
     headers = {"Authorization": f"Bearer {token}"}
@@ -61,14 +65,14 @@ def get_all_discussions(repo_url: str, token: str):
     )
 
     # Check for errors in the GraphQL response
-    if response.status_code != 200:
+    if response.status_code != 200 or "errors" in response.json():
         raise ValueError("GraphQL query failed")
 
     data = response.json()["data"]
 
     # Extract the discussions from the GraphQL response
     discussions = []
-    for discussion in data["repository"]["discussions"]["nodes"]:
-        discussions.append(discussion)
+    for edge in data["search"]["edges"]:
+        discussions.append(edge["node"])
 
     return discussions

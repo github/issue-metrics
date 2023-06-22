@@ -25,7 +25,7 @@ from typing import List, Union
 import github3
 from dotenv import load_dotenv
 
-from discussions import get_all_discussions
+from discussions import get_discussions
 from common import parse_repository_url
 
 
@@ -432,9 +432,9 @@ def main():
     token = env_vars[2]
 
     # Search for issues
-    # If type:discussions is in the search_query, search for discussions using get_all_discussions()
+    # If type:discussions is in the search_query, search for discussions using get_discussions()
     if "type:discussions" in search_query:
-        issues = get_all_discussions(repo_url, token)
+        issues = get_discussions(repo_url, token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
             write_to_markdown(None, None, None, None, None)
