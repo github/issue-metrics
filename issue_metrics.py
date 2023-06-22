@@ -33,12 +33,18 @@ class IssueWithMetrics:
     """A class to represent a GitHub issue with metrics."""
 
     def __init__(
-        self, title, html_url, time_to_first_response=None, time_to_close=None
+        self,
+        title,
+        html_url,
+        time_to_first_response=None,
+        time_to_close=None,
+        time_to_answer=None,
     ):
         self.title = title
         self.html_url = html_url
         self.time_to_first_response = time_to_first_response
         self.time_to_close = time_to_close
+        self.time_to_answer = time_to_answer
 
 
 def search_issues(
@@ -260,8 +266,10 @@ def write_to_markdown(
             file.write(
                 f"| Total number of issues created | {len(issues_with_metrics)} |\n\n"
             )
-            file.write("| Title | URL | Time to first response | Time to close \n")
-            file.write("| --- | --- | ---: | ---: |\n")
+            file.write(
+                "| Title | URL | Time to first response | Time to close | Time to answer |\n"
+            )
+            file.write("| --- | --- | ---: | ---: | ---: |\n")
             for issue in issues_with_metrics:
                 file.write(
                     f"| "
@@ -269,6 +277,7 @@ def write_to_markdown(
                     f"{issue.html_url} | "
                     f"{issue.time_to_first_response} |"
                     f" {issue.time_to_close} |"
+                    f" {issue.time_to_answer} |"
                     f"\n"
                 )
         print("Wrote issue metrics to issue_metrics.md")
@@ -312,6 +321,29 @@ def get_average_time_to_close(
     return timedelta(seconds=average_time_to_close)
 
 
+def measure_time_to_answer(discussion: dict) -> Union[timedelta, None]:
+    """Measure the time to answer for a discussion.
+
+    Args:
+        discussion (dict): A discussion object from the GitHub API.
+
+    Returns:
+        Union[timedelta, None]: The time to answer for the discussion.
+
+    """
+    if not discussion["answerChosenAt"]:
+        return None
+
+    if not discussion["createdAt"]:
+        return None
+
+    # Get the time to answer
+    answer_time = datetime.fromisoformat(discussion["answerChosenAt"])
+    created_time = datetime.fromisoformat(discussion["createdAt"])
+
+    return answer_time - created_time
+
+
 def get_per_issue_metrics(
     issues: List[github3.issues.Issue],  # type: ignore
     discussions: bool = False,
@@ -339,10 +371,12 @@ def get_per_issue_metrics(
                 issue["url"],
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 None, issue
             )
+            issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
                 issue_with_metrics.time_to_close = measure_time_to_close(None, issue)
                 num_issues_closed += 1
@@ -352,6 +386,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
                 issue.html_url,  # type: ignore
+                None,
                 None,
                 None,
             )
