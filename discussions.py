@@ -8,14 +8,11 @@ Functions:
 """
 import requests
 
-from common import parse_repository_url
 
-
-def get_discussions(repo_url: str, token: str, search_query: str):
+def get_discussions(token: str, search_query: str):
     """Get a list of discussions in a GitHub repository that match the search query.
 
     Args:
-        repo_url (str): The URL of the GitHub repository.
         token (str): A personal access token for GitHub.
         search_query (str): The search query to filter discussions by.
 
@@ -47,9 +44,6 @@ def get_discussions(repo_url: str, token: str, search_query: str):
     }
     """
 
-    # Add in the repo URL to the search query
-    owner, repo = parse_repository_url(repo_url)
-    search_query = f"repo:{owner}/{repo} {search_query}"
     # Remove the type:discussions filter from the search query
     search_query = search_query.replace("type:discussions ", "")
     # Set the variables for the GraphQL query

@@ -26,7 +26,6 @@ import github3
 from dotenv import load_dotenv
 
 from discussions import get_discussions
-from common import parse_repository_url
 
 
 class IssueWithMetrics:
@@ -48,14 +47,12 @@ class IssueWithMetrics:
 
 
 def search_issues(
-    repository_url: str, search_query: str, github_connection: github3.GitHub
+    search_query: str, github_connection: github3.GitHub
 ) -> github3.structs.SearchIterator:  # type: ignore
     """
     Searches for issues in a GitHub repository that match the given search query.
 
     Args:
-        repository_url (str): The URL of the repository to search in.
-            ie https://github.com/user/repo
         search_query (str): The search query to use for finding issues.
         github_connection (github3.GitHub): A connection to the GitHub API.
 
@@ -63,12 +60,7 @@ def search_issues(
         github3.structs.SearchIterator: A list of issues that match the search query.
     """
     print("Searching for issues...")
-    # Parse the repository owner and name from the URL
-    owner, repo = parse_repository_url(repository_url)
-
-    # Search for issues that match the query
-    full_query = f"repo:{owner}/{repo} {search_query}"
-    issues = github_connection.search_issues(full_query)  # type: ignore
+    issues = github_connection.search_issues(search_query)
 
     # Print the issue titles
     for issue in issues:
@@ -437,6 +429,49 @@ def get_per_issue_metrics(
     return issues_with_metrics, num_issues_open, num_issues_closed
 
 
+def get_repo_owner_and_name(
+    search_query: str,
+) -> tuple[Union[str, None], Union[str, None]]:
+    """Get the repository owner and name from the search query.
+
+    Args:
+        search_query (str): The search query used to search for issues.
+
+    Returns:
+        tuple[Union[str,None], Union[str,None]]: A tuple containing the repository owner and name.
+
+    """
+    # Get the repository owner and name from the search query
+    search_query_split = search_query.split(" ")
+    repo_owner, repo_name = None, None
+    for item in search_query_split:
+        if "repo:" in item and "/" in item:
+            repo_owner = item.split(":")[1].split("/")[0]
+            repo_name = item.split(":")[1].split("/")[1]
+
+    return repo_owner, repo_name
+
+
+def get_organization(search_query: str) -> Union[str, None]:
+    """Get the organization from the search query.
+
+    Args:
+        search_query (str): The search query used to search for issues.
+
+    Returns:
+        Union[str, None]: The organization from the search query.
+
+    """
+    # Get the organization from the search query
+    search_query_split = search_query.split(" ")
+    organization = None
+    for item in search_query_split:
+        if "org:" in item:
+            organization = item.split(":")[1]
+
+    return organization
+
+
 def main():
     """Run the issue-metrics script.
 
@@ -462,19 +497,33 @@ def main():
     # Get the environment variables for use in the script
     env_vars = get_env_vars()
     search_query = env_vars[0]
-    repo_url = env_vars[1]
-    token = env_vars[2]
+    token = env_vars[1]
+
+    # Get the repository owner and name from the search query
+    owner, repo_name = get_repo_owner_and_name(search_query)
+    organization = get_organization(search_query)
+
+    if (owner is None or repo_name is None) and organization is None:
+        raise ValueError(
+            "The search query must include a repository owner and name \
+            (ie. repo:owner/repo) or an organization (ie. org:organization)"
+        )
 
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
     if "type:discussions" in search_query:
-        issues = get_discussions(repo_url, token, search_query)
+        issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
             write_to_markdown(None, None, None, None, None, None)
             return
     else:
-        issues = search_issues(repo_url, search_query, github_connection)
+        if owner is None or repo_name is None:
+            raise ValueError(
+                "The search query for issues/prs must include a repository owner and name \
+                (ie. repo:owner/repo)"
+            )
+        issues = search_issues(search_query, github_connection)
         if len(issues.items) <= 0:
             print("No issues found")
             write_to_markdown(None, None, None, None, None, None)
@@ -505,13 +554,12 @@ def main():
     )
 
 
-def get_env_vars() -> tuple[str, str, str]:
+def get_env_vars() -> tuple[str, str]:
     """
     Get the environment variables for use in the script.
 
     Returns:
         str: the search query used to filter issues and prs
-        str: the full url of the repo to search
         str: the github token used to authenticate to github.com
     """
     search_query = os.getenv("SEARCH_QUERY")
@@ -522,10 +570,7 @@ def get_env_vars() -> tuple[str, str, str]:
     if not token:
         raise ValueError("GITHUB_TOKEN environment variable not set")
 
-    if repo_url := os.getenv("REPOSITORY_URL"):
-        return search_query, repo_url, token
-
-    raise ValueError("REPOSITORY_URL environment variable not set")
+    return search_query, token
 
 
 if __name__ == "__main__":
