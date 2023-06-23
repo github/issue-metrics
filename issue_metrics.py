@@ -225,6 +225,7 @@ def write_to_markdown(
     issues_with_metrics: Union[List[IssueWithMetrics], None],
     average_time_to_first_response: Union[timedelta, None],
     average_time_to_close: Union[timedelta, None],
+    average_time_to_answer: Union[timedelta, None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     file=None,
@@ -236,6 +237,7 @@ def write_to_markdown(
         average_time_to_first_response (datetime.timedelta): The average time to first
             response for the issues.
         average_time_to_close (datetime.timedelta): The average time to close for the issues.
+        average_time_to_answer (datetime.timedelta): The average time to answer the discussions.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
         num_issues_opened (int): The number of issues that remain opened.
@@ -261,6 +263,7 @@ def write_to_markdown(
                 f"| Average time to first response | {average_time_to_first_response} |\n"
             )
             file.write(f"| Average time to close | {average_time_to_close} |\n")
+            file.write(f"| Average time to answer | {average_time_to_answer} |\n")
             file.write(f"| Number of issues that remain open | {num_issues_opened} |\n")
             file.write(f"| Number of issues closed | {num_issues_closed} |\n")
             file.write(
@@ -319,6 +322,37 @@ def get_average_time_to_close(
     # Print the average time to close converting seconds to a readable time format
     print(f"Average time to close: {timedelta(seconds=average_time_to_close)}")
     return timedelta(seconds=average_time_to_close)
+
+
+def get_average_time_to_answer(
+    issues_with_metrics: List[IssueWithMetrics],
+) -> Union[timedelta, None]:
+    """
+    Calculate the average time to answer for a list of issues.
+    """
+    # Filter out issues with no time to answer
+    issues_with_time_to_answer = [
+        issue for issue in issues_with_metrics if issue.time_to_answer is not None
+    ]
+
+    # Calculate the total time to answer for all issues
+    total_time_to_answer = None
+    if issues_with_time_to_answer:
+        total_time_to_answer = 0
+        for issue in issues_with_time_to_answer:
+            if issue.time_to_answer:
+                total_time_to_answer += issue.time_to_answer.total_seconds()
+
+    # Calculate the average time to answer
+    num_issues_with_time_to_answer = len(issues_with_time_to_answer)
+    if num_issues_with_time_to_answer > 0 and total_time_to_answer is not None:
+        average_time_to_answer = total_time_to_answer / num_issues_with_time_to_answer
+    else:
+        return None
+
+    # Print the average time to answer converting seconds to a readable time format
+    print(f"Average time to answer: {timedelta(seconds=average_time_to_answer)}")
+    return timedelta(seconds=average_time_to_answer)
 
 
 def measure_time_to_answer(discussion: dict) -> Union[timedelta, None]:
@@ -437,13 +471,13 @@ def main():
         issues = get_discussions(repo_url, token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None)
             return
     else:
         issues = search_issues(repo_url, search_query, github_connection)
         if len(issues.items) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None)
             return
 
     issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
@@ -458,11 +492,14 @@ def main():
     if num_issues_closed > 0:
         average_time_to_close = get_average_time_to_close(issues_with_metrics)
 
+    average_time_to_answer = get_average_time_to_answer(issues_with_metrics)
+
     # Write the results to a markdown file
     write_to_markdown(
         issues_with_metrics,
         average_time_to_first_response,
         average_time_to_close,
+        average_time_to_answer,
         num_issues_open,
         num_issues_closed,
     )
