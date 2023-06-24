@@ -91,3 +91,17 @@ class TestMeasureTimeToClose(unittest.TestCase):
 
         # Call the function and check that it returns None
         self.assertEqual(None, measure_time_to_close(issue, None))
+
+    def test_measure_time_to_close_discussion(self):
+        """
+        Test that the function correctly measures the time to close for a discussion.
+        """
+        # Create an issue dictionary with createdAt and closedAt fields
+        issue = {}
+        issue["createdAt"] = "2021-01-01T00:00:00Z"
+        issue["closedAt"] = "2021-01-03T00:00:00Z"
+
+        # Call the function and check the result
+        result = measure_time_to_close(None, issue)
+        expected_result = timedelta(days=2)
+        self.assertEqual(result, expected_result)
