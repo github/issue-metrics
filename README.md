@@ -36,7 +36,7 @@ Below are the allowed configuration options:
 | field                 | required | default | description |
 |-----------------------|----------|---------|-------------|
 | `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. |
+| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussion` in the query. |
 
 ### Example workflows
 
