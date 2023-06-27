@@ -80,7 +80,7 @@ jobs:
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
     - name: Run issue-metrics tool
-      uses: github/issue-metrics@v1
+      uses: github/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
@@ -110,7 +110,7 @@ jobs:
     steps:
 
     - name: Run issue-metrics tool
-      uses: github/issue-metrics@v1
+      uses: github/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
@@ -162,7 +162,7 @@ jobs:
     steps:
     
     - name: Run issue-metrics tool for issues and prs opened in May 2023
-      uses: github/issue-metrics:v1
+      uses: github/issue-metrics:v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo created:2023-05-01..2023-05-31 -reason:"not planned"'
@@ -175,7 +175,7 @@ jobs:
         assignees: <YOUR_GITHUB_HANDLE_HERE>
     
     - name: Run issue-metrics tool for issues and prs closed in May 2023
-      uses: github/issue-metrics:v1
+      uses: github/issue-metrics:v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo closed:2023-05-01..2023-05-31 -reason:"not planned"'
