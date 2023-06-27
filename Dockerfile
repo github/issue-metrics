@@ -2,7 +2,7 @@ FROM python:3.11-slim
 LABEL org.opencontainers.image.source https://github.com/github/issue-metrics
 
 WORKDIR /action/workspace
-COPY requirements.txt issue_metrics.py /action/workspace/
+COPY requirements.txt *.py /action/workspace/
 
 RUN python3 -m pip install --no-cache-dir -r requirements.txt \
     && apt-get -y update \
