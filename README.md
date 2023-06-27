@@ -139,6 +139,9 @@ Pull requests opened in May 2023:
 Pull requests closed in May 2023 (may have been open in May or earlier):
 - `repo:owner/repo is:pr closed:2023-05-01..2023-05-31`
 
+Discussions opened in May 2023:
+- `repo:owner/repo type:discussion created:2023-05-01..2023-05-31`
+
 Both issues and pull requests opened in May 2023:
 - `repo:owner/repo created:2023-05-01..2023-05-31`
 
