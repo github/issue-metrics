@@ -9,7 +9,7 @@ to a Markdown file. The issues/pull requests/discussions to search for can be fi
 
 This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repository.
 
-To find syntax for search queries, check out the [documentation](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests).
+To find syntax for search queries, check out the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
 
 ## Example use cases
 
@@ -36,7 +36,7 @@ Below are the allowed configuration options:
 | field                 | required | default | description |
 |-----------------------|----------|---------|-------------|
 | `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussion` in the query. |
+| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
 
 ### Example workflows
 
@@ -125,7 +125,7 @@ jobs:
 ```
 
 ## SEARCH_QUERY: Issues or Pull Requests? Open or closed?
-This action can be configured to run metrics on pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in [the search documentation](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests). Here are some search query examples:
+This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Here are some search query examples:
 
 Issues opened in May 2023:
 - `repo:owner/repo is:issue created:2023-05-01..2023-05-31`
@@ -140,7 +140,10 @@ Pull requests closed in May 2023 (may have been open in May or earlier):
 - `repo:owner/repo is:pr closed:2023-05-01..2023-05-31`
 
 Discussions opened in May 2023:
-- `repo:owner/repo type:discussion created:2023-05-01..2023-05-31`
+- `repo:owner/repo type:discussions created:2023-05-01..2023-05-31`
+
+Discussions opened in May 2023 with category of engineering and label of question:
+- `repo:owner/repo type:discussions created:2023-05-01..2023-05-31 category:engineering label:"question"`
 
 Both issues and pull requests opened in May 2023:
 - `repo:owner/repo created:2023-05-01..2023-05-31`
