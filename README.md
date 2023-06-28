@@ -36,7 +36,7 @@ Below are the allowed configuration options:
 | field                 | required | default | description |
 |-----------------------|----------|---------|-------------|
 | `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussion` in the query. |
+| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
 
 ### Example workflows
 
@@ -140,10 +140,10 @@ Pull requests closed in May 2023 (may have been open in May or earlier):
 - `repo:owner/repo is:pr closed:2023-05-01..2023-05-31`
 
 Discussions opened in May 2023:
-- `repo:owner/repo type:discussion created:2023-05-01..2023-05-31`
+- `repo:owner/repo type:discussions created:2023-05-01..2023-05-31`
 
 Discussions opened in May 2023 with category of engineering and label of question:
-- `repo:owner/repo type:discussion created:2023-05-01..2023-05-31 category:engineering label:"question"`
+- `repo:owner/repo type:discussions created:2023-05-01..2023-05-31 category:engineering label:"question"`
 
 Both issues and pull requests opened in May 2023:
 - `repo:owner/repo created:2023-05-01..2023-05-31`
