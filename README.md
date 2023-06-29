@@ -204,9 +204,9 @@ jobs:
 | Average time to first response | 0:50:44.666667 |
 | Average time to close | 6 days, 7:08:52 |
 | Average time to answer | 1 day |
-| Number of issues that remain open | 2 |
-| Number of issues closed | 1 |
-| Total number of issues created | 3 |
+| Number of items that remain open | 2 |
+| Number of items closed | 1 |
+| Total number of items created | 3 |
 
 | Title | URL | Time to first response | Time to close | Time to answer |
 | --- | --- | ---: | ---: | ---: |

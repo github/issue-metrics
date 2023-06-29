@@ -43,7 +43,7 @@ def write_to_markdown(
         average_time_to_answer (datetime.timedelta): The average time to answer the discussions.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
-        num_issues_opened (int): The number of issues that remain opened.
+        num_issues_opened (int): The Number of items that remain opened.
         num_issues_closed (int): The number of issues that were closed.
 
     Returns:
@@ -67,10 +67,10 @@ def write_to_markdown(
             )
             file.write(f"| Average time to close | {average_time_to_close} |\n")
             file.write(f"| Average time to answer | {average_time_to_answer} |\n")
-            file.write(f"| Number of issues that remain open | {num_issues_opened} |\n")
-            file.write(f"| Number of issues closed | {num_issues_closed} |\n")
+            file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
+            file.write(f"| Number of items closed | {num_issues_closed} |\n")
             file.write(
-                f"| Total number of issues created | {len(issues_with_metrics)} |\n\n"
+                f"| Total number of items created | {len(issues_with_metrics)} |\n\n"
             )
             file.write(
                 "| Title | URL | Time to first response | Time to close | Time to answer |\n"
