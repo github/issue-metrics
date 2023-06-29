@@ -35,8 +35,11 @@ Below are the allowed configuration options:
 
 | field                 | required | default | description |
 |-----------------------|----------|---------|-------------|
-| `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
+| `GH_TOKEN`            | True     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
+| `SEARCH_QUERY`        | True     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
+| `HIDE_TIME_TO_FIRST_RESPONSE` | False | False | If set to true, the time to first response will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_CLOSE` | False | False | If set to true, the time to close will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_ANSWER` | False | False | If set to true, the time to answer a discussion will not be displayed in the generated markdown file. |
 
 ### Example workflows
 
@@ -196,6 +199,7 @@ jobs:
 
 ## Example issue_metrics.md output
 
+Here is the output with no hidden columns:
 ```markdown
 # Issue Metrics
 
@@ -209,10 +213,28 @@ jobs:
 | Total number of items created | 3 |
 
 | Title | URL | Time to first response | Time to close | Time to answer |
-| --- | --- | ---: | ---: | ---: |
+| --- | --- | --- | --- | --- |
 | Discussion Title 1 | https://github.com/user/repo/discussions/1 | 0:00:41 | 6 days, 7:08:52 | 1 day |
 | Pull Request Title 2 | https://github.com/user/repo/pulls/2 | 0:05:26 | None | None |
 | Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 | None | None |
+
+```
+
+Here is the output with all hidable columns hidden:
+```markdown
+# Issue Metrics
+
+| Metric | Value |
+| --- | ---: |
+| Number of items that remain open | 2 |
+| Number of items closed | 1 |
+| Total number of items created | 3 |
+
+| Title | URL |
+| --- | --- |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 |
+| Pull Request Title 2 | https://github.com/user/repo/pulls/2 |
+| Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 |
 
 ```
 
