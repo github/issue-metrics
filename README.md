@@ -35,8 +35,11 @@ Below are the allowed configuration options:
 
 | field                 | required | default | description |
 |-----------------------|----------|---------|-------------|
-| `GH_TOKEN`            | true     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | true     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
+| `GH_TOKEN`            | True     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
+| `SEARCH_QUERY`        | True     |         | The query by which you can filter issues/prs which must contain a `repo:` entry or an `org:` entry. For discussions, include `type:discussions` in the query. |
+| `HIDE_TIME_TO_FIRST_RESPONSE` | False | False | If set to true, the time to first response will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_CLOSE` | False | False | If set to true, the time to close will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_ANSWER` | False | False | If set to true, the time to answer a discussion will not be displayed in the generated markdown file. |
 
 ### Example workflows
 

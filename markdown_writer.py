@@ -16,12 +16,47 @@ Functions:
         file: file object = None
     ) -> None:
         Write the issues with metrics to a markdown file.
-
+    get_non_hidden_columns(
+        average_time_to_first_response: timedelta,
+        average_time_to_close: timedelta,
+        average_time_to_answer: timedelta
+    ) -> List[str]:
+        Get the columns that are not hidden.
 """
+
+import os
 from datetime import timedelta
 from typing import List, Union
 
 from classes import IssueWithMetrics
+
+
+def get_non_hidden_columns() -> List[str]:
+    """
+    Get a list of the columns that are not hidden.
+
+    Args:
+        None
+
+    Returns:
+        List[str]: A list of the columns that are not hidden.
+
+    """
+    columns = ["Title", "URL"]
+    # Find the number of columns and which are to be hidden
+    hide_time_to_first_response = os.getenv("HIDE_TIME_TO_FIRST_RESPONSE")
+    if not hide_time_to_first_response:
+        columns.append("Time to first response")
+
+    hide_time_to_close = os.getenv("HIDE_TIME_TO_CLOSE")
+    if not hide_time_to_close:
+        columns.append("Time to close")
+
+    hide_time_to_answer = os.getenv("HIDE_TIME_TO_ANSWER")
+    if not hide_time_to_answer:
+        columns.append("Time to answer")
+
+    return columns
 
 
 def write_to_markdown(
@@ -50,40 +85,58 @@ def write_to_markdown(
         None.
 
     """
+    columns = get_non_hidden_columns()
+
+    # If all the metrics are None, then there are no issues
     if not issues_with_metrics or len(issues_with_metrics) == 0:
         with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
             file.write("no issues found for the given search criteria\n\n")
-    else:
-        # Sort the issues by time to first response
-        issues_with_metrics.sort(
-            key=lambda x: x.time_to_first_response or timedelta.max
-        )
-        with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
-            file.write("# Issue Metrics\n\n")
-            file.write("| Metric | Value |\n")
-            file.write("| --- | ---: |\n")
+        return
+
+    # Sort the issues by time to first response
+    issues_with_metrics.sort(key=lambda x: x.time_to_first_response or timedelta.max)
+    with file or open("issue_metrics.md", "w", encoding="utf-8") as file:
+        file.write("# Issue Metrics\n\n")
+
+        # Write first table with overall metrics
+        file.write("| Metric | Value |\n")
+        file.write("| --- | ---: |\n")
+        if "Time to first response" in columns:
             file.write(
                 f"| Average time to first response | {average_time_to_first_response} |\n"
             )
+        if "Time to close" in columns:
             file.write(f"| Average time to close | {average_time_to_close} |\n")
+        if "Time to answer" in columns:
             file.write(f"| Average time to answer | {average_time_to_answer} |\n")
-            file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
-            file.write(f"| Number of items closed | {num_issues_closed} |\n")
-            file.write(
-                f"| Total number of items created | {len(issues_with_metrics)} |\n\n"
-            )
-            file.write(
-                "| Title | URL | Time to first response | Time to close | Time to answer |\n"
-            )
-            file.write("| --- | --- | ---: | ---: | ---: |\n")
-            for issue in issues_with_metrics:
-                file.write(
-                    f"| "
-                    f"{issue.title} | "
-                    f"{issue.html_url} | "
-                    f"{issue.time_to_first_response} |"
-                    f" {issue.time_to_close} |"
-                    f" {issue.time_to_answer} |"
-                    f"\n"
-                )
-        print("Wrote issue metrics to issue_metrics.md")
+        file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
+        file.write(f"| Number of items closed | {num_issues_closed} |\n")
+        file.write(
+            f"| Total number of items created | {len(issues_with_metrics)} |\n\n"
+        )
+
+        # Write second table with individual issue/pr/discussion metrics
+        # First write the header
+        file.write("|")
+        for column in columns:
+            file.write(f" {column} |")
+        file.write("\n")
+
+        # Then write the column dividers
+        file.write("|")
+        for _ in columns:
+            file.write(" --- |")
+        file.write("\n")
+
+        # Then write the issues/pr/discussions row by row
+        for issue in issues_with_metrics:
+            file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
+            if "Time to first response" in columns:
+                file.write(f" {issue.time_to_first_response} |")
+            if "Time to close" in columns:
+                file.write(f" {issue.time_to_close} |")
+            if "Time to answer" in columns:
+                file.write(f" {issue.time_to_answer} |")
+            file.write("\n")
+
+    print("Wrote issue metrics to issue_metrics.md")
