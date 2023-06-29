@@ -199,6 +199,7 @@ jobs:
 
 ## Example issue_metrics.md output
 
+Here is the output with no hidden columns:
 ```markdown
 # Issue Metrics
 
@@ -212,10 +213,28 @@ jobs:
 | Total number of items created | 3 |
 
 | Title | URL | Time to first response | Time to close | Time to answer |
-| --- | --- | ---: | ---: | ---: |
+| --- | --- | --- | --- | --- |
 | Discussion Title 1 | https://github.com/user/repo/discussions/1 | 0:00:41 | 6 days, 7:08:52 | 1 day |
 | Pull Request Title 2 | https://github.com/user/repo/pulls/2 | 0:05:26 | None | None |
 | Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 | None | None |
+
+```
+
+Here is the output with all hidable columns hidden:
+```markdown
+# Issue Metrics
+
+| Metric | Value |
+| --- | ---: |
+| Number of items that remain open | 2 |
+| Number of items closed | 1 |
+| Total number of items created | 3 |
+
+| Title | URL |
+| --- | --- |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 |
+| Pull Request Title 2 | https://github.com/user/repo/pulls/2 |
+| Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 |
 
 ```
 
