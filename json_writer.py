@@ -93,7 +93,7 @@ def write_to_json(
 
     # add output to github action output
     # pylint: disable=unspecified-encoding
-    metrics_json = json.dumps(metrics, indent=4)
+    metrics_json = json.dumps(metrics)
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as file_handle:
             print(f"metrics={metrics_json}", file=file_handle)
