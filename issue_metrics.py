@@ -29,15 +29,16 @@ from typing import List, Union
 import github3
 from dotenv import load_dotenv
 
-from discussions import get_discussions
-from time_to_close import measure_time_to_close, get_average_time_to_close
-from time_to_first_response import (
-    measure_time_to_first_response,
-    get_average_time_to_first_response,
-)
-from time_to_answer import measure_time_to_answer, get_average_time_to_answer
-from markdown_writer import write_to_markdown
 from classes import IssueWithMetrics
+from discussions import get_discussions
+from json_writer import write_to_json
+from markdown_writer import write_to_markdown
+from time_to_answer import get_average_time_to_answer, measure_time_to_answer
+from time_to_close import get_average_time_to_close, measure_time_to_close
+from time_to_first_response import (
+    get_average_time_to_first_response,
+    measure_time_to_first_response,
+)
 
 
 def get_env_vars() -> tuple[str, str]:
@@ -274,7 +275,15 @@ def main():
 
     average_time_to_answer = get_average_time_to_answer(issues_with_metrics)
 
-    # Write the results to a markdown file
+    # Write the results to json and a markdown file
+    write_to_json(
+        issues_with_metrics,
+        average_time_to_first_response,
+        average_time_to_close,
+        average_time_to_answer,
+        num_issues_open,
+        num_issues_closed,
+    )
     write_to_markdown(
         issues_with_metrics,
         average_time_to_first_response,
