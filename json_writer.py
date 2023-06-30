@@ -63,7 +63,7 @@ def write_to_json(
 
     # Ensure issues_with_metrics is not None
     if not issues_with_metrics:
-        raise ValueError("issues_with_metrics cannot be None")
+        return ""
 
     # Create a dictionary with the metrics
     metrics = {
