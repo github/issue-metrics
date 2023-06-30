@@ -69,7 +69,7 @@ class TestWriteToJson(unittest.TestCase):
                 num_issues_opened,
                 num_issues_closed,
             ),
-            json.dumps(expected_output, indent=4),
+            json.dumps(expected_output),
         )
 
 
