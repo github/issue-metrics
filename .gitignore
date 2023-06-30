@@ -1,5 +1,6 @@
 # Output files
 issue_metrics.md
+issue_metrics.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

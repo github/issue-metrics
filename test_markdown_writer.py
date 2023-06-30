@@ -2,6 +2,8 @@
 
 Classes:
     TestWriteToMarkdown: A class to test the write_to_markdown function with mock data.
+    TestWriteToMarkdownWithEnv: A class to test the write_to_markdown function with
+        environment variables set.
 
 """
 import os
