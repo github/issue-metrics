@@ -218,7 +218,7 @@ class TestMain(unittest.TestCase):
         # Call main and check that it writes 'No issues found'
         issue_metrics.main()
         mock_write_to_markdown.assert_called_once_with(
-            None, None, None, None, None, None
+            None, None, None, None, None, None, None
         )
 
 
@@ -279,12 +279,14 @@ class TestGetPerIssueMetrics(unittest.TestCase):
                 timedelta(days=1),
                 None,
                 None,
+                None,
             ),
             IssueWithMetrics(
                 "Issue 2",
                 "https://github.com/user/repo/issues/2",
                 timedelta(days=2),
                 timedelta(days=3),
+                None,
                 None,
             ),
         ]

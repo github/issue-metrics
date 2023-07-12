@@ -52,12 +52,13 @@ class TestWriteToMarkdown(unittest.TestCase):
 
         # Call the function
         write_to_markdown(
-            issues_with_metrics,
-            average_time_to_first_response,
-            average_time_to_close,
-            average_time_to_answer,
-            num_issues_opened,
-            num_issues_closed,
+            issues_with_metrics=issues_with_metrics,
+            average_time_to_first_response=average_time_to_first_response,
+            average_time_to_close=average_time_to_close,
+            average_time_to_answer=average_time_to_answer,
+            average_time_in_labels=None,
+            num_issues_opened=num_issues_opened,
+            num_issues_closed=num_issues_closed,
         )
 
         # Check that the function writes the correct markdown file
@@ -87,7 +88,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         """Test that write_to_markdown writes the correct markdown file when no issues are found."""
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
-            write_to_markdown(None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None)
 
         # Check that the file was written correctly
         expected_output = "no issues found for the given search criteria\n\n"
@@ -143,12 +144,13 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
 
         # Call the function
         write_to_markdown(
-            issues_with_metrics,
-            average_time_to_first_response,
-            average_time_to_close,
-            average_time_to_answer,
-            num_issues_opened,
-            num_issues_closed,
+            issues_with_metrics=issues_with_metrics,
+            average_time_to_first_response=average_time_to_first_response,
+            average_time_to_close=average_time_to_close,
+            average_time_to_answer=average_time_to_answer,
+            average_time_in_labels=None,
+            num_issues_opened=num_issues_opened,
+            num_issues_closed=num_issues_closed,
         )
 
         # Check that the function writes the correct markdown file

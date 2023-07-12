@@ -23,11 +23,13 @@ Functions:
 """
 
 import os
+from datetime import datetime, timedelta
 from os.path import dirname, join
 from typing import List, Union
 
 import github3
 from dotenv import load_dotenv
+import pytz
 
 from classes import IssueWithMetrics
 from discussions import get_discussions
@@ -99,18 +101,89 @@ def auth_to_github() -> github3.GitHub:
     return github_connection  # type: ignore
 
 
+def get_label_events(
+    issue: github3.issues.Issue, labels: List[str]  # type: ignore
+) -> List[github3.issues.event]:  # type: ignore
+    """
+    Get the label events for a given issue if the label is of interest.
+
+    Args:
+        issue (github3.issues.Issue): A GitHub issue.
+        labels (List[str]): A list of labels of interest.
+
+    Returns:
+        List[github3.issues.event]: A list of label events for the given issue.
+    """
+    label_events = []
+    for event in issue.issue.events():
+        if event.event in ("labeled", "unlabeled") and event.label["name"] in labels:
+            label_events.append(event)
+
+    return label_events
+
+
+def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:  # type: ignore
+    """
+    Calculate the time spent with the given labels on a given issue.
+
+    Args:
+        issue (github3.issues.Issue): A GitHub issue.
+        labels (List[str]): A list of labels to measure time spent in.
+
+    Returns:
+        dict: A dictionary containing the time spent in each label.
+    """
+    label_metrics = {}
+    label_events = get_label_events(issue, labels)
+
+    for label in labels:
+        label_metrics[label] = timedelta(0)
+
+    # If the event is one of the labels we're looking for, add the time to the dictionary
+    unlabeled = False
+    for event in label_events:
+        if event.event == "labeled":
+            if event.label["name"] in labels:
+                label_metrics[
+                    event.label["name"]
+                ] -= event.created_at - datetime.fromisoformat(issue.created_at)
+        elif event.event == "unlabeled":
+            unlabeled = True
+            if event.label["name"] in labels:
+                label_metrics[
+                    event.label["name"]
+                ] += event.created_at - datetime.fromisoformat(issue.created_at)
+
+    if not unlabeled:
+        for label in labels:
+            # if the issue is closed, add the time from the issue creation to the closed_at time
+            if issue.state == "closed":
+                label_metrics[label] += datetime.fromisoformat(
+                    issue.closed_at
+                ) - datetime.fromisoformat(issue.created_at)
+            else:
+                # if the issue is open, add the time from the issue creation to now
+                label_metrics[label] += datetime.now(pytz.utc) - datetime.fromisoformat(
+                    issue.created_at
+                )
+
+    return label_metrics
+
+
 def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.issues.Issue]],  # type: ignore
     discussions: bool = False,
+    labels: Union[List[str], None] = None,
 ) -> tuple[List, int, int]:
     """
-    Calculate the metrics for each issue/pr/discussion in a list provided.
+    Calculate the metrics for each issue/pr in a list provided.
 
     Args:
         issues (Union[List[dict], List[github3.issues.Issue]]): A list of
             GitHub issues or discussions.
         discussions (bool, optional): Whether the issues are discussions or not.
             Defaults to False.
+        labels (List[str]): A list of labels to measure time spent in. Defaults to empty list.
 
     Returns:
         tuple[List[IssueWithMetrics], int, int]: A tuple containing a
@@ -127,6 +200,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue["title"],
                 issue["url"],
+                None,
                 None,
                 None,
                 None,
@@ -147,10 +221,13 @@ def get_per_issue_metrics(
                 None,
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 issue, None
             )
+            if labels:
+                issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
                 issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
                 num_issues_closed += 1
@@ -203,6 +280,27 @@ def get_organization(search_query: str) -> Union[str, None]:
     return organization
 
 
+def get_average_time_in_labels(
+    issues_with_metrics: List[IssueWithMetrics],
+) -> dict[str, timedelta]:
+    """Calculate the average time spent in each label."""
+    average_time_in_labels = {}
+    for issue in issues_with_metrics:
+        if issue.label_metrics:
+            for label in issue.label_metrics:
+                if label not in average_time_in_labels:
+                    average_time_in_labels[label] = issue.label_metrics[label]
+                else:
+                    average_time_in_labels[label] += issue.label_metrics[label]
+
+    for label in average_time_in_labels:
+        average_time_in_labels[label] = average_time_in_labels[label] / len(
+            issues_with_metrics
+        )
+
+    return average_time_in_labels
+
+
 def main():
     """Run the issue-metrics script.
 
@@ -240,13 +338,20 @@ def main():
             (ie. repo:owner/repo) or an organization (ie. org:organization)"
         )
 
+    # Determine if there are label to measure
+    labels = os.environ.get("LABELS_TO_MEASURE")
+    if labels:
+        labels = labels.split(",")
+    else:
+        labels = []
+
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
     if "type:discussions" in search_query:
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None)
             return
     else:
         if owner is None or repo_name is None:
@@ -257,13 +362,14 @@ def main():
         issues = search_issues(search_query, github_connection)
         if len(issues.items) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None)
             return
 
     # Get all the metrics
     issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
         issues,
         discussions="type:discussions" in search_query,
+        labels=labels,
     )
 
     average_time_to_first_response = get_average_time_to_first_response(
@@ -275,12 +381,17 @@ def main():
 
     average_time_to_answer = get_average_time_to_answer(issues_with_metrics)
 
+    # Get the average time in label for each label and store it in a dictionary
+    # where the key is the label and the value is the average time
+    average_time_in_labels = get_average_time_in_labels(issues_with_metrics)
+
     # Write the results to json and a markdown file
     write_to_json(
         issues_with_metrics,
         average_time_to_first_response,
         average_time_to_close,
         average_time_to_answer,
+        average_time_in_labels,
         num_issues_open,
         num_issues_closed,
     )
@@ -289,8 +400,10 @@ def main():
         average_time_to_first_response,
         average_time_to_close,
         average_time_to_answer,
+        average_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        labels,
     )
 
 

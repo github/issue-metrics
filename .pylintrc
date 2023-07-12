@@ -4,3 +4,4 @@ disable=
 	too-many-arguments,
 	too-few-public-methods,
 	duplicate-code,
+	too-many-locals,
