@@ -5,3 +5,4 @@ disable=
 	too-few-public-methods,
 	duplicate-code,
 	too-many-locals,
+	too-many-branches,

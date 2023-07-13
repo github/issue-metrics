@@ -23,7 +23,6 @@ Functions:
 """
 
 import os
-from datetime import timedelta
 from os.path import dirname, join
 from typing import List, Union
 
@@ -33,7 +32,7 @@ from dotenv import load_dotenv
 from classes import IssueWithMetrics
 from discussions import get_discussions
 from json_writer import write_to_json
-from labels import get_label_metrics
+from labels import get_average_time_in_labels, get_label_metrics
 from markdown_writer import write_to_markdown
 from time_to_answer import get_average_time_to_answer, measure_time_to_answer
 from time_to_close import get_average_time_to_close, measure_time_to_close
@@ -211,27 +210,6 @@ def get_organization(search_query: str) -> Union[str, None]:
     return organization
 
 
-def get_average_time_in_labels(
-    issues_with_metrics: List[IssueWithMetrics],
-) -> dict[str, timedelta]:
-    """Calculate the average time spent in each label."""
-    average_time_in_labels = {}
-    for issue in issues_with_metrics:
-        if issue.label_metrics:
-            for label in issue.label_metrics:
-                if label not in average_time_in_labels:
-                    average_time_in_labels[label] = issue.label_metrics[label]
-                else:
-                    average_time_in_labels[label] += issue.label_metrics[label]
-
-    for label in average_time_in_labels:
-        average_time_in_labels[label] = average_time_in_labels[label] / len(
-            issues_with_metrics
-        )
-
-    return average_time_in_labels
-
-
 def main():
     """Run the issue-metrics script.
 
@@ -279,6 +257,10 @@ def main():
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
     if "type:discussions" in search_query:
+        if labels:
+            raise ValueError(
+                "The search query for discussions cannot include labels to measure"
+            )
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
@@ -314,7 +296,7 @@ def main():
 
     # Get the average time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time
-    average_time_in_labels = get_average_time_in_labels(issues_with_metrics)
+    average_time_in_labels = get_average_time_in_labels(issues_with_metrics, labels)
 
     # Write the results to json and a markdown file
     write_to_json(
