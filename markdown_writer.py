@@ -143,7 +143,8 @@ def write_to_markdown(
                 file.write(f" {issue.time_to_answer} |")
             if labels and issue.label_metrics:
                 for label in labels:
-                    file.write(f" {issue.label_metrics[label]} |")
+                    if f"Time spent in {label}" in columns:
+                        file.write(f" {issue.label_metrics[label]} |")
             file.write("\n")
 
     print("Wrote issue metrics to issue_metrics.md")

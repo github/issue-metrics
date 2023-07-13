@@ -35,6 +35,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 timedelta(days=1),
                 timedelta(days=2),
                 timedelta(days=3),
+                {"bug": timedelta(days=1)},
             ),
             IssueWithMetrics(
                 "Issue 2",
@@ -42,11 +43,13 @@ class TestWriteToMarkdown(unittest.TestCase):
                 timedelta(days=3),
                 timedelta(days=4),
                 timedelta(days=5),
+                {"bug": timedelta(days=2)},
             ),
         ]
         average_time_to_first_response = timedelta(days=2)
         average_time_to_close = timedelta(days=3)
         average_time_to_answer = timedelta(days=4)
+        average_time_in_labels = {"bug": "1 day, 12:00:00"}
         num_issues_opened = 2
         num_issues_closed = 1
 
@@ -56,9 +59,10 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_to_first_response=average_time_to_first_response,
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
-            average_time_in_labels=None,
+            average_time_in_labels=average_time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
+            labels=["bug"],
         )
 
         # Check that the function writes the correct markdown file
@@ -71,15 +75,17 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Average time to first response | 2 days, 0:00:00 |\n"
             "| Average time to close | 3 days, 0:00:00 |\n"
             "| Average time to answer | 4 days, 0:00:00 |\n"
+            "| Average time spent in bug | 1 day, 12:00:00 |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Time to first response | Time to close | Time to answer |\n"
-            "| --- | --- | --- | --- | --- |\n"
+            "| Title | URL | Time to first response | Time to close |"
+            " Time to answer | Time spent in bug |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 0:00:00 | "
-            "2 days, 0:00:00 | 3 days, 0:00:00 |\n"
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
-            "4 days, 0:00:00 | 5 days, 0:00:00 |\n"
+            "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
@@ -106,12 +112,14 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         os.environ["HIDE_TIME_TO_FIRST_RESPONSE"] = "True"
         os.environ["HIDE_TIME_TO_CLOSE"] = "True"
         os.environ["HIDE_TIME_TO_ANSWER"] = "True"
+        os.environ["HIDE_LABEL_METRICS"] = "True"
 
     def tearDown(self):
         # Unset the HIDE* environment variables
         os.environ.pop("HIDE_TIME_TO_FIRST_RESPONSE")
         os.environ.pop("HIDE_TIME_TO_CLOSE")
         os.environ.pop("HIDE_TIME_TO_ANSWER")
+        os.environ.pop("HIDE_LABEL_METRICS")
 
     def test_writes_markdown_file_with_non_hidden_columns_only(self):
         """
@@ -127,6 +135,9 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
                 time_to_answer=timedelta(hours=2),
+                labels_metrics={
+                    "label1": timedelta(days=1),
+                },
             ),
             IssueWithMetrics(
                 title="Issue 2",
@@ -134,11 +145,17 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 time_to_first_response=timedelta(minutes=20),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(hours=4),
+                labels_metrics={
+                    "label1": timedelta(days=1),
+                },
             ),
         ]
         average_time_to_first_response = timedelta(minutes=15)
         average_time_to_close = timedelta(days=1.5)
         average_time_to_answer = timedelta(hours=3)
+        average_time_in_labels = {
+            "label1": timedelta(days=1),
+        }
         num_issues_opened = 2
         num_issues_closed = 1
 
@@ -148,9 +165,10 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             average_time_to_first_response=average_time_to_first_response,
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
-            average_time_in_labels=None,
+            average_time_in_labels=average_time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
+            labels=["label1"],
         )
 
         # Check that the function writes the correct markdown file

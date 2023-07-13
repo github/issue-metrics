@@ -23,17 +23,17 @@ Functions:
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from os.path import dirname, join
 from typing import List, Union
 
 import github3
 from dotenv import load_dotenv
-import pytz
 
 from classes import IssueWithMetrics
 from discussions import get_discussions
 from json_writer import write_to_json
+from labels import get_label_metrics
 from markdown_writer import write_to_markdown
 from time_to_answer import get_average_time_to_answer, measure_time_to_answer
 from time_to_close import get_average_time_to_close, measure_time_to_close
@@ -99,75 +99,6 @@ def auth_to_github() -> github3.GitHub:
         raise ValueError("GH_TOKEN environment variable not set")
 
     return github_connection  # type: ignore
-
-
-def get_label_events(
-    issue: github3.issues.Issue, labels: List[str]  # type: ignore
-) -> List[github3.issues.event]:  # type: ignore
-    """
-    Get the label events for a given issue if the label is of interest.
-
-    Args:
-        issue (github3.issues.Issue): A GitHub issue.
-        labels (List[str]): A list of labels of interest.
-
-    Returns:
-        List[github3.issues.event]: A list of label events for the given issue.
-    """
-    label_events = []
-    for event in issue.issue.events():
-        if event.event in ("labeled", "unlabeled") and event.label["name"] in labels:
-            label_events.append(event)
-
-    return label_events
-
-
-def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:  # type: ignore
-    """
-    Calculate the time spent with the given labels on a given issue.
-
-    Args:
-        issue (github3.issues.Issue): A GitHub issue.
-        labels (List[str]): A list of labels to measure time spent in.
-
-    Returns:
-        dict: A dictionary containing the time spent in each label.
-    """
-    label_metrics = {}
-    label_events = get_label_events(issue, labels)
-
-    for label in labels:
-        label_metrics[label] = timedelta(0)
-
-    # If the event is one of the labels we're looking for, add the time to the dictionary
-    unlabeled = False
-    for event in label_events:
-        if event.event == "labeled":
-            if event.label["name"] in labels:
-                label_metrics[
-                    event.label["name"]
-                ] -= event.created_at - datetime.fromisoformat(issue.created_at)
-        elif event.event == "unlabeled":
-            unlabeled = True
-            if event.label["name"] in labels:
-                label_metrics[
-                    event.label["name"]
-                ] += event.created_at - datetime.fromisoformat(issue.created_at)
-
-    if not unlabeled:
-        for label in labels:
-            # if the issue is closed, add the time from the issue creation to the closed_at time
-            if issue.state == "closed":
-                label_metrics[label] += datetime.fromisoformat(
-                    issue.closed_at
-                ) - datetime.fromisoformat(issue.created_at)
-            else:
-                # if the issue is open, add the time from the issue creation to now
-                label_metrics[label] += datetime.now(pytz.utc) - datetime.fromisoformat(
-                    issue.created_at
-                )
-
-    return label_metrics
 
 
 def get_per_issue_metrics(
