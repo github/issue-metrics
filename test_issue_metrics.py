@@ -312,5 +312,63 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         )
 
 
+class TestDiscussionMetrics(unittest.TestCase):
+    """Test suite for the discussion_metrics function."""
+
+    def setUp(self):
+        # Mock a discussion dictionary
+        self.issue1 = {
+            "title": "Issue 1",
+            "url": "github.com/user/repo/issues/1",
+            "createdAt": "2023-01-01T00:00:00Z",
+            "comments": {
+                "nodes": [
+                    {
+                        "createdAt": "2023-01-02T00:00:00Z",
+                    }
+                ]
+            },
+            "answerChosenAt": "2023-01-04T00:00:00Z",
+            "closedAt": "2023-01-05T00:00:00Z",
+        }
+
+        self.issue2 = {
+            "title": "Issue 2",
+            "url": "github.com/user/repo/issues/2",
+            "createdAt": "2023-01-01T00:00:00Z",
+            "comments": {"nodes": [{"createdAt": "2023-01-03T00:00:00Z"}]},
+            "answerChosenAt": "2023-01-05T00:00:00Z",
+            "closedAt": "2023-01-07T00:00:00Z",
+        }
+
+    def test_get_per_issue_metrics_with_discussion(self):
+        """
+        Test that the function correctly calculates
+        the metrics for a list of GitHub issues with discussions.
+        """
+
+        issues = [self.issue1, self.issue2]
+        metrics = get_per_issue_metrics(issues, discussions=True)
+
+        # get_per_issue_metrics returns a tuple of
+        # (issues_with_metrics, num_issues_open, num_issues_closed)
+        self.assertEqual(len(metrics), 3)
+
+        # Check that the metrics are correct, 0 issues open, 2 issues closed
+        self.assertEqual(metrics[1], 0)
+        self.assertEqual(metrics[2], 2)
+
+        # Check that the issues_with_metrics has 2 issues in it
+        self.assertEqual(len(metrics[0]), 2)
+
+        # Check that the issues_with_metrics has the correct metrics,
+        self.assertEqual(metrics[0][0].time_to_answer, timedelta(days=3))
+        self.assertEqual(metrics[0][0].time_to_close, timedelta(days=4))
+        self.assertEqual(metrics[0][0].time_to_first_response, timedelta(days=1))
+        self.assertEqual(metrics[0][1].time_to_answer, timedelta(days=4))
+        self.assertEqual(metrics[0][1].time_to_close, timedelta(days=6))
+        self.assertEqual(metrics[0][1].time_to_first_response, timedelta(days=2))
+
+
 if __name__ == "__main__":
     unittest.main()
