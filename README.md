@@ -301,7 +301,7 @@ Here is the output with all hidable columns hidden:
 | --- | --- |
 | Discussion Title 1 | https://github.com/user/repo/discussions/1 |
 | Pull Request Title 2 | https://github.com/user/repo/pulls/2 |
-| Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 |
+| Issue Title 3 | https://github.com/user/repo/issues/3 |
 
 ```
 
