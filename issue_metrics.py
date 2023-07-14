@@ -106,7 +106,7 @@ def get_per_issue_metrics(
     labels: Union[List[str], None] = None,
 ) -> tuple[List, int, int]:
     """
-    Calculate the metrics for each issue/pr in a list provided.
+    Calculate the metrics for each issue/pr/discussion in a list provided.
 
     Args:
         issues (Union[List[dict], List[github3.issues.Issue]]): A list of
