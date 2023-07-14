@@ -19,6 +19,9 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=6),
                 time_to_answer=None,
+                labels_metrics={
+                    "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
+                },
             ),
             IssueWithMetrics(
                 title="Issue 2",
@@ -26,6 +29,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_first_response=timedelta(days=2),
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=1),
+                labels_metrics={},
             ),
         ]
         average_time_to_first_response = timedelta(days=2.5)
@@ -38,6 +42,7 @@ class TestWriteToJson(unittest.TestCase):
             "average_time_to_first_response": "2 days, 12:00:00",
             "average_time_to_close": "5 days, 0:00:00",
             "average_time_to_answer": "1 day, 0:00:00",
+            "average_time_in_labels": {"bug": "1 day, 16:24:12"},
             "num_items_opened": 2,
             "num_items_closed": 1,
             "total_item_count": 2,
@@ -48,6 +53,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "3 days, 0:00:00",
                     "time_to_close": "6 days, 0:00:00",
                     "time_to_answer": "None",
+                    "label_metrics": {"bug": "1 day, 16:24:12"},
                 },
                 {
                     "title": "Issue 2",
@@ -55,6 +61,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "2 days, 0:00:00",
                     "time_to_close": "4 days, 0:00:00",
                     "time_to_answer": "1 day, 0:00:00",
+                    "label_metrics": {},
                 },
             ],
         }
@@ -62,12 +69,15 @@ class TestWriteToJson(unittest.TestCase):
         # Call the function and check the output
         self.assertEqual(
             write_to_json(
-                issues_with_metrics,
-                average_time_to_first_response,
-                average_time_to_close,
-                average_time_to_answer,
-                num_issues_opened,
-                num_issues_closed,
+                issues_with_metrics=issues_with_metrics,
+                average_time_to_first_response=average_time_to_first_response,
+                average_time_to_close=average_time_to_close,
+                average_time_to_answer=average_time_to_answer,
+                average_time_in_labels={
+                    "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
+                },
+                num_issues_opened=num_issues_opened,
+                num_issues_closed=num_issues_closed,
             ),
             json.dumps(expected_output),
         )

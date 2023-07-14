@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 from classes import IssueWithMetrics
 from discussions import get_discussions
 from json_writer import write_to_json
+from labels import get_average_time_in_labels, get_label_metrics
 from markdown_writer import write_to_markdown
 from time_to_answer import get_average_time_to_answer, measure_time_to_answer
 from time_to_close import get_average_time_to_close, measure_time_to_close
@@ -102,6 +103,7 @@ def auth_to_github() -> github3.GitHub:
 def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.issues.Issue]],  # type: ignore
     discussions: bool = False,
+    labels: Union[List[str], None] = None,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -111,6 +113,7 @@ def get_per_issue_metrics(
             GitHub issues or discussions.
         discussions (bool, optional): Whether the issues are discussions or not.
             Defaults to False.
+        labels (List[str]): A list of labels to measure time spent in. Defaults to empty list.
 
     Returns:
         tuple[List[IssueWithMetrics], int, int]: A tuple containing a
@@ -127,6 +130,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue["title"],
                 issue["url"],
+                None,
                 None,
                 None,
                 None,
@@ -147,10 +151,13 @@ def get_per_issue_metrics(
                 None,
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 issue, None
             )
+            if labels:
+                issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
                 issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
                 num_issues_closed += 1
@@ -240,13 +247,24 @@ def main():
             (ie. repo:owner/repo) or an organization (ie. org:organization)"
         )
 
+    # Determine if there are label to measure
+    labels = os.environ.get("LABELS_TO_MEASURE")
+    if labels:
+        labels = labels.split(",")
+    else:
+        labels = []
+
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
     if "type:discussions" in search_query:
+        if labels:
+            raise ValueError(
+                "The search query for discussions cannot include labels to measure"
+            )
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None)
             return
     else:
         if owner is None or repo_name is None:
@@ -257,13 +275,14 @@ def main():
         issues = search_issues(search_query, github_connection)
         if len(issues.items) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None)
             return
 
     # Get all the metrics
     issues_with_metrics, num_issues_open, num_issues_closed = get_per_issue_metrics(
         issues,
         discussions="type:discussions" in search_query,
+        labels=labels,
     )
 
     average_time_to_first_response = get_average_time_to_first_response(
@@ -275,12 +294,17 @@ def main():
 
     average_time_to_answer = get_average_time_to_answer(issues_with_metrics)
 
+    # Get the average time in label for each label and store it in a dictionary
+    # where the key is the label and the value is the average time
+    average_time_in_labels = get_average_time_in_labels(issues_with_metrics, labels)
+
     # Write the results to json and a markdown file
     write_to_json(
         issues_with_metrics,
         average_time_to_first_response,
         average_time_to_close,
         average_time_to_answer,
+        average_time_in_labels,
         num_issues_open,
         num_issues_closed,
     )
@@ -289,8 +313,10 @@ def main():
         average_time_to_first_response,
         average_time_to_close,
         average_time_to_answer,
+        average_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        labels,
     )
 
 
