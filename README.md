@@ -229,7 +229,7 @@ jobs:
       uses: github/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        LABELS_TO_MEASURE: 'waiting-for-manager-approval, waiting-for-security-review'
+        LABELS_TO_MEASURE: 'waiting-for-manager-approval,waiting-for-security-review'
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Create issue
