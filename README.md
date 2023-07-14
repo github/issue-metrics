@@ -251,13 +251,13 @@ then the report will look like this:
 | Average time to first response | 0:50:44.666667 |
 | Average time to close | 6 days, 7:08:52 |
 | Average time to answer | 1 day |
-| Average time in waiting-for-manager-approval | 0:00:41 |
-| Average time in waiting-for-security-review | 2 days, 4:25:03 |
+| Average time spent in waiting-for-manager-approval | 0:00:41 |
+| Average time spent in waiting-for-security-review | 2 days, 4:25:03 |
 | Number of items that remain open | 2 |
 | Number of items closed | 1 |
 | Total number of items created | 3 |
 
-| Title | URL | Time to first response | Time to close | Time to answer | Time in waiting-for-manager-approval | Time in waiting-for-security-review |
+| Title | URL | Time to first response | Time to close | Time to answer | Time spent in waiting-for-manager-approval | Time spent in waiting-for-security-review |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pull Request Title 1 | https://github.com/user/repo/pulls/1 | 0:05:26 | None | None | None | None |
 | Issue Title 2 | https://github.com/user/repo/issues/2 | 2:26:07 | None | None | 0:00:41 | 2 days, 4:25:03 |
