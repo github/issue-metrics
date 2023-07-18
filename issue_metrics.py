@@ -63,7 +63,7 @@ def get_env_vars() -> tuple[str, str]:
 
 def search_issues(
     search_query: str, github_connection: github3.GitHub
-) -> github3.structs.SearchIterator:  # type: ignore
+) -> List[github3.search.IssueSearchResult]:  # type: ignore
     """
     Searches for issues/prs/discussions in a GitHub repository that match
     the given search query.
@@ -73,14 +73,16 @@ def search_issues(
         github_connection (github3.GitHub): A connection to the GitHub API.
 
     Returns:
-        github3.structs.SearchIterator: A list of issues that match the search query.
+        List[github3.search.IssueSearchResult]: A list of issues that match the search query.
     """
     print("Searching for issues...")
-    issues = github_connection.search_issues(search_query)
+    issues_iterator = github_connection.search_issues(search_query, per_page=200)
 
     # Print the issue titles
-    for issue in issues:
+    issues = []
+    for issue in issues_iterator:
         print(issue.title)  # type: ignore
+        issues.append(issue)
 
     return issues
 
@@ -101,7 +103,7 @@ def auth_to_github() -> github3.GitHub:
 
 
 def get_per_issue_metrics(
-    issues: Union[List[dict], List[github3.issues.Issue]],  # type: ignore
+    issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
     discussions: bool = False,
     labels: Union[List[str], None] = None,
 ) -> tuple[List, int, int]:
@@ -109,7 +111,7 @@ def get_per_issue_metrics(
     Calculate the metrics for each issue/pr/discussion in a list provided.
 
     Args:
-        issues (Union[List[dict], List[github3.issues.Issue]]): A list of
+        issues (Union[List[dict], List[github3.search.IssueSearchResult]]): A list of
             GitHub issues or discussions.
         discussions (bool, optional): Whether the issues are discussions or not.
             Defaults to False.
@@ -273,7 +275,7 @@ def main():
                 (ie. repo:owner/repo)"
             )
         issues = search_issues(search_query, github_connection)
-        if len(issues.items) <= 0:
+        if len(issues) <= 0:
             print("No issues found")
             write_to_markdown(None, None, None, None, None, None, None)
             return
