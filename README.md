@@ -93,13 +93,14 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report
+        token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 
@@ -123,13 +124,14 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report
+        token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 
@@ -181,20 +183,21 @@ jobs:
     - name: Run issue-metrics tool for issues and prs opened in May 2023
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo created:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Create issue for opened issues and prs
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report  for opened issues and prs
+        token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
     
     - name: Run issue-metrics tool for issues and prs closed in May 2023
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo closed:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Create issue for closed issues and prs
@@ -228,7 +231,7 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         LABELS_TO_MEASURE: 'waiting-for-manager-approval,waiting-for-security-review'
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
@@ -236,6 +239,7 @@ jobs:
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report
+        token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 
@@ -326,7 +330,7 @@ jobs:
       id: issue-metrics
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
     - name: Print output of issue metrics tool
