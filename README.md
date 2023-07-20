@@ -179,7 +179,7 @@ jobs:
     steps:
     
     - name: Run issue-metrics tool for issues and prs opened in May 2023
-      uses: github/issue-metrics:v2
+      uses: github/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo created:2023-05-01..2023-05-31 -reason:"not planned"'
@@ -192,7 +192,7 @@ jobs:
         assignees: <YOUR_GITHUB_HANDLE_HERE>
     
     - name: Run issue-metrics tool for issues and prs closed in May 2023
-      uses: github/issue-metrics:v2
+      uses: github/issue-metrics@v2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo closed:2023-05-01..2023-05-31 -reason:"not planned"'
