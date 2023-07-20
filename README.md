@@ -30,10 +30,16 @@ If you need support using this project or have questions about it, please [open 
 
 ## Use as a GitHub Action
 
-1. Create a repository to host this GitHub Action or select an existing repository.
-1. Create the env values from the sample workflow below (GH_TOKEN, SEARCH_QUERY) with your information as repository secrets. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
-Note: Your GitHub token will need to have read access to the repository in the organization that you want evaluated
+1. Create a repository to host this GitHub Action or select an existing repository. This is easiest if it is the same repository as the one you want to measure metrics on.
+1. Select a best fit workflow file from the [examples below](#example-workflows).
+1. Copy that example into your repository from step 1 into the proper directory for GItHub Actions: `/.github/workflows/metrics.yaml`
+1. Edit the values (`SEARCH_QUERY`, `assignees`) from the sample workflow with your information. See the [SEARCH_QUERY](#search_query) section for more details on options.
+1. If you are running metrics on a repository other than the one where the workflow file is going to be, then update the value of `GH_TOKEN` to a GitHub API token with permissions to read the repo. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+Note: All API tokens generated will need to have read access to the repository in the organization that you want evaluated
+1. If you are wanting the resulting issue with the metrics in it to appear in a different repository other than the one the workflow file runs in, update the line `token: ${{ secrets.GITHUB_TOKEN }}` without your own GITHUB API token stored as a repository secret. More info on creating secrets can be found [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 1. Copy the below example workflow to your repository and put it in the `.github/workflows/` directory with the file extension `.yml` (ie. `.github/workflows/issue-metrics.yml`)
+1. Commit the workflow file to the default branch (often `master` or `main`)
+1. Wait for the action to trigger based on the `schedule` entry or manually trigger the workflow as shown in the [documentation](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow).
 
 ### Configuration
 
@@ -137,7 +143,8 @@ jobs:
 
 ```
 
-## SEARCH_QUERY: Issues or Pull Requests? Open or closed?
+## SEARCH_QUERY
+Issues or Pull Requests? Open or closed?
 This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Here are some search query examples:
 
 Issues opened in May 2023:
