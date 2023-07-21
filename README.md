@@ -355,6 +355,73 @@ jobs:
 
 ```
 
+## Assigning teams instead of individuals
+
+The assignee part of this workflow action comes from [a different GitHub action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
+
+By way of work around, you could use the [GitHub API to retrieve the members of the team](https://docs.github.com/en/rest/teams/members?apiVersion=2022-11-28#list-team-members) and then put them in a comma separated string that you provide as the assignee. That might look something like the workflow below where `ORG` is your organization name and `TEAM_SLUG` is the name of the team:
+
+```yaml
+name: Monthly issue metrics
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '3 2 1 * *'
+
+permissions:
+  issues: write
+
+jobs:
+  build:
+    name: issue metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - name: Get dates for last month
+      shell: bash
+      run: |
+        # Get the current date
+        current_date=$(date +'%Y-%m-%d')
+
+        # Calculate the previous month
+        previous_date=$(date -d "$current_date -1 month" +'%Y-%m-%d')
+
+        # Extract the year and month from the previous date
+        previous_year=$(date -d "$previous_date" +'%Y')
+        previous_month=$(date -d "$previous_date" +'%m')
+
+        # Calculate the first day of the previous month
+        first_day=$(date -d "$previous_year-$previous_month-01" +'%Y-%m-%d')
+
+        # Calculate the last day of the previous month
+        last_day=$(date -d "$first_day +1 month -1 day" +'%Y-%m-%d')
+
+        echo "$first_day..$last_day"
+        echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+
+    - name: Run issue-metrics tool
+      uses: github/issue-metrics@v2
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
+
+    - name: Get user names from team
+      run: |
+          teamMembers="$(gh api /orgs/ORG/teams/TEAM_SLUG/members | jq -r '.[].login' | paste -sd, -)"
+          echo 'TEAM_MEMBERS='$teamMembers >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create issue
+      uses: peter-evans/create-issue-from-file@v4
+      with:
+        title: Monthly issue metrics report
+        token: ${{ secrets.GITHUB_TOKEN }}
+        content-filepath: ./issue_metrics.md
+        assignees: ${{ env.TEAM_MEMBERS }} 
+```
+
 ## Local usage without Docker
 
 1. Copy `.env-example` to `.env`
