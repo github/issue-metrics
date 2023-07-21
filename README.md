@@ -372,7 +372,6 @@ on:
 
 permissions:
   issues: write
-  organization: 
 
 jobs:
   build:
