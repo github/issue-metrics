@@ -65,6 +65,9 @@ on:
   schedule:
     - cron: '3 2 1 * *'
 
+permissions:
+  issues: write
+
 jobs:
   build:
     name: issue metrics
@@ -117,6 +120,9 @@ This workflow searches for the issues created between 2023-05-01..2023-05-31, an
 name: Monthly issue metrics
 on:
   workflow_dispatch:
+
+permissions:
+  issues: write
 
 jobs:
   build:
@@ -178,6 +184,9 @@ on:
   schedule:
     - cron: '3 2 1 * *'
 
+permissions:
+  issues: write
+
 jobs:
   build:
     name: issue metrics
@@ -225,6 +234,9 @@ Here is an example workflow that does this:
 name: Monthly issue metrics
 on:
   workflow_dispatch:
+
+permissions:
+  issues: write
 
 jobs:
   build:
