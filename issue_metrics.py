@@ -24,6 +24,7 @@ Functions:
 
 import os
 from os.path import dirname, join
+import sys
 from typing import List, Union
 
 import github3
@@ -66,7 +67,7 @@ def search_issues(
 ) -> List[github3.search.IssueSearchResult]:  # type: ignore
     """
     Searches for issues/prs/discussions in a GitHub repository that match
-    the given search query.
+    the given search query and handles errors related to GitHub API responses.
 
     Args:
         search_query (str): The search query to use for finding issues/prs/discussions.
@@ -80,9 +81,29 @@ def search_issues(
 
     # Print the issue titles
     issues = []
-    for issue in issues_iterator:
-        print(issue.title)  # type: ignore
-        issues.append(issue)
+    try:
+        for issue in issues_iterator:
+            print(issue.title)  # type: ignore
+            issues.append(issue)
+    except github3.exceptions.ForbiddenError:
+        print(
+            "You do not have permission to view this repository; Check you API Token."
+        )
+        sys.exit(1)
+    except github3.exceptions.NotFoundError:
+        print("The repository could not be found; Check the repository owner and name.")
+        sys.exit(1)
+    except github3.exceptions.ConnectionError:
+        print(
+            "There was a connection error; Check your internet connection or API Token."
+        )
+        sys.exit(1)
+    except github3.exceptions.AuthenticationFailed:
+        print("Authentication failed; Check your API Token.")
+        sys.exit(1)
+    except github3.exceptions.UnprocessableEntity:
+        print("The search query is invalid; Check the search query.")
+        sys.exit(1)
 
     return issues
 
