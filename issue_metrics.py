@@ -290,11 +290,6 @@ def main():
             write_to_markdown(None, None, None, None, None, None, None)
             return
     else:
-        if owner is None or repo_name is None:
-            raise ValueError(
-                "The search query for issues/prs must include a repository owner and name \
-                (ie. repo:owner/repo)"
-            )
         issues = search_issues(search_query, github_connection)
         if len(issues) <= 0:
             print("No issues found")
