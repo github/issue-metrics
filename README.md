@@ -67,6 +67,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
 
 jobs:
   build:
@@ -123,6 +124,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
 
 jobs:
   build:
@@ -186,6 +188,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
 
 jobs:
   build:
@@ -237,6 +240,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
 
 jobs:
   build:
@@ -337,6 +341,10 @@ on:
   schedule:
     - cron: '3 2 1 * *'
 
+permissions:
+  issues: write
+  pull-requests: read
+
 jobs:
   build:
     name: issue metrics
@@ -372,6 +380,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
 
 jobs:
   build:
