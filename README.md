@@ -79,22 +79,13 @@ jobs:
     - name: Get dates for last month
       shell: bash
       run: |
-        # Get the current date
-        current_date=$(date +'%Y-%m-%d')
-
-        # Calculate the previous month
-        previous_date=$(date -d "$current_date -1 month" +'%Y-%m-%d')
-
-        # Extract the year and month from the previous date
-        previous_year=$(date -d "$previous_date" +'%Y')
-        previous_month=$(date -d "$previous_date" +'%m')
-
         # Calculate the first day of the previous month
-        first_day=$(date -d "$previous_year-$previous_month-01" +'%Y-%m-%d')
+        first_day=$(date -d "last month" +%Y-%m-01)
 
         # Calculate the last day of the previous month
-        last_day=$(date -d "$first_day +1 month -1 day" +'%Y-%m-%d')
-
+        last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
+        
+        #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
@@ -392,22 +383,13 @@ jobs:
     - name: Get dates for last month
       shell: bash
       run: |
-        # Get the current date
-        current_date=$(date +'%Y-%m-%d')
-
-        # Calculate the previous month
-        previous_date=$(date -d "$current_date -1 month" +'%Y-%m-%d')
-
-        # Extract the year and month from the previous date
-        previous_year=$(date -d "$previous_date" +'%Y')
-        previous_month=$(date -d "$previous_date" +'%m')
-
         # Calculate the first day of the previous month
-        first_day=$(date -d "$previous_year-$previous_month-01" +'%Y-%m-%d')
-
+        first_day=$(date -d "last month" +%Y-%m-01)
+        
         # Calculate the last day of the previous month
-        last_day=$(date -d "$first_day +1 month -1 day" +'%Y-%m-%d')
-
+        last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
+        
+        #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
