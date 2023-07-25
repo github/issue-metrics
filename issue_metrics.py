@@ -208,30 +208,10 @@ def get_owner(
     for item in search_query_split:
         if "repo:" in item and "/" in item:
             owner = item.split(":")[1].split("/")[0]
-        if "owner:" in item:
+        if "org:" in item or "owner:" in item or "user:" in item:
             owner = item.split(":")[1]
 
     return owner
-
-
-def get_organization(search_query: str) -> Union[str, None]:
-    """Get the organization from the search query.
-
-    Args:
-        search_query (str): The search query used to search for issues.
-
-    Returns:
-        Union[str, None]: The organization from the search query.
-
-    """
-    # Get the organization from the search query
-    search_query_split = search_query.split(" ")
-    organization = None
-    for item in search_query_split:
-        if "org:" in item:
-            organization = item.split(":")[1]
-
-    return organization
 
 
 def main():
@@ -263,13 +243,12 @@ def main():
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
-    organization = get_organization(search_query)
 
-    if owner is None and organization is None:
+    if owner is None:
         raise ValueError(
             "The search query must include a repository owner and name \
-            (ie. repo:owner/repo), an organization (ie. org:organization) \
-            or an owner (ie. owner:owner)"
+            (ie. repo:owner/repo), an organization (ie. org:organization), \
+            a user (ie. user:login) or an owner (ie. owner:user-or-organization)"
         )
 
     # Determine if there are label to measure
