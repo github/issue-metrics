@@ -17,8 +17,6 @@ Functions:
         Calculate the metrics for each issue in a list of GitHub issues.
     get_owner(search_query: str) -> Union[str, None]]:
         Get the owner from the search query.
-    get_organization(search_query: str) -> Union[str, None]: Get the organization
-        from the search query.
     main(): Run the issue-metrics script.
 """
 
