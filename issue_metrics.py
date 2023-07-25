@@ -15,10 +15,8 @@ Functions:
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
         discussions: bool = False) -> tuple[List, int, int]:
         Calculate the metrics for each issue in a list of GitHub issues.
-    get_repo_owner_and_name(search_query: str) -> tuple[Union[str, None], Union[str, None]]:
-        Get the repository owner and name from the search query.
-    get_organization(search_query: str) -> Union[str, None]: Get the organization
-        from the search query.
+    get_owner(search_query: str) -> Union[str, None]]:
+        Get the owner from the search query.
     main(): Run the issue-metrics script.
 """
 
@@ -191,46 +189,27 @@ def get_per_issue_metrics(
     return issues_with_metrics, num_issues_open, num_issues_closed
 
 
-def get_repo_owner_and_name(
+def get_owner(
     search_query: str,
-) -> tuple[Union[str, None], Union[str, None]]:
-    """Get the repository owner and name from the search query.
+) -> Union[str, None]:
+    """Get the owner from the search query.
 
     Args:
         search_query (str): The search query used to search for issues.
 
     Returns:
-        tuple[Union[str, None], Union[str, None]]: A tuple containing the repository owner and name.
+        Union[str, None]: The owner.
 
     """
     search_query_split = search_query.split(" ")
-    repo_owner, repo_name = None, None
+    owner = None
     for item in search_query_split:
         if "repo:" in item and "/" in item:
-            repo_owner = item.split(":")[1].split("/")[0]
-            repo_name = item.split(":")[1].split("/")[1]
+            owner = item.split(":")[1].split("/")[0]
+        if "org:" in item or "owner:" in item or "user:" in item:
+            owner = item.split(":")[1]
 
-    return repo_owner, repo_name
-
-
-def get_organization(search_query: str) -> Union[str, None]:
-    """Get the organization from the search query.
-
-    Args:
-        search_query (str): The search query used to search for issues.
-
-    Returns:
-        Union[str, None]: The organization from the search query.
-
-    """
-    # Get the organization from the search query
-    search_query_split = search_query.split(" ")
-    organization = None
-    for item in search_query_split:
-        if "org:" in item:
-            organization = item.split(":")[1]
-
-    return organization
+    return owner
 
 
 def main():
@@ -261,13 +240,13 @@ def main():
     token = env_vars[1]
 
     # Get the repository owner and name from the search query
-    owner, repo_name = get_repo_owner_and_name(search_query)
-    organization = get_organization(search_query)
+    owner = get_owner(search_query)
 
-    if (owner is None or repo_name is None) and organization is None:
+    if owner is None:
         raise ValueError(
             "The search query must include a repository owner and name \
-            (ie. repo:owner/repo) or an organization (ie. org:organization)"
+            (ie. repo:owner/repo), an organization (ie. org:organization), \
+            a user (ie. user:login) or an owner (ie. owner:user-or-organization)"
         )
 
     # Determine if there are label to measure
