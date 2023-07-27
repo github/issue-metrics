@@ -142,7 +142,7 @@ jobs:
 
 ## SEARCH_QUERY
 Issues or Pull Requests? Open or closed?
-This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Here are some search query examples:
+This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API. Here are some search query examples:
 
 Issues opened in May 2023:
 - `repo:owner/repo is:issue created:2023-05-01..2023-05-31`
