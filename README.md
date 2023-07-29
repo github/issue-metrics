@@ -74,7 +74,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-
+    
     steps:
 
     - name: Get dates for last month
@@ -85,7 +85,7 @@ jobs:
 
         # Calculate the last day of the previous month
         last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
-
+        
         #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
@@ -122,7 +122,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-
+    
     steps:
 
     - name: Run issue-metrics tool
@@ -169,7 +169,7 @@ Both issues and pull requests opened in May 2023:
 Both issues and pull requests closed in May 2023 (may have been open in May or earlier):
 - `repo:owner/repo closed:2023-05-01..2023-05-31`
 
-OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this:
+OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this: 
 
 ```yaml
 name: Monthly issue metrics
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
+    
     - name: Run issue-metrics tool for issues and prs opened in May 2023
       uses: github/issue-metrics@v2
       env:
@@ -202,7 +202,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
-
+    
     - name: Run issue-metrics tool for issues and prs closed in May 2023
       uses: github/issue-metrics@v2
       env:
@@ -238,7 +238,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-
+    
     steps:
 
     - name: Run issue-metrics tool
@@ -378,7 +378,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-
+    
     steps:
 
     - name: Get dates for last month
@@ -386,10 +386,10 @@ jobs:
       run: |
         # Calculate the first day of the previous month
         first_day=$(date -d "last month" +%Y-%m-01)
-
+        
         # Calculate the last day of the previous month
         last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
-
+        
         #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
@@ -413,7 +413,7 @@ jobs:
         title: Monthly issue metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
-        assignees: ${{ env.TEAM_MEMBERS }}
+        assignees: ${{ env.TEAM_MEMBERS }} 
 ```
 
 ## Local usage without Docker
