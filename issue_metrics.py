@@ -41,13 +41,14 @@ from time_to_first_response import (
 )
 
 
-def get_env_vars() -> tuple[str, str]:
+def get_env_vars() -> tuple[str, str, List[str]]:
     """
     Get the environment variables for use in the script.
 
     Returns:
         str: the search query used to filter issues, prs, and discussions
         str: the github token used to authenticate to github.com
+        List[str]: a list of users to ignore when calculating metrics
     """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
@@ -57,7 +58,13 @@ def get_env_vars() -> tuple[str, str]:
     if not token:
         raise ValueError("GITHUB_TOKEN environment variable not set")
 
-    return search_query, token
+    ignore_users = os.getenv("IGNORE_USERS")
+    if ignore_users:
+        ignore_users = ignore_users.split(",")
+    else:
+        ignore_users = []
+
+    return search_query, token, ignore_users
 
 
 def search_issues(
@@ -240,6 +247,7 @@ def main():
     env_vars = get_env_vars()
     search_query = env_vars[0]
     token = env_vars[1]
+    ignore_users = env_vars[2]
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -282,8 +290,7 @@ def main():
         issues,
         discussions="type:discussions" in search_query,
         labels=labels,
-        # FIXME: ignore_users should be a list of usernames
-        ignore_users=[],
+        ignore_users=ignore_users,
     )
 
     average_time_to_first_response = get_average_time_to_first_response(
