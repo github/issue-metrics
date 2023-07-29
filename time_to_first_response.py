@@ -27,7 +27,7 @@ from classes import IssueWithMetrics
 def measure_time_to_first_response(
     issue: Union[github3.issues.Issue, None],  # type: ignore
     discussion: Union[dict, None],
-    ignore_users: List[str],
+    ignore_users: List[str] = [],
 ) -> Union[timedelta, None]:
     """Measure the time to first response for a single issue or a discussion.
 
