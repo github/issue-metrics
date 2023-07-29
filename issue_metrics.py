@@ -13,7 +13,7 @@ Functions:
         Searches for issues in a GitHub repository that match the given search query.
     auth_to_github() -> github3.GitHub: Connect to GitHub API with token authentication.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
-        discussions: bool = False) -> tuple[List, int, int]:
+        discussions: bool = False), labels: Union[List[str], None] = None, ignore_users: List[str] = [] -> tuple[List, int, int]:
         Calculate the metrics for each issue in a list of GitHub issues.
     get_owner(search_query: str) -> Union[str, None]]:
         Get the owner from the search query.
@@ -125,6 +125,7 @@ def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
     discussions: bool = False,
     labels: Union[List[str], None] = None,
+    ignore_users: List[str] = [],
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -135,6 +136,7 @@ def get_per_issue_metrics(
         discussions (bool, optional): Whether the issues are discussions or not.
             Defaults to False.
         labels (List[str]): A list of labels to measure time spent in. Defaults to empty list.
+        ignore_users (List[str]): A list of users to ignore when calculating metrics.
 
     Returns:
         tuple[List[IssueWithMetrics], int, int]: A tuple containing a
@@ -157,7 +159,7 @@ def get_per_issue_metrics(
                 None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-                None, issue
+                None, issue, ignore_users
             )
             issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
@@ -175,7 +177,7 @@ def get_per_issue_metrics(
                 None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-                issue, None
+                issue, None, ignore_users
             )
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
@@ -280,6 +282,8 @@ def main():
         issues,
         discussions="type:discussions" in search_query,
         labels=labels,
+        # FIXME: ignore_users should be a list of usernames
+        ignore_users=[],
     )
 
     average_time_to_first_response = get_average_time_to_first_response(
