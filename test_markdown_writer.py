@@ -90,6 +90,78 @@ class TestWriteToMarkdown(unittest.TestCase):
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
 
+    def test_write_to_markdown_with_vertical_bar_in_title(self):
+        """Test that write_to_markdown writes the correct markdown file when the title contains a vertical bar.
+
+        This test creates a list of mock GitHub issues (one of which contains a vertical bar in the title) with time to first response
+        attributes, calls write_to_markdown with the list and the average time to
+        first response, time to close and checks that the function writes the correct
+        markdown file.
+
+        """
+        # Create mock data
+        issues_with_metrics = [
+            IssueWithMetrics(
+                "Issue 1",
+                "https://github.com/user/repo/issues/1",
+                timedelta(days=1),
+                timedelta(days=2),
+                timedelta(days=3),
+                {"bug": timedelta(days=1)},
+            ),
+            IssueWithMetrics(
+                "feat| Issue 2",  # title contains a vertical bar
+                "https://github.com/user/repo/issues/2",
+                timedelta(days=3),
+                timedelta(days=4),
+                timedelta(days=5),
+                {"bug": timedelta(days=2)},
+            ),
+        ]
+        average_time_to_first_response = timedelta(days=2)
+        average_time_to_close = timedelta(days=3)
+        average_time_to_answer = timedelta(days=4)
+        average_time_in_labels = {"bug": "1 day, 12:00:00"}
+        num_issues_opened = 2
+        num_issues_closed = 1
+
+        # Call the function
+        write_to_markdown(
+            issues_with_metrics=issues_with_metrics,
+            average_time_to_first_response=average_time_to_first_response,
+            average_time_to_close=average_time_to_close,
+            average_time_to_answer=average_time_to_answer,
+            average_time_in_labels=average_time_in_labels,
+            num_issues_opened=num_issues_opened,
+            num_issues_closed=num_issues_closed,
+            labels=["bug"],
+        )
+
+        # Check that the function writes the correct markdown file
+        with open("issue_metrics.md", "r", encoding="utf-8") as file:
+            content = file.read()
+        expected_content = (
+            "# Issue Metrics\n\n"
+            "| Metric | Value |\n"
+            "| --- | ---: |\n"
+            "| Average time to first response | 2 days, 0:00:00 |\n"
+            "| Average time to close | 3 days, 0:00:00 |\n"
+            "| Average time to answer | 4 days, 0:00:00 |\n"
+            "| Average time spent in bug | 1 day, 12:00:00 |\n"
+            "| Number of items that remain open | 2 |\n"
+            "| Number of items closed | 1 |\n"
+            "| Total number of items created | 2 |\n\n"
+            "| Title | URL | Time to first response | Time to close |"
+            " Time to answer | Time spent in bug |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 0:00:00 | "
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
+            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
+            "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n"
+        )
+        self.assertEqual(content, expected_content)
+        os.remove("issue_metrics.md")
+
     def test_write_to_markdown_no_issues(self):
         """Test that write_to_markdown writes the correct markdown file when no issues are found."""
         # Call the function with no issues
