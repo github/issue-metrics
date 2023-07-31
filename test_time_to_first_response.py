@@ -61,6 +61,31 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         # Check the results
         self.assertEqual(result, expected_result)
 
+    def test_measure_time_to_first_response_ignore_users(self):
+        """Test that measure_time_to_first_response ignores comments from ignored users."""
+        # Set up the mock GitHub issues
+        mock_issue1 = MagicMock()
+        mock_issue1.comments = 1
+        mock_issue1.created_at = "2023-01-01T00:00:00Z"
+
+        # Set up the mock GitHub comments (one ignored, one not ignored)
+        mock_comment1 = MagicMock()
+        mock_comment1.user.login = "ignored_user"
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
+
+        mock_comment2 = MagicMock()
+        mock_comment2.user.login = "not_ignored_user"
+        mock_comment2.created_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
+
+        mock_issue1.issue.comments.return_value = [mock_comment1, mock_comment2]
+
+        # Call the function
+        result = measure_time_to_first_response(mock_issue1, None, ["ignored_user"])
+        expected_result = timedelta(days=2)
+
+        # Check the results
+        self.assertEqual(result, expected_result)
+
 
 class TestGetAverageTimeToFirstResponse(unittest.TestCase):
     """Test the get_average_time_to_first_response function."""
