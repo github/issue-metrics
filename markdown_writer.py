@@ -134,6 +134,9 @@ def write_to_markdown(
 
         # Then write the issues/pr/discussions row by row
         for issue in issues_with_metrics:
+            # Replace the vertical bar with the HTML entity
+            issue.title = issue.title.replace("|", "&#124;")
+
             file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
