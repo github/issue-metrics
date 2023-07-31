@@ -6,3 +6,4 @@ disable=
 	duplicate-code,
 	too-many-locals,
 	too-many-branches,
+	line-too-long,
