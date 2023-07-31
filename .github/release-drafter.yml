@@ -29,13 +29,13 @@ change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 version-resolver:
   major:
     labels:
-      - 'type: breaking'
+      - 'breaking'
   minor:
     labels:
-      - 'type: enhancement'
+      - 'enhancement'
   patch:
     labels:
-      - 'type: bug'
-      - 'type: maintenance'
-      - 'type: documentation'
+      - 'bug'
+      - 'maintenance'
+      - 'documentation'
   default: patch
