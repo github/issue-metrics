@@ -86,6 +86,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
@@ -158,6 +159,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
             "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
@@ -257,6 +259,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 |\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
