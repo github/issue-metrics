@@ -27,7 +27,7 @@ from classes import IssueWithMetrics
 def measure_time_to_first_response(
     issue: Union[github3.issues.Issue, None],  # type: ignore
     discussion: Union[dict, None],
-    ignore_users: List[str] = [],
+    ignore_users: List[str] = None,
 ) -> Union[timedelta, None]:
     """Measure the time to first response for a single issue or a discussion.
 
@@ -44,6 +44,8 @@ def measure_time_to_first_response(
     first_comment_time = None
     earliest_response = None
     issue_time = None
+    if ignore_users is None:
+        ignore_users = []
 
     # Get the first comment time
     if issue:

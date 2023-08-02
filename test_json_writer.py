@@ -64,6 +64,7 @@ class TestWriteToJson(unittest.TestCase):
                     "label_metrics": {},
                 },
             ],
+            "search_query": "is:issue repo:owner/repo",
         }
 
         # Call the function and check the output
@@ -78,6 +79,7 @@ class TestWriteToJson(unittest.TestCase):
                 },
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
+                search_query="is:issue repo:owner/repo",
             ),
             json.dumps(expected_output),
         )

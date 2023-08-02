@@ -63,6 +63,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             labels=["bug"],
+            search_query="is:issue is:open label:bug",
         )
 
         # Check that the function writes the correct markdown file
@@ -87,6 +88,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "Search query used to find these items: `is:issue is:open label:bug`\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
@@ -94,10 +96,10 @@ class TestWriteToMarkdown(unittest.TestCase):
     def test_write_to_markdown_with_vertical_bar_in_title(self):
         """Test that write_to_markdown writes the correct markdown file when the title contains a vertical bar.
 
-        This test creates a list of mock GitHub issues (one of which contains a vertical bar in the title) with time to first response
-        attributes, calls write_to_markdown with the list and the average time to
-        first response, time to close and checks that the function writes the correct
-        markdown file.
+        This test creates a list of mock GitHub issues (one of which contains a vertical
+        bar in the title) with time to first response attributes, calls write_to_markdown
+        with the list and the average time to first response, time to close and checks
+        that the function writes the correct markdown file.
 
         """
         # Create mock data
@@ -243,6 +245,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             labels=["label1"],
+            search_query="repo:user/repo is:issue",
         )
 
         # Check that the function writes the correct markdown file
@@ -260,6 +263,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Issue 1 | https://github.com/user/repo/issues/1 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
