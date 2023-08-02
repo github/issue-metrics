@@ -38,7 +38,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 {"bug": timedelta(days=1)},
             ),
             IssueWithMetrics(
-                "Issue 2",
+                "Issue 2\r",
                 "https://github.com/user/repo/issues/2",
                 timedelta(days=3),
                 timedelta(days=4),
