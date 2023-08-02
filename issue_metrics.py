@@ -121,7 +121,9 @@ def auth_to_github() -> github3.GitHub:
         github3.GitHub: A github api connection.
     """
     if token := os.getenv("GH_TOKEN"):
-        if os.getenv("GITHUB_SERVER_URL") == 'https://github.com':
+        if not os.getenv("GITHUB_SERVER_URL"):
+            github_connection = github3.login(token=token)
+        elif os.getenv("GITHUB_SERVER_URL") == 'https://github.com':
             github_connection = github3.login(token=token)
         else:
             github_connection = github3.GitHubEnterprise(os.getenv("GITHUB_SERVER_URL"),token=token)
