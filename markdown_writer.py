@@ -136,7 +136,7 @@ def write_to_markdown(
         for issue in issues_with_metrics:
             # Replace the vertical bar with the HTML entity
             issue.title = issue.title.replace("|", "&#124;")
-            # Replace any trailing whitespace
+            # Replace any whitespace
             issue.title = issue.title.strip()
 
             file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
