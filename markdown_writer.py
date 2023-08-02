@@ -73,6 +73,7 @@ def write_to_markdown(
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     labels=None,
+    search_query=None,
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -88,6 +89,7 @@ def write_to_markdown(
         num_issues_opened (int): The Number of items that remain opened.
         num_issues_closed (int): The number of issues that were closed.
         labels (List[str]): A list of the labels that are used in the issues.
+        search_query (str): The search query used to find the issues.
 
     Returns:
         None.
@@ -154,6 +156,8 @@ def write_to_markdown(
         file.write(
             "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
+        if search_query:
+            file.write(f"Search query used to find these items: `{search_query}`\n")
 
     print("Wrote issue metrics to issue_metrics.md")
 
