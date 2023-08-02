@@ -124,7 +124,7 @@ def auth_to_github() -> github3.GitHub:
         if os.getenv("GITHUB_SERVER_URL") == 'https://github.com':
             github_connection = github3.login(token=token)
         else:
-            github_connection = github3.GitHubEnterprise(os.getenv("GITHUB_SERVER_URL")).login(token=token)
+            github_connection = github3.GitHubEnterprise(os.getenv("GITHUB_SERVER_URL"),token=token)
     else:
         raise ValueError("GH_TOKEN environment variable not set")
 
