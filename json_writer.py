@@ -8,6 +8,7 @@ Functions:
         average_time_to_answer: timedelta,
         num_issues_opened: int,
         num_issues_closed: int,
+        search_query: str,
     ) -> str:
         Write the issues with metrics to a json file.
 
@@ -30,6 +31,7 @@ def write_to_json(
     average_time_in_labels: Union[dict, None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
+    search_query: str,
 ) -> str:
     """
     Write the issues with metrics to a JSON file called issue_metrics.json.
@@ -63,6 +65,7 @@ def write_to_json(
                 }
             },
         ],
+        "search_query": "is:issue is:open repo:owner/repo"
     }
 
     """
@@ -106,6 +109,9 @@ def write_to_json(
 
     # Add the issues to the metrics dictionary
     metrics["issues"] = issues
+
+    # Add the search query to the metrics dictionary
+    metrics["search_query"] = search_query
 
     # add output to github action output
     # pylint: disable=unspecified-encoding
