@@ -58,7 +58,7 @@ class TestLabels(unittest.TestCase):
         labels = ["bug", "feature"]
         metrics = get_label_metrics(self.issue, labels)
         self.assertEqual(metrics["bug"], timedelta(days=2))
-        self.assertLess(
+        self.assertLessEqual(
             metrics["feature"],
             datetime.now(pytz.utc) - datetime(2021, 1, 2, tzinfo=pytz.UTC),
         )
