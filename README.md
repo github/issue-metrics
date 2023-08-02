@@ -74,7 +74,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-    
+
     steps:
 
     - name: Get dates for last month
@@ -85,7 +85,7 @@ jobs:
 
         # Calculate the last day of the previous month
         last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
-        
+
         #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
@@ -122,7 +122,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-    
+
     steps:
 
     - name: Run issue-metrics tool
@@ -139,6 +139,82 @@ jobs:
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 
+```
+
+#### Multiple Repositories Example
+
+This workflow searches for the issues created last month, and generates an issue with metrics. It also uses the `GH_TOKEN` to scan a different repository than the one the workflow file is in.
+
+```yaml
+name: Monthly issue metrics
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  build:
+    name: issue metrics
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get dates for last month
+        shell: bash
+        run: |
+          # Calculate the first day of the previous month
+          first_day=$(date -d "last month" +%Y-%m-01)
+
+          # Calculate the last day of the previous month
+          last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
+
+          #Set an environment variable with the date range
+          echo "$first_day..$last_day"
+          echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
+
+      - name: Get issue metrics (repo1)
+        uses: github/issue-metrics@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
+
+      - name: Copy issue metrics (repo1)
+        run: |
+          cp ./issue_metrics.md ./issue_metrics_repo1.md
+
+      - name: Get issue metrics (repo2)
+        uses: github/issue-metrics@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
+
+      - name: Copy issue metrics (repo2)
+        run: |
+          cp ./issue_metrics.md ./issue_metrics_repo2.md
+
+      - name: change owner of issue_metrics.md
+        run: |
+          sudo chown runner:runner ./issue_metrics.md
+
+      - name: Merge issue metrics
+        run: |
+          rm ./issue_metrics.md
+          echo "## repo1" >> ./issue_metrics.md
+          cat ./issue_metrics_repo1.md >> ./issue_metrics.md
+          echo "## repo2" >> ./issue_metrics.md
+          cat ./issue_metrics_repo2.md >> ./issue_metrics.md
+          sed -i '/# Issue Metrics/d' ./issue_metrics.md
+          sed -i '/_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_/d' ./issue_metrics.md
+          echo "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_" >> ./issue_metrics.md
+
+      - name: Create issue
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Monthly issue metrics report (dev)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          content-filepath: ./issue_metrics.md
+          assignees: <YOUR_GITHUB_HANDLE_HERE>
 ```
 
 ## SEARCH_QUERY
@@ -169,7 +245,7 @@ Both issues and pull requests opened in May 2023:
 Both issues and pull requests closed in May 2023 (may have been open in May or earlier):
 - `repo:owner/repo closed:2023-05-01..2023-05-31`
 
-OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this: 
+OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this:
 
 ```yaml
 name: Monthly issue metrics
@@ -188,7 +264,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
     - name: Run issue-metrics tool for issues and prs opened in May 2023
       uses: github/issue-metrics@v2
       env:
@@ -202,7 +278,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
-    
+
     - name: Run issue-metrics tool for issues and prs closed in May 2023
       uses: github/issue-metrics@v2
       env:
@@ -238,7 +314,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-    
+
     steps:
 
     - name: Run issue-metrics tool
@@ -378,7 +454,7 @@ jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
-    
+
     steps:
 
     - name: Get dates for last month
@@ -386,10 +462,10 @@ jobs:
       run: |
         # Calculate the first day of the previous month
         first_day=$(date -d "last month" +%Y-%m-01)
-        
+
         # Calculate the last day of the previous month
         last_day=$(date -d "$first_day +1 month -1 day" +%Y-%m-%d)
-        
+
         #Set an environment variable with the date range
         echo "$first_day..$last_day"
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
@@ -413,7 +489,7 @@ jobs:
         title: Monthly issue metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
-        assignees: ${{ env.TEAM_MEMBERS }} 
+        assignees: ${{ env.TEAM_MEMBERS }}
 ```
 
 ## Local usage without Docker
