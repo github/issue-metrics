@@ -29,7 +29,7 @@ def get_label_events(
     return label_events
 
 
-def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:  # type: ignore
+def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
     """
     Calculate the time spent with the given labels on a given issue.
 

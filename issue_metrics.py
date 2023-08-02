@@ -13,7 +13,8 @@ Functions:
         Searches for issues in a GitHub repository that match the given search query.
     auth_to_github() -> github3.GitHub: Connect to GitHub API with token authentication.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
-        discussions: bool = False), labels: Union[List[str], None] = None, ignore_users: List[str] = [] -> tuple[List, int, int]:
+        discussions: bool = False), labels: Union[List[str], None] = None,
+        ignore_users: List[str] = [] -> tuple[List, int, int]:
         Calculate the metrics for each issue in a list of GitHub issues.
     get_owner(search_query: str) -> Union[str, None]]:
         Get the owner from the search query.
@@ -123,10 +124,12 @@ def auth_to_github() -> github3.GitHub:
     if token := os.getenv("GH_TOKEN"):
         if not os.getenv("GITHUB_SERVER_URL"):
             github_connection = github3.login(token=token)
-        elif os.getenv("GITHUB_SERVER_URL") == 'https://github.com':
+        elif os.getenv("GITHUB_SERVER_URL") == "https://github.com":
             github_connection = github3.login(token=token)
         else:
-            github_connection = github3.GitHubEnterprise(os.getenv("GITHUB_SERVER_URL"),token=token)
+            github_connection = github3.GitHubEnterprise(
+                os.getenv("GITHUB_SERVER_URL"), token=token
+            )
     else:
         raise ValueError("GH_TOKEN environment variable not set")
 
@@ -137,7 +140,7 @@ def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
     discussions: bool = False,
     labels: Union[List[str], None] = None,
-    ignore_users: List[str] = [],
+    ignore_users: List[str] = None,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -159,6 +162,8 @@ def get_per_issue_metrics(
     issues_with_metrics = []
     num_issues_open = 0
     num_issues_closed = 0
+    if ignore_users is None:
+        ignore_users = []
 
     for issue in issues:
         if discussions:
@@ -320,6 +325,7 @@ def main():
         average_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        search_query,
     )
     write_to_markdown(
         issues_with_metrics,
@@ -330,6 +336,7 @@ def main():
         num_issues_open,
         num_issues_closed,
         labels,
+        search_query,
     )
 
 
