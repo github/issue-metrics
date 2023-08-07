@@ -33,12 +33,14 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         """
         # Set up the mock GitHub issues
         mock_issue1 = MagicMock()
-        mock_issue1.comments = 1
+        mock_issue1.comments = 2
         mock_issue1.created_at = "2023-01-01T00:00:00Z"
 
         mock_comment1 = MagicMock()
         mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
-        mock_issue1.issue.comments.return_value = [mock_comment1]
+        mock_comment2 = MagicMock()
+        mock_comment2.created_at = datetime.fromisoformat("2023-01-02T12:00:00Z")
+        mock_issue1.issue.comments.return_value = [mock_comment1, mock_comment2]
 
         # Call the function
         result = measure_time_to_first_response(mock_issue1, None)
@@ -105,7 +107,9 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         mock_issue1.issue.comments.return_value = [mock_comment1, mock_comment2]
 
         # Call the function
-        result = measure_time_to_first_response(mock_issue1, None, ["ignored_user", "ignored_user2"])
+        result = measure_time_to_first_response(
+            mock_issue1, None, ["ignored_user", "ignored_user2"]
+        )
         expected_result = None
 
         # Check the results
