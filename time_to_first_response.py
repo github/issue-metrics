@@ -56,6 +56,7 @@ def measure_time_to_first_response(
             if comment.user.login in ignore_users:
                 continue
             first_comment_time = comment.created_at
+            break
 
         # Check if the issue is actually a pull request
         # so we may also get the first review comment time
@@ -66,6 +67,7 @@ def measure_time_to_first_response(
                 if review_comment.user.login in ignore_users:
                     continue
                 first_review_comment_time = review_comment.submitted_at
+                break
 
         # Figure out the earliest response timestamp
         if first_comment_time and first_review_comment_time:
