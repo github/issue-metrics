@@ -83,7 +83,7 @@ def search_issues(
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
     """
     print("Searching for issues...")
-    issues_iterator = github_connection.search_issues(search_query, per_page=200)
+    issues_iterator = github_connection.search_issues(search_query, per_page=100)
 
     # Print the issue titles
     issues = []
