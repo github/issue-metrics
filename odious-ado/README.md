@@ -61,3 +61,12 @@ just dev
 # verify the python template install
 python-template version
 ``` 
+### stupid hacks
+
+ill fix later
+```bash 
+$ pip install github3.py 
+ 
+$ pip install pytz
+```
+

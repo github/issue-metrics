@@ -1,0 +1,79 @@
+[tool.poetry]
+name = "odious-ado"
+version = "0.1.0"
+description = ""
+authors = ["abanna <abanna@nerds.run>"]
+maintainers = ["abanna <abanna@nerds.run>"]
+readme = "README.md"
+include = ["CHANGELOG.md"]
+documentation = "https://pages.github.io/"
+homepage = "TBS"
+repository = "TBD"
+keywords = []
+classifiers = []
+packages = [
+    {include = "odious-ado"}
+#    {include = "api"}
+]
+
+#[tool.poetry.urls]
+#"Bug Tracker" = "https://github.com/**/**/issues"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "*"
+colorama = "*"
+cryptography = "*"
+jinja2 = "*"
+#pytz = "*"
+#pydantic = {extras = ["email", "typing_extensions", "dotenv"], version = "*"}
+## Github API library
+# https://github.com/PyGithub/PyGithub
+PyGithub = "*"
+#github3-py = "*"
+aiohttp = "*"
+httpx = {extras =["http2"], version = "*"}
+uvloop = "*"
+requests = "*"
+tabulate = "^0.9.0"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+furo = "*"
+myst-parser = "*"
+myst-nb = "*"
+sphinx = "*"
+sphinx-autobuild = "*"
+sphinx-autodoc-typehints = "*"
+sphinx-copybutton = "*"
+sphinxcontrib-mermaid = "*"
+sphinxcontrib-napoleon = "*"
+sphinx-design  = "*"
+sphinx-inline-tabs = "*"
+
+[tool.poetry.group.dev.dependencies]
+autoflake = "*"
+black = "*"
+flake8 = "*"
+
+[tool.poetry.group.test.dependencies]
+coverage = "*"
+mock = "*"
+mypy = "*"
+pytest = "*"
+selenium = "*"
+pytest-mock = "*"
+pytest-cov = "*"
+
+[tools.poetry.group.load.dependencies]
+locust = "*"
+
+[tool.poetry.scripts]
+python-template = "odious-ado.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+virtualenvs.prefer-active-python = true

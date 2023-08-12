@@ -1,0 +1,115 @@
+# Structure
+
+## Repository Layout
+
+The repository layout is pretty standard for a Python project, with a few opinions made here and there.
+
+- `.github/`
+  - `workflows/` -- github runner configuration.
+- `api/` -- Application code for the service.
+  - `config/` -- Anything related to application configuration.
+    - `settings/` -- Configuration Classes for application.
+    - `logging.json` -- logger configuration.
+    - `wsgi.py` -- wsgi app entrypoint.
+  - `db` -- Database connection, models, and utils.
+    - `models/` -- Data models for application.
+      - `rules.py` -- Rules object that defines steps or sequence of operations.
+      - `services.py` -- Services object defines the service and metadata about it.
+    - `boto3_alternator.py` - Connection example for using dynamoDB query language over csql.
+    - `engine.py` -- Database engine object.
+    - `session.py` -- Database session and connection pool.
+    - `utils.py` -- Database utilities.
+  - `logs` -- Old school logs directory.
+  - `middleware/` -- Web framework middleware.
+  - `routes/` -- Web framework http routes. These routes get dynamically imported and added during app start.
+    - `index.py` -- root / route.
+    - `metrics.py` -- Prometheus endpoint.
+    - `status.py` -- Health Check / Dependency status.
+    - `services.py` -- CRUD endpoints for services using application.
+  - `main.py` -- Entrypoint for the application.
+  - `planning.py` -- Notes on future routes.
+- `backups/` -- The CLI will store backups of ops manager automation configuration here. (should be moved to db or s3)
+  - `{version}-{md5}.json` -- The backup file is named with the version of the automation config and the md5sum.
+- `cloud_pincher/` -- SDK and CLI
+  - `cli/` -- CLI logic and commands.
+    - `aws.py` -- AWS CLI commands.
+    - `chef.py` -- Chef CLI commands.
+    - `commands.py` -- Configuration of Click and all sub-commands.
+    - `daemon.py` -- Application Daemon commands. (not implemented)
+    - `db.py` -- Database CLI commands.
+    - `opsmanager.py` -- OpsManager CLI commands.
+    - `options.py` -- Shared CLI command options.
+  - `plugins/` -- Collection of python modules that handle interacting with other services.
+    - `aws/` -- AWS integrations.
+      - `ce/` -- Billing / Storage functions.
+        - `callbacks.py`
+        - `reports.py`
+      - `ec2/` -- ec2 functions.
+        - `actions.py`
+        - `callbacks.py`
+        - `reports.py`
+      - `lambdas/` -- lambda functions.
+        - `callbacks.py`
+        - `reports.py`
+      - `organizations/` -- AWS Organization functions.
+        - `callbacks.py`
+        - `reports.py`
+      - `rds/` -- RDS functions.
+        - `callbacks.py`
+        - `reports.py`
+      - `templates/` -- jinja2 templates.
+      - `request.py` -- Requests to AWS.
+      - `settings.py` -- Account settings.
+      - `types.py` -- Object types for AWS.
+      - `validate_callback.py` -- Verify async functions(callbacks).
+    - `chef/` -- Should be deleted when ansible ami works
+      - `request.py` -- request made to chef server.
+    - `opsmanager/` -- MongoDB & OpsManager integrations.
+      - `callbacks.py`
+      - `request.py`
+  - `request_schemas/` -- Schema for request objects.
+    - `services.py` -- Service object required to create a new service.
+  - `response_schemas/` -- Schema for response objects.
+    - `base.py` -- Base class for all responses.
+    - `services.py` -- Schema for services responses.
+    - `status.py` -- Schema for status response.
+  - `utils/` -- Utilities used threw out the application.
+    - `lib.py` -- lib of utils.
+    - `logger.py` -- logger utils.
+  - `broker.py` -- consider removing
+  - `daemon.py` -- consider removing
+  - `officer.py` -- consider removing
+  - `rules.py` -- consider removing
+  - `services.py` -- services logic (should be moved into the api)
+- `docs/` -- Sources for the documentation.
+- `infrastructure/`
+  - `alerts/` -- any alert configuration for this project should live here.
+  - `images/` -- any dockerfiles for this project should live here.
+    - `base/` -- base image intended to be used with from image.
+      - `Dockerfile`
+    - `docker-compose.yaml` -- this should be removed in favor of k8s manifests
+    - `collector-config.yaml` -- config for digma collector ++
+    - `prometheus.yaml` -- config for prometheus. ++
+  - `k8s/` -- any k8s configuration files should live here.
+    - `python-template/`
+      - `manifest.yaml`
+    - `datadog/`
+      - `manifest.yaml`
+  - `tasks/` -- collection of tasks for the project. (think k8s jobs)
+  - `terraform/` -- any project terraform configuration files would live here.
+- `test/` -- The home of tests.
+  - `unit/` -- Unit tests.
+  - `integration/` -- Integration tests.
+- `.env` -- Configuration values.
+- `.gitignore` -- standard gitignore file.
+- `.pre-commit-config.yaml` -- pre-commit checks configuration.
+- `.python-version` -- pyenv version file config.
+- `Dockerfile` -- main application dockerfile.
+- `justfile` -- justfile with helper functions for project.
+- `meta.yaml` -- metadata about the project.  (just and idea for the future)
+- `mypi.ini` -- mypi configuration.
+- `poetry.lock` -- package lock file.
+- `poetry.toml` -- package manager configuration file.
+- `pyproject.toml` -- for Python Packaging.
+- `README.md` -- project readme.
+- `setup.cfg` -- flake8 configuration.
