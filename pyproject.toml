@@ -12,7 +12,8 @@ repository = "TBD"
 keywords = []
 classifiers = []
 packages = [
-    {include = "odious-ado"}
+    {include = "odious_ado"}
+
 #    {include = "api"}
 ]
 
@@ -71,7 +72,7 @@ pytest-cov = "*"
 locust = "*"
 
 [tool.poetry.scripts]
-python-template = "odious-ado.cli:main"
+python-template = "odious_ado.cli:main"
 
 [build-system]
 requires = ["poetry-core"]

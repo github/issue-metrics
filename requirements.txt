@@ -1,4 +1,0 @@
-github3.py==4.0.1
-python-dotenv==1.0.0
-pytz==2023.3
-Requests==2.31.0
