@@ -63,10 +63,55 @@ python-template version
 ``` 
 ### stupid hacks
 
-ill fix later
+update pyproject.toml to add these packages correctly - abanna
 ```bash 
 $ pip install github3.py 
  
 $ pip install pytz
 ```
+
+This ADO SDK is a bit wack regarding the amount of boilerplate code required to do much of anything...
+The docs are somewhat lack luster. With that said This project can likely have an MVP built out in a
+few days. 
+
+A few unknowns.  How does one release GitHub action... Would like to test this early in the hackation to 
+allow for a smooth ending and time to focus on a nice video presentation.
+
+Main things that we need to do.  Get data from workflow action yaml. Use that data to map fields and labels to 
+ado fields etc. 
+
+We need the issues to be assigned to Github project.
+
+The labels on that github project need to include the ADO_PROJECT_NAME.
+
+assignees might be somewhat painful if there isn't a way to map github users to ado users. (not really required atm)
+
+update ADO with issue title comments and any other requirements.
+
+iterations might be a bit of a stretch for mvp - though probably a requirement for real life use.
+
+swimlane mapping -> Github project Status has to be mapped to ADO swim lanes.
+
+The lanes will have to have a mapping or match otherwise we will not be able to track the work.
+
+points to estimates update prs in ado comments.
+
+repo and reviews can be updated. 
+
+```yaml
+lanes:
+  NoStatus: Proposed
+  Blocked: things
+  New: New
+  Backlog: Backlog
+  Ready: Ready
+  InProgress: InProgress
+  InReview: CodeReview
+  Done: Done
+```
+
+Also, thing to consider is if we want to update github issues based on what has been updated or added to ADO?
+
+This might also be some additional fun stuff to automate with PR's and other such things.
+
 

@@ -1,10 +1,10 @@
 ---
-name: 'issue-metrics'
+name: 'odious-ado'
 author: 'github'
-description: 'A GitHub Action to report out issue metrics'
+description: 'A GitHub Action to say good bye to ADO projects. Hello, Github'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/github/issue_metrics:v2'
+  image: 'docker://ghcr.io/github/odious_ado:v1'
 branding:
-  icon: 'check-square'
-  color: 'white'
+  icon: 'hard-drive'
+  color: 'red'

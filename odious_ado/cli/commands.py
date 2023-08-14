@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 from odious_ado import __version__
 
+from odious_ado.cli.ado import ado as ado_commands
+
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -34,3 +36,6 @@ def main(ctx, path) -> None:
 @click.pass_context
 def version(ctx):
     click.secho(__version__)
+
+
+main.add_command(ado_commands, "ado")
