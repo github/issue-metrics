@@ -117,7 +117,16 @@ action:
 
 ```
 
-
+```yaml
+  action: odious_ado@v1
+  with:
+       mappings:
+        thing: thing2
+    title: Monthly issue metrics report
+     token: ${{ secrets.GITHUB_TOKEN }}
+        content-filepath: ./issue_metrics.md
+        assignees: <YOUR_GITHUB_HANDLE_HERE>
+```
 
 ```yaml
 lanes:
