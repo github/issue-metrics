@@ -98,6 +98,27 @@ points to estimates update prs in ado comments.
 
 repo and reviews can be updated. 
 
+
+
+
+anytime a an issue or pr get create up date ado ticket wit comments and other data. link to pr 
+
+ - if possible we can attempt to update github issues from ado events.
+
+video demo --- patrick will spear head this. cool 90s music --- add some nick cage 
+
+
+```yaml
+
+action:
+  mappings:
+    mymappings:
+       thing: thing2
+
+```
+
+
+
 ```yaml
 lanes:
   NoStatus: Proposed
