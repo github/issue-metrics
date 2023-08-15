@@ -100,6 +100,8 @@ repo and reviews can be updated.
 
 
 
+when pr is created link pr in newly created issue and also ADO. Or if any existing issue has a pr create a new ado ticket with pr link included.
+- add ado link to github issue.
 
 anytime a an issue or pr get create up date ado ticket wit comments and other data. link to pr 
 
