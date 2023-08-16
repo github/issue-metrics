@@ -75,7 +75,7 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
 
         # Set up the mock GitHub pull request comments
         mock_pr_comment1 = MagicMock()
-        mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-02T00:00:00Z") # first response
+        mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-02T00:00:00Z")  # first response
         mock_pr_comment2 = MagicMock()
         mock_pr_comment2.submitted_at = datetime.fromisoformat("2023-01-02T12:00:00Z")
         mock_issue1.issue.pull_request().reviews.return_value = [mock_pr_comment1, mock_pr_comment2]
@@ -98,7 +98,7 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
 
         # Set up the mock GitHub issue comment
         mock_comment1 = MagicMock()
-        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z") # first response
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")  # first response
         mock_issue1.issue.comments.return_value = [mock_comment1]
 
         # Set up the mock GitHub pull request comment
@@ -129,7 +129,7 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
 
         # Set up the mock GitHub pull request comment
         mock_pr_comment1 = MagicMock()
-        mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-02T00:00:00Z") # first response
+        mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-02T00:00:00Z")  # first response
         mock_issue1.issue.pull_request().reviews.return_value = [mock_pr_comment1]
 
         # Call the function
@@ -161,7 +161,7 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
         mock_pr_comment2 = MagicMock()
         mock_pr_comment2.user.login = "not_ignored_user"
-        mock_pr_comment2.submitted_at = datetime.fromisoformat("2023-01-04T00:00:00Z") # first response
+        mock_pr_comment2.submitted_at = datetime.fromisoformat("2023-01-04T00:00:00Z")  # first response
         mock_issue1.issue.pull_request().reviews.return_value = [mock_pr_comment1, mock_pr_comment2]
 
         # Call the function
