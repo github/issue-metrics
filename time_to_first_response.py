@@ -55,6 +55,8 @@ def measure_time_to_first_response(
         for comment in comments:
             if comment.user.login in ignore_users:
                 continue
+            if comment.user.login == issue.issue.user.login:
+                continue
             first_comment_time = comment.created_at
             break
 
@@ -65,6 +67,8 @@ def measure_time_to_first_response(
             review_comments = pull_request.reviews(number=50)  # type: ignore
             for review_comment in review_comments:
                 if review_comment.user.login in ignore_users:
+                    continue
+                if review_comment.user.login == issue.issue.user.login:
                     continue
                 first_review_comment_time = review_comment.submitted_at
                 break
