@@ -143,10 +143,10 @@ jobs:
 
 #### Multiple Repositories Example
 
-This workflow searches for the issues created last month, and generates an issue with metrics. It also uses the `GH_TOKEN` to scan a different repository than the one the workflow file is in.
+This workflow searches for the issues created last month, and generates an issue with metrics. It also searches for issues in a second repository and includes those metrics in the same issue.
 
 ```yaml
-name: Monthly issue metrics
+name: Monthly issue metrics (Multi Repo)
 on:
   workflow_dispatch:
 
@@ -173,40 +173,11 @@ jobs:
           echo "$first_day..$last_day"
           echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
-      - name: Get issue metrics (repo1)
+      - name: Get issue metrics
         uses: github/issue-metrics@v2
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
-
-      - name: Copy issue metrics (repo1)
-        run: |
-          cp ./issue_metrics.md ./issue_metrics_repo1.md
-
-      - name: Get issue metrics (repo2)
-        uses: github/issue-metrics@v2
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
-
-      - name: Copy issue metrics (repo2)
-        run: |
-          cp ./issue_metrics.md ./issue_metrics_repo2.md
-
-      - name: change owner of issue_metrics.md
-        run: |
-          sudo chown runner:runner ./issue_metrics.md
-
-      - name: Merge issue metrics
-        run: |
-          rm ./issue_metrics.md
-          echo "## repo1" >> ./issue_metrics.md
-          cat ./issue_metrics_repo1.md >> ./issue_metrics.md
-          echo "## repo2" >> ./issue_metrics.md
-          cat ./issue_metrics_repo2.md >> ./issue_metrics.md
-          sed -i '/# Issue Metrics/d' ./issue_metrics.md
-          sed -i '/_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_/d' ./issue_metrics.md
-          echo "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_" >> ./issue_metrics.md
+          SEARCH_QUERY: 'repo:owner/repo1 repo:owner/repo2 is:issue created:${{ env.last_month }} -reason:"not planned"'
 
       - name: Create issue
         uses: peter-evans/create-issue-from-file@v4
