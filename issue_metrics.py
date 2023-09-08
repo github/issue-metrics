@@ -36,6 +36,8 @@ from labels import get_average_time_in_labels, get_label_metrics
 from markdown_writer import write_to_markdown
 from time_to_answer import get_average_time_to_answer, measure_time_to_answer
 from time_to_close import get_average_time_to_close, measure_time_to_close
+from time_to_ready_for_review import get_time_to_ready_for_review
+from time_to_merge import measure_time_to_merge
 from time_to_first_response import (
     get_average_time_to_first_response,
     measure_time_to_first_response,
@@ -193,13 +195,23 @@ def get_per_issue_metrics(
                 None,
                 None,
             )
+
+            # Check if issue is actually a pull request
+            pull_request, ready_for_review_at = None, None
+            if issue.issue.pull_request_urls:
+                pull_request = issue.issue.pull_request()
+                ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
+
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-                issue, None, ignore_users
+                issue, None, pull_request, ready_for_review_at, ignore_users
             )
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
-                issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
+                if pull_request:
+                    issue_with_metrics.time_to_close = measure_time_to_merge(pull_request, ready_for_review_at)
+                else:
+                    issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
                 num_issues_closed += 1
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
