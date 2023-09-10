@@ -8,10 +8,12 @@ several metrics. The issues/pull requests/discussions to search for can be filte
 The metrics that are measured are:
 | Metric | Description |
 |--------|-------------|
-| Time to first response | The time between when an issue/pull request/discussion is created and when the first comment or review is made. |
-| Time to close | The time between when an issue/pull request/discussion is created and when it is closed. |
+| Time to first response | The time between when an issue/pull request/discussion is created and when the first comment or review is made.* |
+| Time to close | The time between when an issue/pull request/discussion is created and when it is closed.* |
 | Time to answer | (Discussions only) The time between when a discussion is created and when it is answered. |
 | Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the LABELS_TO_MEASURE env variable to be set. |
+
+*For pull requests, these metrics exclude the time the PR was in draft mode.
 
 This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repository.
 
