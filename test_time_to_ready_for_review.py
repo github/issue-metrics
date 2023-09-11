@@ -14,6 +14,7 @@ from unittest.mock import MagicMock
 
 from time_to_ready_for_review import get_time_to_ready_for_review
 
+
 class TestGetTimeToReadyForReview(unittest.TestCase):
     """Test suite for the get_time_to_ready_for_review function."""
 
@@ -33,11 +34,11 @@ class TestGetTimeToReadyForReview(unittest.TestCase):
         pull_request = MagicMock()
         pull_request.draft = False
         event = MagicMock()
-        event.event = 'ready_for_review'
+        event.event = "ready_for_review"
         event.created_at = datetime.fromisoformat("2021-01-01T00:00:00Z")
         issue = MagicMock()
-        issue.issue.events.return_value=[event]
-        
+        issue.issue.events.return_value = [event]
+
         result = get_time_to_ready_for_review(issue, pull_request)
         expected_result = event.created_at
         self.assertEqual(result, expected_result)
@@ -47,10 +48,10 @@ class TestGetTimeToReadyForReview(unittest.TestCase):
         pull_request = MagicMock()
         pull_request.draft = False
         event = MagicMock()
-        event.event = 'foobar'
+        event.event = "foobar"
         event.created_at = "2021-01-01T00:00:00Z"
         issue = MagicMock()
-        issue.events.return_value=[event]
+        issue.events.return_value = [event]
 
         result = get_time_to_ready_for_review(issue, pull_request)
         expected_result = None

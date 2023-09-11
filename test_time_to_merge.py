@@ -14,6 +14,7 @@ from unittest.mock import MagicMock
 
 from time_to_merge import measure_time_to_merge
 
+
 class TestMeasureTimeToMerge(unittest.TestCase):
     """Test suite for the measure_time_to_merge function."""
 

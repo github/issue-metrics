@@ -12,19 +12,19 @@ Functions:
 
 """
 from datetime import datetime, timedelta
-from typing import List, Union
+from typing import Union
 
 import github3
 
+
 def measure_time_to_merge(
-    pull_request: github3.pulls.PullRequest,
-    ready_for_review_at: Union[datetime, None]
+    pull_request: github3.pulls.PullRequest, ready_for_review_at: Union[datetime, None]
 ) -> Union[timedelta, None]:
     """Measure the time it takes to merge a pull request.
 
     Args:
         pull_request (github3.pulls.PullRequest): A GitHub pull request.
-        ready_for_review_at (Union[timedelta, None]): When the PR was marked as ready for review 
+        ready_for_review_at (Union[timedelta, None]): When the PR was marked as ready for review
 
     Returns:
         Union[datetime.timedelta, None]: The time it takes to close the issue.
