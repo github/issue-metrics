@@ -8,6 +8,7 @@ Functions:
     measure_time_to_first_response(
         issue: Union[github3.issues.Issue, None],
         discussion: Union[dict, None]
+        pull_request: Union[github3.pulls.PullRequest, None],
     ) -> Union[timedelta, None]:
         Measure the time to first response for a single issue or a discussion.
     get_average_time_to_first_response(
@@ -27,13 +28,16 @@ from classes import IssueWithMetrics
 def measure_time_to_first_response(
     issue: Union[github3.issues.Issue, None],  # type: ignore
     discussion: Union[dict, None],
+    pull_request: Union[github3.pulls.PullRequest, None] = None,
+    ready_for_review_at: Union[datetime, None] = None,
     ignore_users: List[str] = None,
 ) -> Union[timedelta, None]:
-    """Measure the time to first response for a single issue or a discussion.
+    """Measure the time to first response for a single issue, pull request, or a discussion.
 
     Args:
         issue (Union[github3.issues.Issue, None]): A GitHub issue.
         discussion (Union[dict, None]): A GitHub discussion.
+        pull_request (Union[github3.pulls.PullRequest, None]): A GitHub pull request.
         ignore_users (List[str]): A list of GitHub usernames to ignore.
 
     Returns:
@@ -57,18 +61,21 @@ def measure_time_to_first_response(
                 continue
             if comment.user.login == issue.issue.user.login:
                 continue
+            if ready_for_review_at and comment.created_at < ready_for_review_at:
+                continue
             first_comment_time = comment.created_at
             break
 
         # Check if the issue is actually a pull request
         # so we may also get the first review comment time
-        if issue.issue.pull_request_urls:
-            pull_request = issue.issue.pull_request()
+        if pull_request:
             review_comments = pull_request.reviews(number=50)  # type: ignore
             for review_comment in review_comments:
                 if review_comment.user.login in ignore_users:
                     continue
                 if review_comment.user.login == issue.issue.user.login:
+                    continue
+                if ready_for_review_at and review_comment.submitted_at < ready_for_review_at:
                     continue
                 first_review_comment_time = review_comment.submitted_at
                 break
@@ -84,7 +91,10 @@ def measure_time_to_first_response(
             return None
 
         # Get the created_at time for the issue so we can calculate the time to first response
-        issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+        if ready_for_review_at:
+            issue_time = ready_for_review_at
+        else:
+            issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
 
     if discussion and len(discussion["comments"]["nodes"]) > 0:
         earliest_response = datetime.fromisoformat(
