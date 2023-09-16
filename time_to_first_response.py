@@ -57,13 +57,7 @@ def measure_time_to_first_response(
             number=20, sort="created", direction="asc"
         )  # type: ignore
         for comment in comments:
-            if comment.user.login in ignore_users:
-                continue
-            if comment.user.type == "Bot":
-                continue
-            if comment.user.login == issue.issue.user.login:
-                continue
-            if ready_for_review_at and comment.created_at < ready_for_review_at:
+            if ignore_comment(issue.issue.user, comment.user, ignore_users, comment.created_at, ready_for_review_at):
                 continue
             first_comment_time = comment.created_at
             break
@@ -73,13 +67,8 @@ def measure_time_to_first_response(
         if pull_request:
             review_comments = pull_request.reviews(number=50)  # type: ignore
             for review_comment in review_comments:
-                if review_comment.user.login in ignore_users:
-                    continue
-                if review_comment.user.type == "Bot":
-                    continue
-                if review_comment.user.login == issue.issue.user.login:
-                    continue
-                if ready_for_review_at and review_comment.submitted_at < ready_for_review_at:
+                if ignore_comment(issue.issue.user, review_comment.user, ignore_users,
+                                  review_comment.submitted_at, ready_for_review_at):
                     continue
                 first_review_comment_time = review_comment.submitted_at
                 break
@@ -111,6 +100,25 @@ def measure_time_to_first_response(
         return earliest_response - issue_time
 
     return None
+
+
+def ignore_comment(
+    issue_user: github3.users.User,
+    comment_user: github3.users.User,
+    ignore_users: List[str],
+    comment_created_at: datetime,
+    ready_for_review_at: Union[datetime, None],
+) -> bool:
+    """Check if a comment should be ignored."""
+    return (
+        # ignore comments by IGNORE_USERS
+        comment_user.login in ignore_users
+        # ignore comments by bots
+        or comment_user.type == "Bot"
+        # ignore comments by the issue creator
+        or comment_user.login == issue_user.login
+        # ignore comments created before the issue was ready for review
+        or (ready_for_review_at and comment_created_at < ready_for_review_at))
 
 
 def get_average_time_to_first_response(
