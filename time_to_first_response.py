@@ -59,6 +59,8 @@ def measure_time_to_first_response(
         for comment in comments:
             if comment.user.login in ignore_users:
                 continue
+            if comment.user.type == "Bot":
+                continue
             if comment.user.login == issue.issue.user.login:
                 continue
             if ready_for_review_at and comment.created_at < ready_for_review_at:
@@ -72,6 +74,8 @@ def measure_time_to_first_response(
             review_comments = pull_request.reviews(number=50)  # type: ignore
             for review_comment in review_comments:
                 if review_comment.user.login in ignore_users:
+                    continue
+                if review_comment.user.type == "Bot":
                     continue
                 if review_comment.user.login == issue.issue.user.login:
                     continue
