@@ -280,6 +280,36 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         # Check the results
         self.assertEqual(result, expected_result)
 
+    def test_measure_time_to_first_response_ignore_bot(self):
+        """Test that measure_time_to_first_response ignore bot's comment."""
+        # Set up the mock GitHub issues
+        mock_issue1 = MagicMock()
+        mock_issue1.comments = 2
+        mock_issue1.created_at = "2023-01-01T00:00:00Z"
+
+        # Set up the mock GitHub issue comments
+        mock_comment1 = MagicMock()
+        mock_comment1.user.type = "Bot"
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
+        mock_issue1.issue.comments.return_value = [mock_comment1]
+
+        # Set up the mock GitHub pull request comments
+        mock_pr_comment1 = MagicMock()
+        mock_pr_comment1.user.type = "Bot"
+        mock_pr_comment1.submitted_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
+        mock_pr_comment2 = MagicMock()
+        mock_pr_comment2.user.type = "User"
+        mock_pr_comment2.submitted_at = datetime.fromisoformat("2023-01-04T00:00:00Z")  # first response
+        mock_pull_request = MagicMock()
+        mock_pull_request.reviews.return_value = [mock_pr_comment1, mock_pr_comment2]
+
+        # Call the function
+        result = measure_time_to_first_response(mock_issue1, None, mock_pull_request, None)
+        expected_result = timedelta(days=3)
+
+        # Check the results
+        self.assertEqual(result, expected_result)
+
 
 class TestGetAverageTimeToFirstResponse(unittest.TestCase):
     """Test the get_average_time_to_first_response function."""
