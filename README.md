@@ -348,7 +348,7 @@ Here is the output with no hidden columns:
 
 | Title | URL | Author | Time to first response | Time to close | Time to answer |
 | --- | --- | --- | --- | --- | --- |
-| Discussion Title 1 | https://github.com/user/repo/discussions/1 | alice | 0:00:41 | 6 days, 7:08:52 | 1 day |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 | None | 0:00:41 | 6 days, 7:08:52 | 1 day |
 | Pull Request Title 2 | https://github.com/user/repo/pulls/2 | bob | 0:05:26 | None | None |
 | Issue Title 3 | https://github.com/user/repo/issues/3 | carol | 2:26:07 | None | None |
 
@@ -366,7 +366,7 @@ Here is the output with all hidable columns hidden:
 
 | Title | URL | Author |
 | --- | --- | --- |
-| Discussion Title 1 | https://github.com/user/repo/discussions/1 | alice |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 | None |
 | Pull Request Title 2 | https://github.com/user/repo/pulls/2 | bob |
 | Issue Title 3 | https://github.com/user/repo/issues/3 | carol |
 
