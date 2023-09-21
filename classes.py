@@ -12,6 +12,7 @@ class IssueWithMetrics:
     Attributes:
         title (str): The title of the issue.
         html_url (str): The URL of the issue on GitHub.
+        author (str): The author of the issue.
         time_to_first_response (timedelta, optional): The time it took to
             get the first response to the issue.
         time_to_close (timedelta, optional): The time it took to close the issue.
@@ -25,7 +26,7 @@ class IssueWithMetrics:
         self,
         title,
         html_url,
-        author=None,
+        author,
         time_to_first_response=None,
         time_to_close=None,
         time_to_answer=None,
