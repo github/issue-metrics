@@ -172,7 +172,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue["title"],
                 issue["url"],
-                None,
+                issue["user"]["login"],
                 None,
                 None,
                 None,
@@ -191,7 +191,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
                 issue.html_url,  # type: ignore
-                None,
+                issue.user["login"],  # type: ignore
                 None,
                 None,
                 None,
