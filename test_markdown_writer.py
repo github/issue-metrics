@@ -212,6 +212,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
+                author="alice",
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
                 time_to_answer=timedelta(hours=2),
@@ -222,6 +223,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 2",
                 html_url="https://github.com/user/repo/issues/2",
+                author="bob",
                 time_to_first_response=timedelta(minutes=20),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(hours=4),
@@ -262,10 +264,10 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL |\n"
-            "| --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 |\n"
-            "| Issue 2 | https://github.com/user/repo/issues/2 |\n\n"
+            "| Title | URL | Author |\n"
+            "| --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | alice |\n"
+            "| Issue 2 | https://github.com/user/repo/issues/2 | bob |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )

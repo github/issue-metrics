@@ -325,12 +325,12 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
         # Create mock data
         issues_with_metrics = [
             IssueWithMetrics(
-                "Issue 1", "https://github.com/user/repo/issues/1", timedelta(days=1)
+                "Issue 1", "https://github.com/user/repo/issues/1", "alice", timedelta(days=1)
             ),
             IssueWithMetrics(
-                "Issue 2", "https://github.com/user/repo/issues/2", timedelta(days=2)
+                "Issue 2", "https://github.com/user/repo/issues/2", "bob", timedelta(days=2)
             ),
-            IssueWithMetrics("Issue 3", "https://github.com/user/repo/issues/3", None),
+            IssueWithMetrics("Issue 3", "https://github.com/user/repo/issues/3", "carol", None),
         ]
 
         # Call the function and check the result
@@ -343,8 +343,8 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
 
         # Create mock data with all None
         issues_with_metrics = [
-            IssueWithMetrics("Issue 1", "https://github.com/user/repo/issues/1", None),
-            IssueWithMetrics("Issue 2", "https://github.com/user/repo/issues/2", None),
+            IssueWithMetrics("Issue 1", "https://github.com/user/repo/issues/1", "alice", None),
+            IssueWithMetrics("Issue 2", "https://github.com/user/repo/issues/2", "bob", None),
         ]
 
         # Call the function and check the result
