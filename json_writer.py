@@ -48,6 +48,7 @@ def write_to_json(
             {
                 "title": "Issue 1",
                 "html_url": "https://github.com/owner/repo/issues/1",
+                "author": "author",
                 "time_to_first_response": "3 days, 0:00:00",
                 "time_to_close": "6 days, 0:00:00",
                 "time_to_answer": "None",
@@ -58,6 +59,7 @@ def write_to_json(
             {
                 "title": "Issue 2",
                 "html_url": "https://github.com/owner/repo/issues/2",
+                "author": "author",
                 "time_to_first_response": "2 days, 0:00:00",
                 "time_to_close": "4 days, 0:00:00",
                 "time_to_answer": "1 day, 0:00:00",
@@ -100,6 +102,7 @@ def write_to_json(
             {
                 "title": issue.title,
                 "html_url": issue.html_url,
+                "author": issue.author,
                 "time_to_first_response": str(issue.time_to_first_response),
                 "time_to_close": str(issue.time_to_close),
                 "time_to_answer": str(issue.time_to_answer),

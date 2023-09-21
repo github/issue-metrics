@@ -176,6 +176,7 @@ def get_per_issue_metrics(
                 None,
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 None, issue, ignore_users
@@ -190,6 +191,7 @@ def get_per_issue_metrics(
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
                 issue.html_url,  # type: ignore
+                None,
                 None,
                 None,
                 None,
