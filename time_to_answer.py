@@ -17,9 +17,10 @@ Functions:
 from datetime import datetime, timedelta
 from typing import List, Union
 
+import numpy
+
 from classes import IssueWithMetrics
 
-import numpy
 
 def get_average_time_to_answer(
     issues_with_metrics: List[IssueWithMetrics],
