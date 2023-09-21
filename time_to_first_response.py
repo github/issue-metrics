@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
+import numpy
 
 from classes import IssueWithMetrics
 
@@ -133,20 +134,18 @@ def get_average_time_to_first_response(
         datetime.timedelta: The average time to first response for the issues in seconds.
 
     """
-    total_time_to_first_response = 0
+    response_times = []
     none_count = 0
     for issue in issues:
         if issue.time_to_first_response:
-            total_time_to_first_response += issue.time_to_first_response.total_seconds()
+            response_times.append(issue.time_to_first_response.total_seconds())
         else:
             none_count += 1
 
     if len(issues) - none_count <= 0:
         return None
 
-    average_seconds_to_first_response = total_time_to_first_response / (
-        len(issues) - none_count
-    )  # type: ignore
+    average_seconds_to_first_response = numpy.average(response_times)
 
     # Print the average time to first response converting seconds to a readable time format
     print(

@@ -19,6 +19,7 @@ from typing import List, Union
 
 from classes import IssueWithMetrics
 
+import numpy
 
 def get_average_time_to_answer(
     issues_with_metrics: List[IssueWithMetrics],
@@ -32,17 +33,16 @@ def get_average_time_to_answer(
     ]
 
     # Calculate the total time to answer for all issues
-    total_time_to_answer = None
+    answer_times = []
     if issues_with_time_to_answer:
-        total_time_to_answer = 0
         for issue in issues_with_time_to_answer:
             if issue.time_to_answer:
-                total_time_to_answer += issue.time_to_answer.total_seconds()
+                answer_times.append(issue.time_to_answer.total_seconds())
 
     # Calculate the average time to answer
     num_issues_with_time_to_answer = len(issues_with_time_to_answer)
-    if num_issues_with_time_to_answer > 0 and total_time_to_answer is not None:
-        average_time_to_answer = total_time_to_answer / num_issues_with_time_to_answer
+    if num_issues_with_time_to_answer > 0:
+        average_time_to_answer = numpy.average(answer_times)
     else:
         return None
 

@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
+import numpy
 
 from classes import IssueWithMetrics
 
@@ -73,17 +74,17 @@ def get_average_time_to_close(
     ]
 
     # Calculate the total time to close for all issues
-    total_time_to_close = None
+    close_times = []
     if issues_with_time_to_close:
         total_time_to_close = 0
         for issue in issues_with_time_to_close:
             if issue.time_to_close:
-                total_time_to_close += issue.time_to_close.total_seconds()
+                close_times.append(issue.time_to_close.total_seconds())
 
     # Calculate the average time to close
     num_issues_with_time_to_close = len(issues_with_time_to_close)
     if num_issues_with_time_to_close > 0 and total_time_to_close is not None:
-        average_time_to_close = total_time_to_close / num_issues_with_time_to_close
+        average_time_to_close = numpy.average(close_times)
     else:
         return None
 
