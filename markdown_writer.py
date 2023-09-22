@@ -42,8 +42,12 @@ def get_non_hidden_columns(labels) -> List[str]:
         List[str]: A list of the columns that are not hidden.
 
     """
-    columns = ["Title", "URL", "Author"]
+    columns = ["Title", "URL"]
     # Find the number of columns and which are to be hidden
+    hide_author = os.getenv("HIDE_AUTHOR")
+    if not hide_author:
+        columns.append("Author")
+
     hide_time_to_first_response = os.getenv("HIDE_TIME_TO_FIRST_RESPONSE")
     if not hide_time_to_first_response:
         columns.append("Time to first response")
@@ -141,7 +145,9 @@ def write_to_markdown(
             # Replace any whitespace
             issue.title = issue.title.strip()
 
-            file.write(f"| " f"{issue.title} | " f"{issue.html_url} |" f" {issue.author} |")
+            file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
+            if "Author" in columns:
+                file.write(f" {issue.author} |")
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
             if "Time to close" in columns:
