@@ -1,3 +1,22 @@
+# Table of Contents
+- [Issue Metrics Action](#issue-metrics-action)
+  - [Example use cases](#example-use-cases)
+  - [Support](#support)
+  - [Use as a GitHub Action](#use-as-a-github-action)
+    - [Configuration](#configuration)
+    - [Example workflows](#example-workflows)
+      - [Calculated Time Example](#calculated-time-example)
+      - [Fixed Time Example](#fixed-time-example)
+      - [Multiple Repositories Example](#multiple-repositories-example)
+    - [SEARCH_QUERY](#search_query)
+    - [Measuring time spent in labels](#measuring-time-spent-in-labels)
+    - [Example issue_metrics.md output](#example-issue_metricsmd-output)
+    - [Example using the JSON output instead of the markdown output](#example-using-the-json-output-instead-of-the-markdown-output)
+    - [Assigning teams instead of individuals](#assigning-teams-instead-of-individuals)
+  - [Local usage without Docker](#local-usage-without-docker)
+  - [License](#license)
+
+
 # Issue Metrics Action
 
 [![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
@@ -13,7 +32,8 @@ search for can be filtered by using a search query.
 |Time to Answer (Discussions Only) | The time from creation to an answer.|
 |Time in Label | The duration from label application to removal, requires LABELS_TO_MEASURE env variable.|
 
-*Excludes draft mode time for pull requests.
+*For pull requests, these metrics exclude the time the PR was in draft mode.
+*For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
 
 *Excludes comments by the issue/pull request author and bots.
 
@@ -58,6 +78,7 @@ Below are the allowed configuration options:
 | `GH_TOKEN`            | True     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
 | `SEARCH_QUERY`        | True     |         | The query by which you can filter issues/prs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
 | `LABELS_TO_MEASURE`   | False    |         | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
+| `HIDE_AUTHOR` | False |         | If set to any value, the author will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_FIRST_RESPONSE` | False |         | If set to any value, the time to first response will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_CLOSE` | False |         | If set to any value, the time to close will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_ANSWER` | False |         | If set to any value, the time to answer a discussion will not be displayed in the generated markdown file. |

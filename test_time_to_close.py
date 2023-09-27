@@ -27,17 +27,19 @@ class TestGetAverageTimeToClose(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 1",
                 "https://github.com/user/repo/issues/1",
+                "alice",
                 None,
                 timedelta(days=2),
             ),
             IssueWithMetrics(
                 "Issue 2",
                 "https://github.com/user/repo/issues/2",
+                "bob",
                 None,
                 timedelta(days=4),
             ),
             IssueWithMetrics(
-                "Issue 3", "https://github.com/user/repo/issues/3", None, None
+                "Issue 3", "https://github.com/user/repo/issues/3", "carol", None, None
             ),
         ]
 
@@ -51,13 +53,13 @@ class TestGetAverageTimeToClose(unittest.TestCase):
         # Create mock data
         issues_with_metrics = [
             IssueWithMetrics(
-                "Issue 1", "https://github.com/user/repo/issues/1", None, None
+                "Issue 1", "https://github.com/user/repo/issues/1", "alice", None, None
             ),
             IssueWithMetrics(
-                "Issue 2", "https://github.com/user/repo/issues/2", None, None
+                "Issue 2", "https://github.com/user/repo/issues/2", "bob", None, None
             ),
             IssueWithMetrics(
-                "Issue 3", "https://github.com/user/repo/issues/3", None, None
+                "Issue 3", "https://github.com/user/repo/issues/3", "carol", None, None
             ),
         ]
 

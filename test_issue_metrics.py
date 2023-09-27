@@ -167,11 +167,13 @@ class TestMain(unittest.TestCase):
             (
                 "Issue 1",
                 "https://github.com/user/repo/issues/1",
+                "alice",
                 timedelta(days=1, hours=2, minutes=30),
             ),
             (
                 "Issue 2",
                 "https://github.com/user/repo/issues/2",
+                "bob",
                 timedelta(days=3, hours=4, minutes=30),
             ),
         ]
@@ -231,6 +233,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue1 = MagicMock(
             title="Issue 1",
             html_url="https://github.com/user/repo/issues/1",
+            author="alice",
             state="open",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -244,6 +247,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue2 = MagicMock(
             title="Issue 2",
             html_url="https://github.com/user/repo/issues/2",
+            author="bob",
             state="closed",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -276,6 +280,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 1",
                 "https://github.com/user/repo/issues/1",
+                "alice",
                 timedelta(days=1),
                 None,
                 None,
@@ -284,6 +289,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 2",
                 "https://github.com/user/repo/issues/2",
+                "bob",
                 timedelta(days=2),
                 timedelta(days=3),
                 None,
@@ -320,6 +326,9 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.issue1 = {
             "title": "Issue 1",
             "url": "github.com/user/repo/issues/1",
+            "user": {
+                "login": "alice",
+            },
             "createdAt": "2023-01-01T00:00:00Z",
             "comments": {
                 "nodes": [
@@ -335,6 +344,9 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.issue2 = {
             "title": "Issue 2",
             "url": "github.com/user/repo/issues/2",
+            "user": {
+                "login": "bob",
+            },
             "createdAt": "2023-01-01T00:00:00Z",
             "comments": {"nodes": [{"createdAt": "2023-01-03T00:00:00Z"}]},
             "answerChosenAt": "2023-01-05T00:00:00Z",
