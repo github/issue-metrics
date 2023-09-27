@@ -32,6 +32,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 1",
                 "https://github.com/user/repo/issues/1",
+                "alice",
                 timedelta(days=1),
                 timedelta(days=2),
                 timedelta(days=3),
@@ -40,6 +41,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 2\r",
                 "https://github.com/user/repo/issues/2",
+                "bob",
                 timedelta(days=3),
                 timedelta(days=4),
                 timedelta(days=5),
@@ -80,12 +82,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Time to first response | Time to close |"
+            "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 0:00:00 | "
+            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | alice | 1 day, 0:00:00 | "
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
-            "| Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
+            "| Issue 2 | https://github.com/user/repo/issues/2 | bob | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `is:issue is:open label:bug`\n"
@@ -107,6 +109,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             IssueWithMetrics(
                 "Issue 1",
                 "https://github.com/user/repo/issues/1",
+                "alice",
                 timedelta(days=1),
                 timedelta(days=2),
                 timedelta(days=3),
@@ -115,6 +118,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             IssueWithMetrics(
                 "feat| Issue 2",  # title contains a vertical bar
                 "https://github.com/user/repo/issues/2",
+                "bob",
                 timedelta(days=3),
                 timedelta(days=4),
                 timedelta(days=5),
@@ -154,12 +158,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Time to first response | Time to close |"
+            "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 | 1 day, 0:00:00 | "
+            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | alice | 1 day, 0:00:00 | "
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
-            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | 3 days, 0:00:00 | "
+            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | bob | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
@@ -208,6 +212,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
+                author="alice",
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
                 time_to_answer=timedelta(hours=2),
@@ -218,6 +223,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 2",
                 html_url="https://github.com/user/repo/issues/2",
+                author="bob",
                 time_to_first_response=timedelta(minutes=20),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(hours=4),
@@ -258,10 +264,10 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL |\n"
-            "| --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 |\n"
-            "| Issue 2 | https://github.com/user/repo/issues/2 |\n\n"
+            "| Title | URL | Author |\n"
+            "| --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | alice |\n"
+            "| Issue 2 | https://github.com/user/repo/issues/2 | bob |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )

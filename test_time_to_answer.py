@@ -35,8 +35,8 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
         """
         # Arrange
         issues_with_metrics = [
-            IssueWithMetrics("issue1", None),
-            IssueWithMetrics("issue2", None),
+            IssueWithMetrics("issue1", None, None),
+            IssueWithMetrics("issue2", None, None),
         ]
 
         # Act
@@ -53,9 +53,9 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
 
         # Arrange
         issues_with_metrics = [
-            IssueWithMetrics("issue1", "url1", None, None, timedelta(seconds=10)),
-            IssueWithMetrics("issue2", "url2", None, None, timedelta(seconds=20)),
-            IssueWithMetrics("issue3", "url3", None, None, timedelta(seconds=30)),
+            IssueWithMetrics("issue1", "url1", "alice", None, None, timedelta(seconds=10)),
+            IssueWithMetrics("issue2", "url2", "bob", None, None, timedelta(seconds=20)),
+            IssueWithMetrics("issue3", "url3", "carol", None, None, timedelta(seconds=30)),
         ]
 
         # Act

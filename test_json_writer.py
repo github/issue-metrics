@@ -16,6 +16,7 @@ class TestWriteToJson(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 1",
                 html_url="https://github.com/owner/repo/issues/1",
+                author="alice",
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=6),
                 time_to_answer=None,
@@ -26,6 +27,7 @@ class TestWriteToJson(unittest.TestCase):
             IssueWithMetrics(
                 title="Issue 2",
                 html_url="https://github.com/owner/repo/issues/2",
+                author="bob",
                 time_to_first_response=timedelta(days=2),
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=1),
@@ -50,6 +52,7 @@ class TestWriteToJson(unittest.TestCase):
                 {
                     "title": "Issue 1",
                     "html_url": "https://github.com/owner/repo/issues/1",
+                    "author": "alice",
                     "time_to_first_response": "3 days, 0:00:00",
                     "time_to_close": "6 days, 0:00:00",
                     "time_to_answer": "None",
@@ -58,6 +61,7 @@ class TestWriteToJson(unittest.TestCase):
                 {
                     "title": "Issue 2",
                     "html_url": "https://github.com/owner/repo/issues/2",
+                    "author": "bob",
                     "time_to_first_response": "2 days, 0:00:00",
                     "time_to_close": "4 days, 0:00:00",
                     "time_to_answer": "1 day, 0:00:00",

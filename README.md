@@ -13,7 +13,7 @@ The metrics that are measured are:
 | Time to answer | (Discussions only) The time between when a discussion is created and when it is answered. |
 | Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the LABELS_TO_MEASURE env variable to be set. |
 
-*For pull requests, these metrics exclude the time the PR was in draft mode.  
+*For pull requests, these metrics exclude the time the PR was in draft mode.
 *For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
 
 This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repository.
@@ -51,6 +51,7 @@ Below are the allowed configuration options:
 | `GH_TOKEN`            | True     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
 | `SEARCH_QUERY`        | True     |         | The query by which you can filter issues/prs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
 | `LABELS_TO_MEASURE`   | False    |         | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
+| `HIDE_AUTHOR` | False |         | If set to any value, the author will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_FIRST_RESPONSE` | False |         | If set to any value, the time to first response will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_CLOSE` | False |         | If set to any value, the time to close will not be displayed in the generated markdown file. |
 | `HIDE_TIME_TO_ANSWER` | False |         | If set to any value, the time to answer a discussion will not be displayed in the generated markdown file. |
@@ -324,10 +325,10 @@ then the report will look like this:
 | Number of items closed | 1 |
 | Total number of items created | 3 |
 
-| Title | URL | Time to first response | Time to close | Time to answer | Time spent in waiting-for-manager-approval | Time spent in waiting-for-security-review |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pull Request Title 1 | https://github.com/user/repo/pulls/1 | 0:05:26 | None | None | None | None |
-| Issue Title 2 | https://github.com/user/repo/issues/2 | 2:26:07 | None | None | 0:00:41 | 2 days, 4:25:03 |
+| Title | URL | Author | Time to first response | Time to close | Time to answer | Time spent in waiting-for-manager-approval | Time spent in waiting-for-security-review |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pull Request Title 1 | https://github.com/user/repo/pulls/1 | alice | 0:05:26 | None | None | None | None |
+| Issue Title 2 | https://github.com/user/repo/issues/2 | bob | 2:26:07 | None | None | 0:00:41 | 2 days, 4:25:03 |
 
 ```
 
@@ -346,11 +347,11 @@ Here is the output with no hidden columns:
 | Number of items closed | 1 |
 | Total number of items created | 3 |
 
-| Title | URL | Time to first response | Time to close | Time to answer |
-| --- | --- | --- | --- | --- |
-| Discussion Title 1 | https://github.com/user/repo/discussions/1 | 0:00:41 | 6 days, 7:08:52 | 1 day |
-| Pull Request Title 2 | https://github.com/user/repo/pulls/2 | 0:05:26 | None | None |
-| Issue Title 3 | https://github.com/user/repo/issues/3 | 2:26:07 | None | None |
+| Title | URL | Author | Time to first response | Time to close | Time to answer |
+| --- | --- | --- | --- | --- | --- |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 | None | 0:00:41 | 6 days, 7:08:52 | 1 day |
+| Pull Request Title 2 | https://github.com/user/repo/pulls/2 | bob | 0:05:26 | None | None |
+| Issue Title 3 | https://github.com/user/repo/issues/3 | carol | 2:26:07 | None | None |
 
 ```
 
@@ -364,11 +365,11 @@ Here is the output with all hidable columns hidden:
 | Number of items closed | 1 |
 | Total number of items created | 3 |
 
-| Title | URL |
-| --- | --- |
-| Discussion Title 1 | https://github.com/user/repo/discussions/1 |
-| Pull Request Title 2 | https://github.com/user/repo/pulls/2 |
-| Issue Title 3 | https://github.com/user/repo/issues/3 |
+| Title | URL | Author |
+| --- | --- | --- |
+| Discussion Title 1 | https://github.com/user/repo/discussions/1 | None |
+| Pull Request Title 2 | https://github.com/user/repo/pulls/2 | bob |
+| Issue Title 3 | https://github.com/user/repo/issues/3 | carol |
 
 ```
 
