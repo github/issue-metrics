@@ -1,3 +1,22 @@
+# Table of Contents
+- [Issue Metrics Action](#issue-metrics-action)
+  - [Example use cases](#example-use-cases)
+  - [Support](#support)
+  - [Use as a GitHub Action](#use-as-a-github-action)
+    - [Configuration](#configuration)
+    - [Example workflows](#example-workflows)
+      - [Calculated Time Example](#calculated-time-example)
+      - [Fixed Time Example](#fixed-time-example)
+      - [Multiple Repositories Example](#multiple-repositories-example)
+    - [SEARCH_QUERY](#search_query)
+    - [Measuring time spent in labels](#measuring-time-spent-in-labels)
+    - [Example issue_metrics.md output](#example-issue_metricsmd-output)
+    - [Example using the JSON output instead of the markdown output](#example-using-the-json-output-instead-of-the-markdown-output)
+    - [Assigning teams instead of individuals](#assigning-teams-instead-of-individuals)
+  - [Local usage without Docker](#local-usage-without-docker)
+  - [License](#license)
+
+
 # Issue Metrics Action
 
 [![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
