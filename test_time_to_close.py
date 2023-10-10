@@ -44,7 +44,7 @@ class TestGetAverageTimeToClose(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_close(issues_with_metrics)
+        result = get_average_time_to_close(issues_with_metrics)['avg']
         expected_result = timedelta(days=3)
         self.assertEqual(result, expected_result)
 

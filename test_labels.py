@@ -83,9 +83,10 @@ class TestGetAverageTimeInLabels(unittest.TestCase):
         """Test get_average_time_in_labels"""
         labels = ["bug", "feature"]
         metrics = get_average_time_in_labels(self.issues_with_metrics, labels)
-        self.assertEqual(len(metrics), 2)
-        self.assertEqual(metrics["bug"], timedelta(days=2))
-        self.assertIsNone(metrics.get("feature"))
+        print(metrics)
+        self.assertEqual(len(metrics['avg']), 2)
+        self.assertEqual(metrics['avg']["bug"], timedelta(days=2))
+        self.assertIsNone(metrics['avg'].get("feature"))
 
 
 if __name__ == "__main__":

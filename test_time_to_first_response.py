@@ -334,7 +334,7 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_first_response(issues_with_metrics)
+        result = get_average_time_to_first_response(issues_with_metrics)['avg']
         expected_result = timedelta(days=1.5)
         self.assertEqual(result, expected_result)
 

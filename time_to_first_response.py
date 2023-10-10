@@ -146,10 +146,17 @@ def get_average_time_to_first_response(
         return None
 
     average_seconds_to_first_response = numpy.average(response_times)
+    med_seconds_to_first_response = numpy.median(response_times)
+    ninety_percentile_seconds_to_first_response = numpy.percentile(response_times, 90, axis=0)
+
+    stats = {
+                 'avg': timedelta(seconds=average_seconds_to_first_response),
+                 'med': timedelta(seconds=med_seconds_to_first_response),
+                 '90p': timedelta(seconds=ninety_percentile_seconds_to_first_response)}
 
     # Print the average time to first response converting seconds to a readable time format
     print(
         f"Average time to first response: {timedelta(seconds=average_seconds_to_first_response)}"
     )
 
-    return timedelta(seconds=average_seconds_to_first_response)
+    return stats

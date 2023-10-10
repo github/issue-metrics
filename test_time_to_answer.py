@@ -59,7 +59,7 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
         ]
 
         # Act
-        result = get_average_time_to_answer(issues_with_metrics)
+        result = get_average_time_to_answer(issues_with_metrics)['avg']
 
         # Assert
         self.assertEqual(result, timedelta(seconds=20))

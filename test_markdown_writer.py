@@ -17,7 +17,7 @@ from markdown_writer import write_to_markdown
 
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
-
+    maxDiff = None
     def test_write_to_markdown(self):
         """Test that write_to_markdown writes the correct markdown file.
 
@@ -48,20 +48,32 @@ class TestWriteToMarkdown(unittest.TestCase):
                 {"bug": timedelta(days=2)},
             ),
         ]
-        average_time_to_first_response = timedelta(days=2)
-        average_time_to_close = timedelta(days=3)
-        average_time_to_answer = timedelta(days=4)
-        average_time_in_labels = {"bug": "1 day, 12:00:00"}
+        time_to_first_response = {
+                'avg': timedelta(days=2),
+                'med': timedelta(days=2),
+                '90p': timedelta(days=2)}
+        time_to_close = {
+                'avg': timedelta(days=3),
+                'med': timedelta(days=3),
+                '90p': timedelta(days=3)}
+        time_to_answer = {
+                'avg': timedelta(days=4),
+                'med': timedelta(days=4),
+                '90p': timedelta(days=4)}
+        time_in_labels = {
+                'avg': {"bug": "1 day, 12:00:00"},
+                'med': {"bug": "1 day, 12:00:00"},
+                '90p': {"bug": "1 day, 12:00:00"}}
         num_issues_opened = 2
         num_issues_closed = 1
 
         # Call the function
         write_to_markdown(
             issues_with_metrics=issues_with_metrics,
-            average_time_to_first_response=average_time_to_first_response,
-            average_time_to_close=average_time_to_close,
-            average_time_to_answer=average_time_to_answer,
-            average_time_in_labels=average_time_in_labels,
+            average_time_to_first_response=time_to_first_response,
+            average_time_to_close=time_to_close,
+            average_time_to_answer=time_to_answer,
+            average_time_in_labels=time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             labels=["bug"],
@@ -73,12 +85,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             content = file.read()
         expected_content = (
             "# Issue Metrics\n\n"
-            "| Metric | Value |\n"
-            "| --- | ---: |\n"
-            "| Average time to first response | 2 days, 0:00:00 |\n"
-            "| Average time to close | 3 days, 0:00:00 |\n"
-            "| Average time to answer | 4 days, 0:00:00 |\n"
-            "| Average time spent in bug | 1 day, 12:00:00 |\n"
+            "| Metric | Average | Median | 90th percentile |\n"
+            "| --- | --- | --- | ---: |\n"
+            "| Time to first response | 2 days, 0:00:00 | 2 days, 0:00:00 | 2 days, 0:00:00 |\n"
+            "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
+            "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
+            "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
@@ -125,10 +137,22 @@ class TestWriteToMarkdown(unittest.TestCase):
                 {"bug": timedelta(days=2)},
             ),
         ]
-        average_time_to_first_response = timedelta(days=2)
-        average_time_to_close = timedelta(days=3)
-        average_time_to_answer = timedelta(days=4)
-        average_time_in_labels = {"bug": "1 day, 12:00:00"}
+        average_time_to_first_response = {
+             'avg' : timedelta(days=2),
+             'med' : timedelta(days=2),
+             '90p' : timedelta(days=2)}
+        average_time_to_close = {
+             'avg' : timedelta(days=3),
+             'med' : timedelta(days=3),
+             '90p' : timedelta(days=3)}
+        average_time_to_answer = {
+             'avg' : timedelta(days=4),
+             'med' : timedelta(days=4),
+             '90p' : timedelta(days=4)}
+        average_time_in_labels = {
+             'avg' : {"bug": "1 day, 12:00:00"},
+             'med' : {"bug": "1 day, 12:00:00"},
+             '90p' : {"bug": "1 day, 12:00:00"}}
         num_issues_opened = 2
         num_issues_closed = 1
 
@@ -149,12 +173,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             content = file.read()
         expected_content = (
             "# Issue Metrics\n\n"
-            "| Metric | Value |\n"
-            "| --- | ---: |\n"
-            "| Average time to first response | 2 days, 0:00:00 |\n"
-            "| Average time to close | 3 days, 0:00:00 |\n"
-            "| Average time to answer | 4 days, 0:00:00 |\n"
-            "| Average time spent in bug | 1 day, 12:00:00 |\n"
+            "| Metric | Average | Median | 90th percentile |\n"
+            "| --- | --- | --- | ---: |\n"
+            "| Time to first response | 2 days, 0:00:00 | 2 days, 0:00:00 | 2 days, 0:00:00 |\n"
+            "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
+            "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
+            "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
@@ -259,8 +283,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             content = file.read()
         expected_content = (
             "# Issue Metrics\n\n"
-            "| Metric | Value |\n"
-            "| --- | ---: |\n"
+            "| Metric | Average | Median | 90th percentile |\n"
+            "| --- | --- | --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"

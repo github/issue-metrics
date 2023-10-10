@@ -44,12 +44,19 @@ def get_average_time_to_answer(
     num_issues_with_time_to_answer = len(issues_with_time_to_answer)
     if num_issues_with_time_to_answer > 0:
         average_time_to_answer = numpy.average(answer_times)
+        med_time_to_answer = numpy.median(answer_times)
+        ninety_percentile_time_to_answer = numpy.percentile(answer_times, 90, axis=0)
     else:
         return None
 
+    stats = {
+                 'avg': timedelta(seconds=average_time_to_answer),
+                 'med': timedelta(seconds=med_time_to_answer),
+                 '90p': timedelta(seconds=ninety_percentile_time_to_answer)}
+
     # Print the average time to answer converting seconds to a readable time format
     print(f"Average time to answer: {timedelta(seconds=average_time_to_answer)}")
-    return timedelta(seconds=average_time_to_answer)
+    return stats
 
 
 def measure_time_to_answer(discussion: dict) -> Union[timedelta, None]:

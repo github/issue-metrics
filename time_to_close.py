@@ -85,9 +85,16 @@ def get_average_time_to_close(
     num_issues_with_time_to_close = len(issues_with_time_to_close)
     if num_issues_with_time_to_close > 0 and total_time_to_close is not None:
         average_time_to_close = numpy.average(close_times)
+        med_time_to_close = numpy.median(close_times)
+        ninety_percentile_time_to_close = numpy.percentile(close_times, 90, axis=0)
     else:
         return None
 
+    stats = {
+                 'avg': timedelta(seconds=average_time_to_close),
+                 'med': timedelta(seconds=med_time_to_close),
+                 '90p': timedelta(seconds=ninety_percentile_time_to_close)}
+
     # Print the average time to close converting seconds to a readable time format
-    print(f"Average time to close: {timedelta(seconds=average_time_to_close)}")
-    return timedelta(seconds=average_time_to_close)
+    print(f"Time to close: {timedelta(seconds=average_time_to_close)}")
+    return stats

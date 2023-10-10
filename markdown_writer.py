@@ -170,10 +170,10 @@ def write_to_markdown(
 
 def write_overall_metrics_table(
     issues_with_metrics,
-    average_time_to_first_response,
-    average_time_to_close,
-    average_time_to_answer,
-    average_time_in_labels,
+    stats_time_to_first_response,
+    stats_time_to_close,
+    stats_time_to_answer,
+    stats_time_in_labels,
     num_issues_opened,
     num_issues_closed,
     labels,
@@ -181,21 +181,34 @@ def write_overall_metrics_table(
     file,
 ):
     """Write the overall metrics table to the markdown file."""
-    file.write("| Metric | Value |\n")
-    file.write("| --- | ---: |\n")
+    file.write("| Metric | Average | Median | 90th percentile |\n")
+    file.write("| --- | --- | --- | ---: |\n")
     if "Time to first response" in columns:
+      if (stats_time_to_first_response != None):
         file.write(
-            f"| Average time to first response | {average_time_to_first_response} |\n"
+            f"| Time to first response | {stats_time_to_first_response['avg']} | {stats_time_to_first_response['med']} | {stats_time_to_first_response['90p']} |\n"
         )
+      else:
+       file.write(f"| Time to first response | None | None | None |\n")
     if "Time to close" in columns:
-        file.write(f"| Average time to close | {average_time_to_close} |\n")
+       if (stats_time_to_close != None):
+        file.write(
+            f"| Time to close | {stats_time_to_close['avg']} | {stats_time_to_close['med']} | {stats_time_to_close['90p']} |\n"
+        )
+       else:
+        file.write(f"| Time to close | None | None | None |\n")
     if "Time to answer" in columns:
-        file.write(f"| Average time to answer | {average_time_to_answer} |\n")
-    if labels and average_time_in_labels:
+       if (stats_time_to_answer != None):
+        file.write(
+            f"| Time to answer | {stats_time_to_answer['avg']} | {stats_time_to_answer['med']} | {stats_time_to_answer['90p']} |\n"
+        )
+       else:
+        file.write(f"| Time to answer | None | None | None |\n")
+    if labels and stats_time_in_labels:
         for label in labels:
-            if f"Time spent in {label}" in columns and label in average_time_in_labels:
+            if f"Time spent in {label}" in columns and label in stats_time_in_labels['avg']:
                 file.write(
-                    f"| Average time spent in {label} | {average_time_in_labels[label]} |\n"
+                    f"| Time spent in {label} | {stats_time_in_labels['avg'][label]} | {stats_time_in_labels['med'][label]} | {stats_time_in_labels['90p'][label]} |\n"
                 )
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
     file.write(f"| Number of items closed | {num_issues_closed} |\n")
