@@ -30,7 +30,7 @@ The metrics that are measured are:
 | Time to first response | The time between when an issue/pull request/discussion is created and when the first comment or review is made.* |
 | Time to close | The time between when an issue/pull request/discussion is created and when it is closed.* |
 | Time to answer | (Discussions only) The time between when a discussion is created and when it is answered. |
-| Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the LABELS_TO_MEASURE env variable to be set. |
+| Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the `LABELS_TO_MEASURE` env variable to be set. |
 
 *For pull requests, these metrics exclude the time the PR was in draft mode.
 *For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
