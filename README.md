@@ -21,7 +21,7 @@
 
 [![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
 
-This is a GitHub Action that searches for pull requests/issues/discussions in a repository and measures and reports on
+This is a GitHub Action that searches for issues/pull requests/discussions in a repository and measures and reports on
 several metrics. The issues/pull requests/discussions to search for can be filtered by using a search query.
 
 The metrics that are measured are:
