@@ -32,7 +32,9 @@ search for can be filtered by using a search query.
 |Time to Answer (Discussions Only) | The time from creation to an answer.|
 |Time in Label | The duration from label application to removal, requires LABELS_TO_MEASURE env variable.|
 
+
 *For pull requests, these metrics exclude the time the PR was in draft mode.
+
 *For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
 
 This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
