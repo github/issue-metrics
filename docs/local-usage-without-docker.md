@@ -1,4 +1,4 @@
-## Local usage without Docker
+# Local usage without Docker
 
 1. Make sure you have at least Python3.11 installed
 1. Copy `.env-example` to `.env`

@@ -1,5 +1,4 @@
-
-## Example using the JSON output instead of the markdown output
+# Example using the JSON output instead of the markdown output
 
 There is JSON output available as well. You could use it for any number of possibilities, but here is one example that demonstrates retreiving the JSON output and then printing it out.
 

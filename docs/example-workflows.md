@@ -1,7 +1,7 @@
+# Example workflows
 
-### Example workflows
+## Calculated Time Example
 
-#### Calculated Time Example
 This workflow searches for the issues created last month, and generates an issue with metrics.
 
 ```yaml
@@ -51,7 +51,8 @@ jobs:
 
 ```
 
-#### Fixed Time Example
+## Fixed Time Example
+
 This workflow searches for the issues created between 2023-05-01..2023-05-31, and generates an issue with metrics.
 
 ```yaml
@@ -86,8 +87,7 @@ jobs:
 
 ```
 
-
-#### Multiple Repositories Example
+## Multiple Repositories Example
 
 This workflow searches for the issues created last month, and generates an issue with metrics. It also searches for issues in a second repository and includes those metrics in the same issue.
 
@@ -133,4 +133,3 @@ jobs:
           content-filepath: ./issue_metrics.md
           assignees: <YOUR_GITHUB_HANDLE_HERE>
 ```
-

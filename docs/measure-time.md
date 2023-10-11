@@ -1,4 +1,4 @@
-## Measuring time spent in labels
+# Measuring time spent in labels
 
 **Note**: The discussions API currently doesn't support the `LabeledEvent` so this action cannot measure the time spent in a label for discussions.
 
@@ -65,6 +65,7 @@ then the report will look like this:
 ## Example issue_metrics.md output
 
 Here is the output with no hidden columns:
+
 ```markdown
 # Issue Metrics
 
@@ -86,6 +87,7 @@ Here is the output with no hidden columns:
 ```
 
 Here is the output with all hidable columns hidden:
+
 ```markdown
 # Issue Metrics
 
@@ -102,4 +104,3 @@ Here is the output with all hidable columns hidden:
 | Issue Title 3 | https://github.com/user/repo/issues/3 |
 
 ```
-

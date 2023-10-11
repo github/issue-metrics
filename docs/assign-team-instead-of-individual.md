@@ -1,4 +1,4 @@
-## Assigning teams instead of individuals
+# Assigning teams instead of individuals
 
 The assignee part of this workflow action comes from [a different GitHub action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
 
