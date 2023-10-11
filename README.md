@@ -21,8 +21,8 @@
 
 [![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
 
-This is a GitHub Action that searches for pull requests/issues/discussions in a repository and measures and reports on
-several metrics. The issues/pull requests/discussions to search for can be filtered by using a search query.
+This is a GitHub Action that searches for issues/pull requests/discussions in a repository, measures several metrics, and generates a report in form of a GitHub issue.
+The issues/pull requests/discussions to search for can be filtered by using a search query.
 
 The metrics that are measured are:
 | Metric | Description |
@@ -30,9 +30,10 @@ The metrics that are measured are:
 | Time to first response | The time between when an issue/pull request/discussion is created and when the first comment or review is made.* |
 | Time to close | The time between when an issue/pull request/discussion is created and when it is closed.* |
 | Time to answer | (Discussions only) The time between when a discussion is created and when it is answered. |
-| Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the LABELS_TO_MEASURE env variable to be set. |
+| Time in label | The time between when a label has a specific label applied to an issue/pull request/discussion and when it is removed. This requires the `LABELS_TO_MEASURE` env variable to be set. |
 
 *For pull requests, these metrics exclude the time the PR was in draft mode.
+
 *For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
 
 This action was developed by the GitHub OSPO for our own use and developed in a way that we could open source it that it might be useful to you as well! If you want to know more about how we use it, reach out in an issue in this repository.
@@ -80,6 +81,7 @@ Below are the allowed configuration options:
 ### Example workflows
 
 #### Calculated Time Example
+
 This workflow searches for the issues created last month, and generates an issue with metrics.
 
 ```yaml
@@ -130,6 +132,7 @@ jobs:
 ```
 
 #### Fixed Time Example
+
 This workflow searches for the issues created between 2023-05-01..2023-05-31, and generates an issue with metrics.
 
 ```yaml
@@ -212,6 +215,7 @@ jobs:
 ```
 
 ## SEARCH_QUERY
+
 Issues or Pull Requests? Open or closed?
 This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API. Here are some search query examples:
 
@@ -268,7 +272,7 @@ jobs:
     - name: Create issue for opened issues and prs
       uses: peter-evans/create-issue-from-file@v4
       with:
-        title: Monthly issue metrics report  for opened issues and prs
+        title: Monthly issue metrics report for opened issues and prs
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
@@ -354,6 +358,7 @@ then the report will look like this:
 ## Example issue_metrics.md output
 
 Here is the output with no hidden columns:
+
 ```markdown
 # Issue Metrics
 
@@ -375,6 +380,7 @@ Here is the output with no hidden columns:
 ```
 
 Here is the output with all hidable columns hidden:
+
 ```markdown
 # Issue Metrics
 
