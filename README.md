@@ -59,6 +59,15 @@ Below are the allowed configuration options:
 | `HIDE_LABEL_METRICS` | False |         | If set to any value, the time in label metrics will not be displayed in the generated markdown file. |
 | `IGNORE_USERS` | False |         | A comma separated list of users to ignore when calculating metrics. (ie. `IGNORE_USERS: 'user1,user2'`). To ignore bots, append `[bot]` to the user (ie. `IGNORE_USERS: 'github-actions[bot]'`)  |
 
+## Links
+
+- [Assigning teams instead of individuals](./docs/assign-team-instead-of-individual.md)
+- [Example using the JSON output instead of the markdown output](./docs/example-using-json-instead-markdown-output.md)
+- [Example workflows](./docs/example-workflows.md)
+- [Local usage without Docker](./docs/local-usage-without-docker.md)
+- [Measuring time spent in labels](./docs/measure-time.md)
+- [SEARCH_QUERY](./docs/search-query.md)
+
 ## License
 
 [MIT](LICENSE)
