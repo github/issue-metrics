@@ -23,12 +23,10 @@ or the [documentation on searching discussions](https://docs.github.com/en/searc
 
 ## Example use cases
 
-| Metric | Description |
-|--------|-------------|
-|Maintainer Metrics| Monitor issue and pull request metrics for effective attention.|
-|Timely Response| Ensure prompt user contact as a first responder.|
-|OSPO Insights| Track open source request status and processing times.|
-|Review Efficiency| Analyze PR review durations for retrospectives.|
+- As a maintainer, I want to see metrics for issues and pull requests on the repository I maintain in order to ensure I am giving them the proper amount of attention.
+- As a first responder on a repository, I want to ensure that users are getting contact from me in a reasonable amount of time.
+- As an OSPO, I want to see how many open source repository requests are open/closed, and metrics for how long it takes to get through the open source process.
+- As a product development team, I want to see metrics around how long pull request reviews are taking, so that we can reflect on that data during retrospectives.
 
 ## Support
 
