@@ -133,7 +133,7 @@ class TestMain(unittest.TestCase):
     @patch("issue_metrics.auth_to_github")
     @patch("issue_metrics.search_issues")
     @patch("issue_metrics.measure_time_to_first_response")
-    @patch("issue_metrics.get_average_time_to_first_response")
+    @patch("issue_metrics.get_stats_time_to_first_response")
     @patch.dict(
         os.environ,
         {
@@ -142,7 +142,7 @@ class TestMain(unittest.TestCase):
     )
     def test_main(
         self,
-        mock_get_average_time_to_first_response,
+        mock_get_stats_time_to_first_response,
         mock_measure_time_to_first_response,
         mock_search_issues,
         mock_auth_to_github,
@@ -179,10 +179,10 @@ class TestMain(unittest.TestCase):
         ]
         mock_measure_time_to_first_response.return_value = mock_issues_with_ttfr
 
-        # Set up the mock get_average_time_to_first_response function
-        mock_average_time_to_first_response = 15
-        mock_get_average_time_to_first_response.return_value = (
-            mock_average_time_to_first_response
+        # Set up the mock get_stats_time_to_first_response function
+        mock_stats_time_to_first_response = 15
+        mock_get_stats_time_to_first_response.return_value = (
+            mock_stats_time_to_first_response
         )
 
         # Call main and check that it runs without errors

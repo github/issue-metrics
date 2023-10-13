@@ -32,14 +32,14 @@ from dotenv import load_dotenv
 from classes import IssueWithMetrics
 from discussions import get_discussions
 from json_writer import write_to_json
-from labels import get_average_time_in_labels, get_label_metrics
+from labels import get_stats_time_in_labels, get_label_metrics
 from markdown_writer import write_to_markdown
-from time_to_answer import get_average_time_to_answer, measure_time_to_answer
-from time_to_close import get_average_time_to_close, measure_time_to_close
+from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
+from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_ready_for_review import get_time_to_ready_for_review
 from time_to_merge import measure_time_to_merge
 from time_to_first_response import (
-    get_average_time_to_first_response,
+    get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
 
@@ -317,36 +317,36 @@ def main():
         ignore_users=ignore_users,
     )
 
-    average_time_to_first_response = get_average_time_to_first_response(
+    stats_time_to_first_response = get_stats_time_to_first_response(
         issues_with_metrics
     )
-    average_time_to_close = None
+    stats_time_to_close = None
     if num_issues_closed > 0:
-        average_time_to_close = get_average_time_to_close(issues_with_metrics)
+        stats_time_to_close = get_stats_time_to_close(issues_with_metrics)
 
-    average_time_to_answer = get_average_time_to_answer(issues_with_metrics)
+    stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
 
-    # Get the average time in label for each label and store it in a dictionary
+    # Get stats describing the time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time
-    average_time_in_labels = get_average_time_in_labels(issues_with_metrics, labels)
+    stats_time_in_labels = get_stats_time_in_labels(issues_with_metrics, labels)
 
     # Write the results to json and a markdown file
     write_to_json(
         issues_with_metrics,
-        average_time_to_first_response,
-        average_time_to_close,
-        average_time_to_answer,
-        average_time_in_labels,
+        stats_time_to_first_response,
+        stats_time_to_close,
+        stats_time_to_answer,
+        stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
         search_query,
     )
     write_to_markdown(
         issues_with_metrics,
-        average_time_to_first_response,
-        average_time_to_close,
-        average_time_to_answer,
-        average_time_in_labels,
+        stats_time_to_first_response,
+        stats_time_to_close,
+        stats_time_to_answer,
+        stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
         labels,

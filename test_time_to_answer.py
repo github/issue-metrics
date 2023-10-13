@@ -5,16 +5,16 @@ from datetime import timedelta
 from typing import List
 
 from classes import IssueWithMetrics
-from time_to_answer import get_average_time_to_answer, measure_time_to_answer
+from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 
 
 class TestGetAverageTimeToAnswer(unittest.TestCase):
-    """A test case for the get_average_time_to_answer function.
+    """A test case for the get_stats_time_to_answer function.
 
     This test case includes three test methods:
     - test_returns_none_for_empty_list
     - test_returns_none_for_list_with_no_time_to_answer
-    - test_returns_average_time_to_answer
+    - test_returns_stats_time_to_answer
     """
 
     def test_returns_none_for_empty_list(self):
@@ -23,7 +23,7 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
         issues_with_metrics: List[IssueWithMetrics] = []
 
         # Act
-        result = get_average_time_to_answer(issues_with_metrics)
+        result = get_stats_time_to_answer(issues_with_metrics)
 
         # Assert
         self.assertIsNone(result)
@@ -40,12 +40,12 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
         ]
 
         # Act
-        result = get_average_time_to_answer(issues_with_metrics)
+        result = get_stats_time_to_answer(issues_with_metrics)
 
         # Assert
         self.assertIsNone(result)
 
-    def test_returns_average_time_to_answer(self):
+    def test_returns_stats_time_to_answer(self):
         """
         Tests that the function correctly calculates the average
         time to answer for a list of issues with time to answer.
@@ -59,7 +59,7 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
         ]
 
         # Act
-        result = get_average_time_to_answer(issues_with_metrics)['avg']
+        result = get_stats_time_to_answer(issues_with_metrics)['avg']
 
         # Assert
         self.assertEqual(result, timedelta(seconds=20))

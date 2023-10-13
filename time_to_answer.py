@@ -1,13 +1,13 @@
 """A module for measuring the time it takes to answer a GitHub discussion.
 
 This module provides functions for measuring the time it takes to answer a GitHub
-discussion, as well as calculating the average time to answer for a list of discussions.
+discussion, as well as calculating stats describing the time to answer for a list of discussions.
 
 Functions:
-    get_average_time_to_answer(
+    get_stats_time_to_answer(
         issues_with_metrics: List[IssueWithMetrics]
     ) -> Union[timedelta, None]:
-        Calculate the average time to answer for a list of issues with metrics.
+        Calculate stats describing the time to answer for a list of issues with metrics.
     measure_time_to_answer(
         discussion: dict
     ) -> Union[timedelta, None]:
@@ -22,11 +22,11 @@ import numpy
 from classes import IssueWithMetrics
 
 
-def get_average_time_to_answer(
+def get_stats_time_to_answer(
     issues_with_metrics: List[IssueWithMetrics],
 ) -> Union[timedelta, None]:
     """
-    Calculate the average time to answer for a list of issues.
+    Calculate stats describing the time to answer for a list of issues.
     """
     # Filter out issues with no time to answer
     issues_with_time_to_answer = [
@@ -40,7 +40,7 @@ def get_average_time_to_answer(
             if issue.time_to_answer:
                 answer_times.append(issue.time_to_answer.total_seconds())
 
-    # Calculate the average time to answer
+    # Calculate stats describing time to answer
     num_issues_with_time_to_answer = len(issues_with_time_to_answer)
     if num_issues_with_time_to_answer > 0:
         average_time_to_answer = numpy.average(answer_times)

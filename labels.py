@@ -89,11 +89,11 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
     return label_metrics
 
 
-def get_average_time_in_labels(
+def get_stats_time_in_labels(
     issues_with_metrics: List[IssueWithMetrics],
     labels: List[str],
 ) -> dict[str, timedelta]:
-    """Calculate the average time spent in each label."""
+    """Calculate stats describing time spent in each label."""
     time_in_labels = {}
     for issue in issues_with_metrics:
         if issue.label_metrics:

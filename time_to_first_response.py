@@ -11,10 +11,10 @@ Functions:
         pull_request: Union[github3.pulls.PullRequest, None],
     ) -> Union[timedelta, None]:
         Measure the time to first response for a single issue or a discussion.
-    get_average_time_to_first_response(
+    get_stats_time_to_first_response(
         issues: List[IssueWithMetrics]
     ) -> Union[timedelta, None]:
-        Calculate the average time to first response for a list of issues with metrics.
+        Calculate stats describing time to first response for a list of issues with metrics.
 
 """
 from datetime import datetime, timedelta
@@ -122,16 +122,16 @@ def ignore_comment(
         or (ready_for_review_at and comment_created_at < ready_for_review_at))
 
 
-def get_average_time_to_first_response(
+def get_stats_time_to_first_response(
     issues: List[IssueWithMetrics],
 ) -> Union[timedelta, None]:
-    """Calculate the average time to first response for a list of issues.
+    """Calculate the stats describing time to first response for a list of issues.
 
     Args:
         issues (List[IssueWithMetrics]): A list of GitHub issues with metrics attached.
 
     Returns:
-        datetime.timedelta: The average time to first response for the issues in seconds.
+        Union[Dict{String: datetime.timedelta}, None]: The stats describing time to first response for the issues in seconds.
 
     """
     response_times = []
