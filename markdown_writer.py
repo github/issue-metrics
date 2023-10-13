@@ -184,31 +184,43 @@ def write_overall_metrics_table(
     file.write("| Metric | Average | Median | 90th percentile |\n")
     file.write("| --- | --- | --- | ---: |\n")
     if "Time to first response" in columns:
-      if (stats_time_to_first_response != None):
-        file.write(
-            f"| Time to first response | {stats_time_to_first_response['avg']} | {stats_time_to_first_response['med']} | {stats_time_to_first_response['90p']} |\n"
-        )
-      else:
-       file.write(f"| Time to first response | None | None | None |\n")
+        if stats_time_to_first_response is not None:
+            file.write(
+                f"| Time to first response "
+                f"| {stats_time_to_first_response['avg']} "
+                f"| {stats_time_to_first_response['med']} "
+                f"| {stats_time_to_first_response['90p']} |\n"
+            )
+        else:
+            file.write("| Time to first response | None | None | None |\n")
     if "Time to close" in columns:
-       if (stats_time_to_close != None):
-        file.write(
-            f"| Time to close | {stats_time_to_close['avg']} | {stats_time_to_close['med']} | {stats_time_to_close['90p']} |\n"
-        )
-       else:
-        file.write(f"| Time to close | None | None | None |\n")
+        if stats_time_to_close is not None:
+            file.write(
+                f"| Time to close "
+                f"| {stats_time_to_close['avg']} "
+                f"| {stats_time_to_close['med']} "
+                f"| {stats_time_to_close['90p']} |\n"
+            )
+        else:
+            file.write("| Time to close | None | None | None |\n")
     if "Time to answer" in columns:
-       if (stats_time_to_answer != None):
-        file.write(
-            f"| Time to answer | {stats_time_to_answer['avg']} | {stats_time_to_answer['med']} | {stats_time_to_answer['90p']} |\n"
-        )
-       else:
-        file.write(f"| Time to answer | None | None | None |\n")
+        if stats_time_to_answer is not None:
+            file.write(
+                f"| Time to answer "
+                f"| {stats_time_to_answer['avg']} "
+                f"| {stats_time_to_answer['med']} "
+                f"| {stats_time_to_answer['90p']} |\n"
+            )
+        else:
+            file.write("| Time to answer | None | None | None |\n")
     if labels and stats_time_in_labels:
         for label in labels:
             if f"Time spent in {label}" in columns and label in stats_time_in_labels['avg']:
                 file.write(
-                    f"| Time spent in {label} | {stats_time_in_labels['avg'][label]} | {stats_time_in_labels['med'][label]} | {stats_time_in_labels['90p'][label]} |\n"
+                    f"| Time spent in {label} "
+                    f"| {stats_time_in_labels['avg'][label]} "
+                    f"| {stats_time_in_labels['med'][label]} "
+                    f"| {stats_time_in_labels['90p'][label]} |\n"
                 )
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
     file.write(f"| Number of items closed | {num_issues_closed} |\n")

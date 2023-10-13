@@ -18,6 +18,7 @@ from markdown_writer import write_to_markdown
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
     maxDiff = None
+
     def test_write_to_markdown(self):
         """Test that write_to_markdown writes the correct markdown file.
 
@@ -64,6 +65,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 'avg': {"bug": "1 day, 12:00:00"},
                 'med': {"bug": "1 day, 12:00:00"},
                 '90p': {"bug": "1 day, 12:00:00"}}
+
         num_issues_opened = 2
         num_issues_closed = 1
 
@@ -138,21 +140,22 @@ class TestWriteToMarkdown(unittest.TestCase):
             ),
         ]
         average_time_to_first_response = {
-             'avg' : timedelta(days=2),
-             'med' : timedelta(days=2),
-             '90p' : timedelta(days=2)}
+             'avg': timedelta(days=2),
+             'med': timedelta(days=2),
+             '90p': timedelta(days=2)}
         average_time_to_close = {
-             'avg' : timedelta(days=3),
-             'med' : timedelta(days=3),
-             '90p' : timedelta(days=3)}
+             'avg': timedelta(days=3),
+             'med': timedelta(days=3),
+             '90p': timedelta(days=3)}
         average_time_to_answer = {
-             'avg' : timedelta(days=4),
-             'med' : timedelta(days=4),
-             '90p' : timedelta(days=4)}
+             'avg': timedelta(days=4),
+             'med': timedelta(days=4),
+             '90p': timedelta(days=4)}
         average_time_in_labels = {
-             'avg' : {"bug": "1 day, 12:00:00"},
-             'med' : {"bug": "1 day, 12:00:00"},
-             '90p' : {"bug": "1 day, 12:00:00"}}
+             'avg': {"bug": "1 day, 12:00:00"},
+             'med': {"bug": "1 day, 12:00:00"},
+             '90p': {"bug": "1 day, 12:00:00"}}
+
         num_issues_opened = 2
         num_issues_closed = 1
 

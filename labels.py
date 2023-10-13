@@ -108,10 +108,10 @@ def get_average_time_in_labels(
     average_time_in_labels = {}
     med_time_in_labels = {}
     ninety_percentile_in_labels = {}
-    for label in time_in_labels:
-        average_time_in_labels[label] = numpy.average(time_in_labels[label])
-        med_time_in_labels[label] = numpy.median(time_in_labels[label])
-        ninety_percentile_in_labels[label] = numpy.percentile(time_in_labels[label], 90, axis=0)
+    for label, time_list in time_in_labels.items():
+        average_time_in_labels[label] = numpy.average(time_list)
+        med_time_in_labels[label] = numpy.median(time_list)
+        ninety_percentile_in_labels[label] = numpy.percentile(time_list, 90, axis=0)
 
     for label in labels:
         if label not in average_time_in_labels:
