@@ -64,7 +64,7 @@ jobs:
     - name: Create issue for opened issues and prs
       uses: peter-evans/create-issue-from-file@v4
       with:
-        title: Monthly issue metrics report  for opened issues and prs
+        title: Monthly issue metrics report for opened issues and prs
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>

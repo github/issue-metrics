@@ -2,7 +2,7 @@
 
 [![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml) [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml) [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
 
-This is a GitHub Action that searches for issues/pull requests/discussions in a repository and measures and reports on several metrics.
+This is a GitHub Action that searches for issues/pull requests/discussions in a repository, measures several metrics, and generates a report in form of a GitHub issue.
 The issues/pull requests/discussions to search for can be filtered by using a search query.
 
 | Metric | Description |
@@ -10,9 +10,10 @@ The issues/pull requests/discussions to search for can be filtered by using a se
 |Time to First Response | The duration from creation to the initial comment or review.|
 |Time to Close | The period from creation to closure.|
 |Time to Answer (Discussions Only) | The time from creation to an answer.|
-|Time in Label | The duration from label application to removal, requires LABELS_TO_MEASURE env variable.|
+|Time in Label | The duration from label application to removal, requires `LABELS_TO_MEASURE` env variable.|
 
 *For pull requests, these metrics exclude the time the PR was in draft mode.
+
 *For Issue and pull requests, issue/pull request author's own comments and comments by bots are excluded.
 
 This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
