@@ -14,7 +14,7 @@ The issues/pull requests/discussions to search for can be filtered by using a se
 
 *For pull requests, these metrics exclude the time the PR was in draft mode.
 
-*For issues and pull requests, issue/pull request author's own comments and comments by bots are excluded.
+*For issues and pull requests, comments by issue/pull request author's and comments by bots are excluded.
 
 This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
 Feel free to inquire about its usage by creating an issue in this repository.
