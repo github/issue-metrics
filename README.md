@@ -7,8 +7,8 @@ The issues/pull requests/discussions to search for can be filtered by using a se
 
 | Metric | Description |
 |--------|-------------|
-|Time to First Response | The duration from creation to the initial comment or review.|
-|Time to Close | The period from creation to closure.|
+|Time to First Response | The duration from creation to the initial comment or review.*|
+|Time to Close | The period from creation to closure.*|
 |Time to Answer (Discussions Only) | The time from creation to an answer.|
 |Time in Label | The duration from label application to removal, requires `LABELS_TO_MEASURE` env variable.|
 
