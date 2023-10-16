@@ -7,7 +7,7 @@ import github3
 import pytz
 from classes import IssueWithMetrics
 
-from labels import get_average_time_in_labels, get_label_events, get_label_metrics
+from labels import get_stats_time_in_labels, get_label_events, get_label_metrics
 
 
 class TestLabels(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestLabels(unittest.TestCase):
 
 
 class TestGetAverageTimeInLabels(unittest.TestCase):
-    """Unit tests for get_average_time_in_labels"""
+    """Unit tests for get_stats_time_in_labels"""
 
     def setUp(self):
         self.issues_with_metrics = MagicMock()
@@ -79,13 +79,14 @@ class TestGetAverageTimeInLabels(unittest.TestCase):
             ),
         ]
 
-    def test_get_average_time_in_labels(self):
-        """Test get_average_time_in_labels"""
+    def test_get_stats_time_in_labels(self):
+        """Test get_stats_time_in_labels"""
         labels = ["bug", "feature"]
-        metrics = get_average_time_in_labels(self.issues_with_metrics, labels)
-        self.assertEqual(len(metrics), 2)
-        self.assertEqual(metrics["bug"], timedelta(days=2))
-        self.assertIsNone(metrics.get("feature"))
+        metrics = get_stats_time_in_labels(self.issues_with_metrics, labels)
+        print(metrics)
+        self.assertEqual(len(metrics['avg']), 2)
+        self.assertEqual(metrics['avg']["bug"], timedelta(days=2))
+        self.assertIsNone(metrics['avg'].get("feature"))
 
 
 if __name__ == "__main__":

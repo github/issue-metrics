@@ -1,13 +1,13 @@
 """A module containing unit tests for the time_to_first_response module.
 
 This module contains unit tests for the measure_time_to_first_response and
-get_average_time_to_first_response functions in the time_to_first_response module.
+get_stats_time_to_first_response functions in the time_to_first_response module.
 The tests use mock GitHub issues and comments to test the functions' behavior.
 
 Classes:
     TestMeasureTimeToFirstResponse: A class to test the measure_time_to_first_response function.
     TestGetAverageTimeToFirstResponse: A class to test the
-        get_average_time_to_first_response function.
+        get_stats_time_to_first_response function.
 
 """
 import unittest
@@ -16,7 +16,7 @@ from unittest.mock import MagicMock
 
 from classes import IssueWithMetrics
 from time_to_first_response import (
-    get_average_time_to_first_response,
+    get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
 
@@ -311,14 +311,14 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
 
-class TestGetAverageTimeToFirstResponse(unittest.TestCase):
-    """Test the get_average_time_to_first_response function."""
+class TestGetStatsTimeToFirstResponse(unittest.TestCase):
+    """Test the get_stats_time_to_first_response function."""
 
-    def test_get_average_time_to_first_response(self):
-        """Test that get_average_time_to_first_response calculates the correct average.
+    def test_get_stats_time_to_first_response(self):
+        """Test that get_stats_time_to_first_response calculates the correct average.
 
         This test creates a list of mock GitHub issues with time to first response
-        attributes, calls get_average_time_to_first_response with the list, and
+        attributes, calls get_stats_time_to_first_response with the list, and
         checks that the function returns the correct average time to first response.
 
         """
@@ -334,12 +334,12 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_first_response(issues_with_metrics)
+        result = get_stats_time_to_first_response(issues_with_metrics)['avg']
         expected_result = timedelta(days=1.5)
         self.assertEqual(result, expected_result)
 
-    def test_get_average_time_to_first_response_with_all_none(self):
-        """Test that get_average_time_to_first_response with all None data."""
+    def test_get_stats_time_to_first_response_with_all_none(self):
+        """Test that get_stats_time_to_first_response with all None data."""
 
         # Create mock data with all None
         issues_with_metrics = [
@@ -348,6 +348,6 @@ class TestGetAverageTimeToFirstResponse(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_first_response(issues_with_metrics)
+        result = get_stats_time_to_first_response(issues_with_metrics)
         expected_result = None
         self.assertEqual(result, expected_result)

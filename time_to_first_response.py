@@ -11,16 +11,17 @@ Functions:
         pull_request: Union[github3.pulls.PullRequest, None],
     ) -> Union[timedelta, None]:
         Measure the time to first response for a single issue or a discussion.
-    get_average_time_to_first_response(
+    get_stats_time_to_first_response(
         issues: List[IssueWithMetrics]
     ) -> Union[timedelta, None]:
-        Calculate the average time to first response for a list of issues with metrics.
+        Calculate stats describing time to first response for a list of issues with metrics.
 
 """
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
+import numpy
 
 from classes import IssueWithMetrics
 
@@ -121,36 +122,41 @@ def ignore_comment(
         or (ready_for_review_at and comment_created_at < ready_for_review_at))
 
 
-def get_average_time_to_first_response(
+def get_stats_time_to_first_response(
     issues: List[IssueWithMetrics],
 ) -> Union[timedelta, None]:
-    """Calculate the average time to first response for a list of issues.
+    """Calculate the stats describing time to first response for a list of issues.
 
     Args:
         issues (List[IssueWithMetrics]): A list of GitHub issues with metrics attached.
 
     Returns:
-        datetime.timedelta: The average time to first response for the issues in seconds.
+        Union[Dict{String: datetime.timedelta}, None]: The stats describing time to first response for the issues in seconds.
 
     """
-    total_time_to_first_response = 0
+    response_times = []
     none_count = 0
     for issue in issues:
         if issue.time_to_first_response:
-            total_time_to_first_response += issue.time_to_first_response.total_seconds()
+            response_times.append(issue.time_to_first_response.total_seconds())
         else:
             none_count += 1
 
     if len(issues) - none_count <= 0:
         return None
 
-    average_seconds_to_first_response = total_time_to_first_response / (
-        len(issues) - none_count
-    )  # type: ignore
+    average_seconds_to_first_response = numpy.average(response_times)
+    med_seconds_to_first_response = numpy.median(response_times)
+    ninety_percentile_seconds_to_first_response = numpy.percentile(response_times, 90, axis=0)
+
+    stats = {
+                 'avg': timedelta(seconds=average_seconds_to_first_response),
+                 'med': timedelta(seconds=med_seconds_to_first_response),
+                 '90p': timedelta(seconds=ninety_percentile_seconds_to_first_response)}
 
     # Print the average time to first response converting seconds to a readable time format
     print(
         f"Average time to first response: {timedelta(seconds=average_seconds_to_first_response)}"
     )
 
-    return timedelta(seconds=average_seconds_to_first_response)
+    return stats

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import List
 
 import github3
+import numpy
 import pytz
 
 from classes import IssueWithMetrics
@@ -88,32 +89,39 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
     return label_metrics
 
 
-def get_average_time_in_labels(
+def get_stats_time_in_labels(
     issues_with_metrics: List[IssueWithMetrics],
     labels: List[str],
 ) -> dict[str, timedelta]:
-    """Calculate the average time spent in each label."""
-    average_time_in_labels = {}
-    number_of_issues_in_labels = {}
+    """Calculate stats describing time spent in each label."""
+    time_in_labels = {}
     for issue in issues_with_metrics:
         if issue.label_metrics:
             for label in issue.label_metrics:
                 if issue.label_metrics[label] is None:
                     continue
-                if label not in average_time_in_labels:
-                    average_time_in_labels[label] = issue.label_metrics[label]
-                    number_of_issues_in_labels[label] = 1
+                if label not in time_in_labels:
+                    time_in_labels[label] = [issue.label_metrics[label]]
                 else:
-                    average_time_in_labels[label] += issue.label_metrics[label]
-                    number_of_issues_in_labels[label] += 1
+                    time_in_labels[label].append(issue.label_metrics[label])
 
-    for label in average_time_in_labels:
-        average_time_in_labels[label] = (
-            average_time_in_labels[label] / number_of_issues_in_labels[label]
-        )
+    average_time_in_labels = {}
+    med_time_in_labels = {}
+    ninety_percentile_in_labels = {}
+    for label, time_list in time_in_labels.items():
+        average_time_in_labels[label] = numpy.average(time_list)
+        med_time_in_labels[label] = numpy.median(time_list)
+        ninety_percentile_in_labels[label] = numpy.percentile(time_list, 90, axis=0)
 
     for label in labels:
         if label not in average_time_in_labels:
             average_time_in_labels[label] = None
+            med_time_in_labels[label] = None
+            ninety_percentile_in_labels[label] = None
 
-    return average_time_in_labels
+    stats = {
+                 'avg': average_time_in_labels,
+                 'med': med_time_in_labels,
+                 '90p': ninety_percentile_in_labels
+    }
+    return stats

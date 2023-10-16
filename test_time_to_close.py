@@ -1,12 +1,12 @@
 """A module containing unit tests for the time_to_close module.
 
 This module contains unit tests for the measure_time_to_close and
-get_average_time_to_close functions in the time_to_close module.
+get_stats_time_to_close functions in the time_to_close module.
 The tests use mock GitHub issues to test the functions' behavior.
 
 Classes:
     TestMeasureTimeToClose: A class to test the measure_time_to_close function.
-    TestGetAverageTimeToClose: A class to test the get_average_time_to_close function.
+    TestGetStatsTimeToClose: A class to test the get_stats_time_to_close function.
 
 """
 from datetime import timedelta
@@ -14,13 +14,13 @@ import unittest
 from unittest.mock import MagicMock
 from classes import IssueWithMetrics
 
-from time_to_close import get_average_time_to_close, measure_time_to_close
+from time_to_close import get_stats_time_to_close, measure_time_to_close
 
 
 class TestGetAverageTimeToClose(unittest.TestCase):
-    """Test suite for the get_average_time_to_close function."""
+    """Test suite for the get_stats_time_to_close function."""
 
-    def test_get_average_time_to_close(self):
+    def test_get_stats_time_to_close(self):
         """Test that the function correctly calculates the average time to close."""
         # Create mock data
         issues_with_metrics = [
@@ -44,11 +44,11 @@ class TestGetAverageTimeToClose(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_close(issues_with_metrics)
+        result = get_stats_time_to_close(issues_with_metrics)['avg']
         expected_result = timedelta(days=3)
         self.assertEqual(result, expected_result)
 
-    def test_get_average_time_to_close_no_issues(self):
+    def test_get_stats_time_to_close_no_issues(self):
         """Test that the function returns None if there are no issues with time to close."""
         # Create mock data
         issues_with_metrics = [
@@ -64,7 +64,7 @@ class TestGetAverageTimeToClose(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_average_time_to_close(issues_with_metrics)
+        result = get_stats_time_to_close(issues_with_metrics)
         expected_result = None
         self.assertEqual(result, expected_result)
 
