@@ -84,9 +84,9 @@ def get_stats_time_to_close(
     # Calculate stats describing time to close
     num_issues_with_time_to_close = len(issues_with_time_to_close)
     if num_issues_with_time_to_close > 0 and total_time_to_close is not None:
-        average_time_to_close = round(numpy.average(close_times))
-        med_time_to_close = round(numpy.median(close_times))
-        ninety_percentile_time_to_close = round(
+        average_time_to_close = numpy.round(numpy.average(close_times))
+        med_time_to_close = numpy.round(numpy.median(close_times))
+        ninety_percentile_time_to_close = numpy.round(
             numpy.percentile(close_times, 90, axis=0)
         )
     else:

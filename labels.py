@@ -109,9 +109,9 @@ def get_stats_time_in_labels(
     med_time_in_labels = {}
     ninety_percentile_in_labels = {}
     for label, time_list in time_in_labels.items():
-        average_time_in_labels[label] = round(numpy.average(time_list))
-        med_time_in_labels[label] = round(numpy.median(time_list))
-        ninety_percentile_in_labels[label] = round(
+        average_time_in_labels[label] = numpy.round(numpy.average(time_list))
+        med_time_in_labels[label] = numpy.round(numpy.median(time_list))
+        ninety_percentile_in_labels[label] = numpy.round(
             numpy.percentile(time_list, 90, axis=0)
         )
 

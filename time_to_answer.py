@@ -43,9 +43,9 @@ def get_stats_time_to_answer(
     # Calculate stats describing time to answer
     num_issues_with_time_to_answer = len(issues_with_time_to_answer)
     if num_issues_with_time_to_answer > 0:
-        average_time_to_answer = round(numpy.average(answer_times))
-        med_time_to_answer = round(numpy.median(answer_times))
-        ninety_percentile_time_to_answer = round(
+        average_time_to_answer = numpy.round(numpy.average(answer_times))
+        med_time_to_answer = numpy.round(numpy.median(answer_times))
+        ninety_percentile_time_to_answer = numpy.round(
             numpy.percentile(answer_times, 90, axis=0)
         )
     else:

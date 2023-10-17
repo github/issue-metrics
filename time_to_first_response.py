@@ -157,9 +157,9 @@ def get_stats_time_to_first_response(
     if len(issues) - none_count <= 0:
         return None
 
-    average_seconds_to_first_response = round(numpy.average(response_times))
-    med_seconds_to_first_response = round(numpy.median(response_times))
-    ninety_percentile_seconds_to_first_response = round(
+    average_seconds_to_first_response = numpy.round(numpy.average(response_times))
+    med_seconds_to_first_response = numpy.round(numpy.median(response_times))
+    ninety_percentile_seconds_to_first_response = numpy.round(
         numpy.percentile(response_times, 90, axis=0)
     )
 
