@@ -22,7 +22,7 @@ Feel free to inquire about its usage by creating an issue in this repository.
 To find syntax for search queries, check out the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests)
 or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
 
-## Quick Start
+## Getting Started
 
 Create a workflow file (ie. `.github/workflows/issue-metrics.yml`) in your repository with the following contents:
 
