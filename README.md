@@ -29,8 +29,6 @@ Create a workflow file (ie. `.github/workflows/issue-metrics.yml`) in your repos
 **Note**: `repo:owner/repo` is the repository you want to measure metrics on
 
 ```yaml
-
-```yaml
 name: Monthly issue metrics
 on:
   workflow_dispatch:
