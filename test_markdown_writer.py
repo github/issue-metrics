@@ -17,6 +17,7 @@ from markdown_writer import write_to_markdown
 
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
+
     maxDiff = None
 
     def test_write_to_markdown(self):
@@ -50,21 +51,25 @@ class TestWriteToMarkdown(unittest.TestCase):
             ),
         ]
         time_to_first_response = {
-                'avg': timedelta(days=2),
-                'med': timedelta(days=2),
-                '90p': timedelta(days=2)}
+            "avg": timedelta(days=2),
+            "med": timedelta(days=2),
+            "90p": timedelta(days=2),
+        }
         time_to_close = {
-                'avg': timedelta(days=3),
-                'med': timedelta(days=3),
-                '90p': timedelta(days=3)}
+            "avg": timedelta(days=3),
+            "med": timedelta(days=3),
+            "90p": timedelta(days=3),
+        }
         time_to_answer = {
-                'avg': timedelta(days=4),
-                'med': timedelta(days=4),
-                '90p': timedelta(days=4)}
+            "avg": timedelta(days=4),
+            "med": timedelta(days=4),
+            "90p": timedelta(days=4),
+        }
         time_in_labels = {
-                'avg': {"bug": "1 day, 12:00:00"},
-                'med': {"bug": "1 day, 12:00:00"},
-                '90p': {"bug": "1 day, 12:00:00"}}
+            "avg": {"bug": "1 day, 12:00:00"},
+            "med": {"bug": "1 day, 12:00:00"},
+            "90p": {"bug": "1 day, 12:00:00"},
+        }
 
         num_issues_opened = 2
         num_issues_closed = 1
@@ -93,6 +98,9 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
             "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
             "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
+            "\n"
+            "| Metric | Count |\n"
+            "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
@@ -140,21 +148,25 @@ class TestWriteToMarkdown(unittest.TestCase):
             ),
         ]
         average_time_to_first_response = {
-             'avg': timedelta(days=2),
-             'med': timedelta(days=2),
-             '90p': timedelta(days=2)}
+            "avg": timedelta(days=2),
+            "med": timedelta(days=2),
+            "90p": timedelta(days=2),
+        }
         average_time_to_close = {
-             'avg': timedelta(days=3),
-             'med': timedelta(days=3),
-             '90p': timedelta(days=3)}
+            "avg": timedelta(days=3),
+            "med": timedelta(days=3),
+            "90p": timedelta(days=3),
+        }
         average_time_to_answer = {
-             'avg': timedelta(days=4),
-             'med': timedelta(days=4),
-             '90p': timedelta(days=4)}
+            "avg": timedelta(days=4),
+            "med": timedelta(days=4),
+            "90p": timedelta(days=4),
+        }
         average_time_in_labels = {
-             'avg': {"bug": "1 day, 12:00:00"},
-             'med': {"bug": "1 day, 12:00:00"},
-             '90p': {"bug": "1 day, 12:00:00"}}
+            "avg": {"bug": "1 day, 12:00:00"},
+            "med": {"bug": "1 day, 12:00:00"},
+            "90p": {"bug": "1 day, 12:00:00"},
+        }
 
         num_issues_opened = 2
         num_issues_closed = 1
@@ -182,6 +194,9 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
             "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
             "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
+            "\n"
+            "| Metric | Count |\n"
+            "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
@@ -288,6 +303,9 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "# Issue Metrics\n\n"
             "| Metric | Average | Median | 90th percentile |\n"
             "| --- | --- | --- | ---: |\n"
+            "\n"
+            "| Metric | Count |\n"
+            "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"

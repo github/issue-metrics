@@ -112,7 +112,7 @@ def write_to_markdown(
         file.write("# Issue Metrics\n\n")
 
         # Write first table with overall metrics
-        write_overall_metrics_table(
+        write_overall_metrics_tables(
             issues_with_metrics,
             average_time_to_first_response,
             average_time_to_close,
@@ -168,7 +168,7 @@ def write_to_markdown(
     print("Wrote issue metrics to issue_metrics.md")
 
 
-def write_overall_metrics_table(
+def write_overall_metrics_tables(
     issues_with_metrics,
     stats_time_to_first_response,
     stats_time_to_close,
@@ -180,7 +180,7 @@ def write_overall_metrics_table(
     columns,
     file,
 ):
-    """Write the overall metrics table to the markdown file."""
+    """Write the overall metrics tables to the markdown file."""
     file.write("| Metric | Average | Median | 90th percentile |\n")
     file.write("| --- | --- | --- | ---: |\n")
     if "Time to first response" in columns:
@@ -215,13 +215,20 @@ def write_overall_metrics_table(
             file.write("| Time to answer | None | None | None |\n")
     if labels and stats_time_in_labels:
         for label in labels:
-            if f"Time spent in {label}" in columns and label in stats_time_in_labels['avg']:
+            if (
+                f"Time spent in {label}" in columns
+                and label in stats_time_in_labels["avg"]
+            ):
                 file.write(
                     f"| Time spent in {label} "
                     f"| {stats_time_in_labels['avg'][label]} "
                     f"| {stats_time_in_labels['med'][label]} "
                     f"| {stats_time_in_labels['90p'][label]} |\n"
                 )
+    # Write count stats to a separate table
+    file.write("\n")
+    file.write("| Metric | Count |\n")
+    file.write("| --- | ---: |\n")
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
     file.write(f"| Number of items closed | {num_issues_closed} |\n")
     file.write(f"| Total number of items created | {len(issues_with_metrics)} |\n\n")
