@@ -58,7 +58,13 @@ def measure_time_to_first_response(
             number=20, sort="created", direction="asc"
         )  # type: ignore
         for comment in comments:
-            if ignore_comment(issue.issue.user, comment.user, ignore_users, comment.created_at, ready_for_review_at):
+            if ignore_comment(
+                issue.issue.user,
+                comment.user,
+                ignore_users,
+                comment.created_at,
+                ready_for_review_at,
+            ):
                 continue
             first_comment_time = comment.created_at
             break
@@ -68,8 +74,13 @@ def measure_time_to_first_response(
         if pull_request:
             review_comments = pull_request.reviews(number=50)  # type: ignore
             for review_comment in review_comments:
-                if ignore_comment(issue.issue.user, review_comment.user, ignore_users,
-                                  review_comment.submitted_at, ready_for_review_at):
+                if ignore_comment(
+                    issue.issue.user,
+                    review_comment.user,
+                    ignore_users,
+                    review_comment.submitted_at,
+                    ready_for_review_at,
+                ):
                     continue
                 first_review_comment_time = review_comment.submitted_at
                 break
@@ -119,7 +130,8 @@ def ignore_comment(
         # ignore comments by the issue creator
         or comment_user.login == issue_user.login
         # ignore comments created before the issue was ready for review
-        or (ready_for_review_at and comment_created_at < ready_for_review_at))
+        or (ready_for_review_at and comment_created_at < ready_for_review_at)
+    )
 
 
 def get_stats_time_to_first_response(
@@ -145,14 +157,17 @@ def get_stats_time_to_first_response(
     if len(issues) - none_count <= 0:
         return None
 
-    average_seconds_to_first_response = numpy.average(response_times)
-    med_seconds_to_first_response = numpy.median(response_times)
-    ninety_percentile_seconds_to_first_response = numpy.percentile(response_times, 90, axis=0)
+    average_seconds_to_first_response = numpy.round(numpy.average(response_times))
+    med_seconds_to_first_response = numpy.round(numpy.median(response_times))
+    ninety_percentile_seconds_to_first_response = numpy.round(
+        numpy.percentile(response_times, 90, axis=0)
+    )
 
     stats = {
-                 'avg': timedelta(seconds=average_seconds_to_first_response),
-                 'med': timedelta(seconds=med_seconds_to_first_response),
-                 '90p': timedelta(seconds=ninety_percentile_seconds_to_first_response)}
+        "avg": timedelta(seconds=average_seconds_to_first_response),
+        "med": timedelta(seconds=med_seconds_to_first_response),
+        "90p": timedelta(seconds=ninety_percentile_seconds_to_first_response),
+    }
 
     # Print the average time to first response converting seconds to a readable time format
     print(

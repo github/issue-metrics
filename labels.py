@@ -101,17 +101,25 @@ def get_stats_time_in_labels(
                 if issue.label_metrics[label] is None:
                     continue
                 if label not in time_in_labels:
-                    time_in_labels[label] = [issue.label_metrics[label]]
+                    time_in_labels[label] = [issue.label_metrics[label].total_seconds()]
                 else:
-                    time_in_labels[label].append(issue.label_metrics[label])
+                    time_in_labels[label].append(
+                        issue.label_metrics[label].total_seconds()
+                    )
 
     average_time_in_labels = {}
     med_time_in_labels = {}
     ninety_percentile_in_labels = {}
     for label, time_list in time_in_labels.items():
-        average_time_in_labels[label] = numpy.average(time_list)
-        med_time_in_labels[label] = numpy.median(time_list)
-        ninety_percentile_in_labels[label] = numpy.percentile(time_list, 90, axis=0)
+        average_time_in_labels[label] = timedelta(
+            seconds=numpy.round(numpy.average(time_list))
+        )
+        med_time_in_labels[label] = timedelta(
+            seconds=numpy.round(numpy.median(time_list))
+        )
+        ninety_percentile_in_labels[label] = timedelta(
+            seconds=numpy.round(numpy.percentile(time_list, 90, axis=0))
+        )
 
     for label in labels:
         if label not in average_time_in_labels:
@@ -120,8 +128,8 @@ def get_stats_time_in_labels(
             ninety_percentile_in_labels[label] = None
 
     stats = {
-                 'avg': average_time_in_labels,
-                 'med': med_time_in_labels,
-                 '90p': ninety_percentile_in_labels
+        "avg": average_time_in_labels,
+        "med": med_time_in_labels,
+        "90p": ninety_percentile_in_labels,
     }
     return stats
