@@ -101,7 +101,7 @@ def get_stats_time_in_labels(
                 if issue.label_metrics[label] is None:
                     continue
                 if label not in time_in_labels:
-                    time_in_labels[label] = [issue.label_metrics[label].total_seconds()]
+                    time_in_labels[label] = [issue.label_metrics[label]]
                 else:
                     time_in_labels[label].append(
                         issue.label_metrics[label].total_seconds()
