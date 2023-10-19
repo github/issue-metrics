@@ -294,6 +294,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             num_issues_closed=num_issues_closed,
             labels=["label1"],
             search_query="repo:user/repo is:issue",
+            hide_label_metrics=True,
         )
 
         # Check that the function writes the correct markdown file
@@ -301,9 +302,6 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             content = file.read()
         expected_content = (
             "# Issue Metrics\n\n"
-            "| Metric | Average | Median | 90th percentile |\n"
-            "| --- | --- | --- | ---: |\n"
-            "\n"
             "| Metric | Count |\n"
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
