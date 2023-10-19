@@ -78,6 +78,7 @@ def write_to_markdown(
     num_issues_closed: Union[int, None],
     labels=None,
     search_query=None,
+    hide_label_metrics=False,
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -94,6 +95,7 @@ def write_to_markdown(
         num_issues_closed (int): The number of issues that were closed.
         labels (List[str]): A list of the labels that are used in the issues.
         search_query (str): The search query used to find the issues.
+        hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output
 
     Returns:
         None.
@@ -112,7 +114,7 @@ def write_to_markdown(
         file.write("# Issue Metrics\n\n")
 
         # Write first table with overall metrics
-        write_overall_metrics_table(
+        write_overall_metrics_tables(
             issues_with_metrics,
             average_time_to_first_response,
             average_time_to_close,
@@ -123,6 +125,7 @@ def write_to_markdown(
             labels,
             columns,
             file,
+            hide_label_metrics,
         )
 
         # Write second table with individual issue/pr/discussion metrics
@@ -168,7 +171,7 @@ def write_to_markdown(
     print("Wrote issue metrics to issue_metrics.md")
 
 
-def write_overall_metrics_table(
+def write_overall_metrics_tables(
     issues_with_metrics,
     stats_time_to_first_response,
     stats_time_to_close,
@@ -179,49 +182,63 @@ def write_overall_metrics_table(
     labels,
     columns,
     file,
+    hide_label_metrics,
 ):
-    """Write the overall metrics table to the markdown file."""
-    file.write("| Metric | Average | Median | 90th percentile |\n")
-    file.write("| --- | --- | --- | ---: |\n")
-    if "Time to first response" in columns:
-        if stats_time_to_first_response is not None:
-            file.write(
-                f"| Time to first response "
-                f"| {stats_time_to_first_response['avg']} "
-                f"| {stats_time_to_first_response['med']} "
-                f"| {stats_time_to_first_response['90p']} |\n"
-            )
-        else:
-            file.write("| Time to first response | None | None | None |\n")
-    if "Time to close" in columns:
-        if stats_time_to_close is not None:
-            file.write(
-                f"| Time to close "
-                f"| {stats_time_to_close['avg']} "
-                f"| {stats_time_to_close['med']} "
-                f"| {stats_time_to_close['90p']} |\n"
-            )
-        else:
-            file.write("| Time to close | None | None | None |\n")
-    if "Time to answer" in columns:
-        if stats_time_to_answer is not None:
-            file.write(
-                f"| Time to answer "
-                f"| {stats_time_to_answer['avg']} "
-                f"| {stats_time_to_answer['med']} "
-                f"| {stats_time_to_answer['90p']} |\n"
-            )
-        else:
-            file.write("| Time to answer | None | None | None |\n")
-    if labels and stats_time_in_labels:
-        for label in labels:
-            if f"Time spent in {label}" in columns and label in stats_time_in_labels['avg']:
+    """Write the overall metrics tables to the markdown file."""
+    if (
+        "Time to first response" in columns
+        or "Time to close" in columns
+        or "Time to answer" in columns
+        or (hide_label_metrics is False and len(labels) > 0)
+    ):
+        file.write("| Metric | Average | Median | 90th percentile |\n")
+        file.write("| --- | --- | --- | ---: |\n")
+        if "Time to first response" in columns:
+            if stats_time_to_first_response is not None:
                 file.write(
-                    f"| Time spent in {label} "
-                    f"| {stats_time_in_labels['avg'][label]} "
-                    f"| {stats_time_in_labels['med'][label]} "
-                    f"| {stats_time_in_labels['90p'][label]} |\n"
+                    f"| Time to first response "
+                    f"| {stats_time_to_first_response['avg']} "
+                    f"| {stats_time_to_first_response['med']} "
+                    f"| {stats_time_to_first_response['90p']} |\n"
                 )
+            else:
+                file.write("| Time to first response | None | None | None |\n")
+        if "Time to close" in columns:
+            if stats_time_to_close is not None:
+                file.write(
+                    f"| Time to close "
+                    f"| {stats_time_to_close['avg']} "
+                    f"| {stats_time_to_close['med']} "
+                    f"| {stats_time_to_close['90p']} |\n"
+                )
+            else:
+                file.write("| Time to close | None | None | None |\n")
+        if "Time to answer" in columns:
+            if stats_time_to_answer is not None:
+                file.write(
+                    f"| Time to answer "
+                    f"| {stats_time_to_answer['avg']} "
+                    f"| {stats_time_to_answer['med']} "
+                    f"| {stats_time_to_answer['90p']} |\n"
+                )
+            else:
+                file.write("| Time to answer | None | None | None |\n")
+        if labels and stats_time_in_labels:
+            for label in labels:
+                if (
+                    f"Time spent in {label}" in columns
+                    and label in stats_time_in_labels["avg"]
+                ):
+                    file.write(
+                        f"| Time spent in {label} "
+                        f"| {stats_time_in_labels['avg'][label]} "
+                        f"| {stats_time_in_labels['med'][label]} "
+                        f"| {stats_time_in_labels['90p'][label]} |\n"
+                    )
+        file.write("\n")
+    # Write count stats to a separate table
+    file.write("| Metric | Count |\n")
+    file.write("| --- | ---: |\n")
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
     file.write(f"| Number of items closed | {num_issues_closed} |\n")
     file.write(f"| Total number of items created | {len(issues_with_metrics)} |\n\n")
