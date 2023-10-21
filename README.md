@@ -121,7 +121,7 @@ Below are the allowed configuration options:
 - [Measuring time spent in labels](./docs/measure-time.md)
 - [Assigning teams instead of individuals](./docs/assign-team-instead-of-individual.md)
 - [Example using the JSON output instead of the markdown output](./docs/example-using-json-instead-markdown-output.md)
-- [SEARCH_QUERY](./docs/search-query.md)
+- [Configuring the `SEARCH_QUERY`](./docs/search-query.md)
 - [Local usage without Docker](./docs/local-usage-without-docker.md)
 
 ## License
