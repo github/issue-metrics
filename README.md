@@ -26,7 +26,7 @@ or [searching discussions](https://docs.github.com/en/search-github/searching-on
 
 ## Sample Output
 
-![Sample GitHub issue created by the issue/metrics GitHub Action](docs/issue-metrics-sample-output.png)
+![Sample GitHub issue created by the issue/metrics GitHub Action](docs/img/issue-metrics-sample-output.png)
 
 ## Getting Started
 
