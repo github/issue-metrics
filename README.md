@@ -5,6 +5,11 @@
 This is a GitHub Action that searches for issues/pull requests/discussions in a repository, measures several metrics, and generates a report in form of a GitHub issue.
 The issues/pull requests/discussions to search for can be filtered by using a search query.
 
+This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
+Feel free to inquire about its usage by creating an issue in this repository.
+
+## Available Metrics
+
 | Metric | Description |
 |--------|-------------|
 |Time to First Response | The duration from creation to the initial comment or review.*|
@@ -15,9 +20,6 @@ The issues/pull requests/discussions to search for can be filtered by using a se
 *For pull requests, these metrics exclude the time the PR was in draft mode.
 
 *For issues and pull requests, comments by issue/pull request author's and comments by bots are excluded.
-
-This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
-Feel free to inquire about its usage by creating an issue in this repository.
 
 To find syntax for search queries, check out the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests)
 or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
