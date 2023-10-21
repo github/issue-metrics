@@ -24,7 +24,7 @@ or the [documentation on searching discussions](https://docs.github.com/en/searc
 
 ## Sample Output
 
-[Sample GitHub issue created by the issue/metrics GitHub Action](docs/issue-metrics-sample-output.png)
+![Sample GitHub issue created by the issue/metrics GitHub Action](docs/issue-metrics-sample-output.png)
 
 ## Getting Started
 
