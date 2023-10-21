@@ -24,7 +24,7 @@ Feel free to inquire about its usage by creating an issue in this repository.
 To find syntax for search queries, check out the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests)
 or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
 
-## Sample Output
+## Sample Report
 
 The output of this action is a report in form of a GitHub issue.
 Below you see a sample of such a GitHub issue.
