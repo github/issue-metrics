@@ -1,7 +1,9 @@
 # Configuring the `SEARCH_QUERY`
 
 Issues or Pull Requests? Open or closed?
-This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API. Here are some search query examples:
+This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API.
+
+## Examples
 
 Issues opened in May 2023:
 
@@ -23,7 +25,7 @@ Discussions opened in May 2023:
 
 - `repo:owner/repo type:discussions created:2023-05-01..2023-05-31`
 
-Discussions opened in May 2023 with category of engineering and label of question:
+Discussions opened in May 2023 with category of `engineering` and label of `question`:
 
 - `repo:owner/repo type:discussions created:2023-05-01..2023-05-31 category:engineering label:"question"`
 
@@ -34,6 +36,8 @@ Both issues and pull requests opened in May 2023:
 Both issues and pull requests closed in May 2023 (may have been open in May or earlier):
 
 - `repo:owner/repo closed:2023-05-01..2023-05-31`
+
+## Reporting on opened and closed issues/PRs
 
 OK, but what if I want both open or closed issues and pull requests? Due to limitations in issue search (no ability for OR logic), you will need to run the action twice, once for opened and once for closed. Here is an example workflow that does this:
 
