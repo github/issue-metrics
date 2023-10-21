@@ -26,6 +26,9 @@ or [searching discussions](https://docs.github.com/en/search-github/searching-on
 
 ## Sample Output
 
+The output of this action is a report in form of a GitHub issue.
+Below you see a sample of such a GitHub issue.
+
 ![Sample GitHub issue created by the issue/metrics GitHub Action](docs/img/issue-metrics-sample-output.png)
 
 ## Getting Started
