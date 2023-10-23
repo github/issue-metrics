@@ -5,6 +5,11 @@
 This is a GitHub Action that searches for issues/pull requests/discussions in a repository, measures several metrics, and generates a report in form of a GitHub issue.
 The issues/pull requests/discussions to search for can be filtered by using a search query.
 
+This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
+Feel free to inquire about its usage by creating an issue in this repository.
+
+## Available Metrics
+
 | Metric | Description |
 |--------|-------------|
 |Time to First Response | The duration from creation to the initial comment or review.*|
@@ -16,11 +21,15 @@ The issues/pull requests/discussions to search for can be filtered by using a se
 
 *For issues and pull requests, comments by issue/pull request author's and comments by bots are excluded.
 
-This action, developed by GitHub OSPO for our internal use, is open-sourced for your potential benefit.
-Feel free to inquire about its usage by creating an issue in this repository.
+To find syntax for search queries, check out the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests)
+or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
 
-To find syntax for search queries, check out the [documentation on searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests)
-or the [documentation on searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions).
+## Sample Report
+
+The output of this action is a report in form of a GitHub issue.
+Below you see a sample of such a GitHub issue.
+
+![Sample GitHub issue created by the issue/metrics GitHub Action](docs/img/issue-metrics-sample-output.png)
 
 ## Getting Started
 
@@ -109,14 +118,14 @@ Below are the allowed configuration options:
 | `HIDE_LABEL_METRICS` | False |         | If set to any value, the time in label metrics will not be displayed in the generated markdown file. |
 | `IGNORE_USERS` | False |         | A comma separated list of users to ignore when calculating metrics. (ie. `IGNORE_USERS: 'user1,user2'`). To ignore bots, append `[bot]` to the user (ie. `IGNORE_USERS: 'github-actions[bot]'`)  |
 
-## Links
+## Further Documentation
 
+- [Example workflows](./docs/example-workflows.md)
+- [Measuring time spent in labels](./docs/measure-time.md)
 - [Assigning teams instead of individuals](./docs/assign-team-instead-of-individual.md)
 - [Example using the JSON output instead of the markdown output](./docs/example-using-json-instead-markdown-output.md)
-- [Example workflows](./docs/example-workflows.md)
+- [Configuring the `SEARCH_QUERY`](./docs/search-query.md)
 - [Local usage without Docker](./docs/local-usage-without-docker.md)
-- [Measuring time spent in labels](./docs/measure-time.md)
-- [SEARCH_QUERY](./docs/search-query.md)
 
 ## License
 
