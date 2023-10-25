@@ -9,7 +9,7 @@ Classes:
 import os
 import unittest
 from datetime import timedelta
-from unittest.mock import mock_open, patch
+from unittest.mock import call, mock_open, patch
 
 from classes import IssueWithMetrics
 from markdown_writer import write_to_markdown
@@ -219,11 +219,19 @@ class TestWriteToMarkdown(unittest.TestCase):
             write_to_markdown(None, None, None, None, None, None, None)
 
         # Check that the file was written correctly
-        expected_output = "no issues found for the given search criteria\n\n"
-        mock_open_file.assert_called_once_with(
-            "issue_metrics.md", "w", encoding="utf-8"
+        expected_output = [
+            "# Issue Metrics\n\n",
+            "no issues found for the given search criteria\n\n",
+            "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n",
+        ]
+        # Check that the markdown file was written with the three calls in expected output
+        mock_open_file.assert_has_calls(
+            [
+                call().write(expected_output[0]),
+                call().write(expected_output[1]),
+                call().write(expected_output[2]),
+            ]
         )
-        mock_open_file().write.assert_called_once_with(expected_output)
 
 
 class TestWriteToMarkdownWithEnv(unittest.TestCase):
