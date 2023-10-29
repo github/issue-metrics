@@ -52,6 +52,7 @@ def get_env_vars() -> tuple[str, str, List[str]]:
         str: the search query used to filter issues, prs, and discussions
         str: the github token used to authenticate to github.com
         List[str]: a list of users to ignore when calculating metrics
+        str: the title to use at the very top of the markdown output
     """
     search_query = os.getenv("SEARCH_QUERY")
     if not search_query:
@@ -67,7 +68,11 @@ def get_env_vars() -> tuple[str, str, List[str]]:
     else:
         ignore_users = []
 
-    return search_query, token, ignore_users
+    report_title = os.getenv("REPORT_TITLE")
+    if not report_title:
+        report_title = "Issue Metrics"
+
+    return search_query, token, ignore_users, report_title
 
 
 def search_issues(
@@ -272,6 +277,7 @@ def main():
     search_query = env_vars[0]
     token = env_vars[1]
     ignore_users = env_vars[2]
+    report_title = env_vars[3]
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -351,6 +357,7 @@ def main():
         num_issues_closed,
         labels,
         search_query,
+        report_title,
     )
 
 

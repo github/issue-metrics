@@ -85,6 +85,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_closed=num_issues_closed,
             labels=["bug"],
             search_query="is:issue is:open label:bug",
+            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -181,6 +182,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             labels=["bug"],
+            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -216,7 +218,17 @@ class TestWriteToMarkdown(unittest.TestCase):
         """Test that write_to_markdown writes the correct markdown file when no issues are found."""
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
-            write_to_markdown(None, None, None, None, None, None, None)
+            # write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(
+                issues_with_metrics=None,
+                average_time_to_first_response=None,
+                average_time_to_close=None,
+                average_time_to_answer=None,
+                average_time_in_labels=None,
+                num_issues_opened=None,
+                num_issues_closed=None,
+                report_title="Issue Metrics",
+            )
 
         # Check that the file was written correctly
         expected_output = [
@@ -303,6 +315,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             labels=["label1"],
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
+            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -321,6 +334,116 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Issue 2 | https://github.com/user/repo/issues/2 | bob |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
+        )
+        self.assertEqual(content, expected_content)
+        os.remove("issue_metrics.md")
+
+
+class TestWriteToMarkdownWithOutputCustomization(unittest.TestCase):
+    """Test the write_to_markdown function with the REPORT_TITLE environment variables set."""
+
+    def setUp(self):
+        os.environ["REPORT_TITLE"] = "My Custom Report Title"
+        # os.environ["HIDE_TIME_TO_CLOSE"] = "True"
+        # os.environ["HIDE_TIME_TO_ANSWER"] = "True"
+        # os.environ["HIDE_LABEL_METRICS"] = "True"
+
+    def tearDown(self):
+        # Unset the environment variables
+        os.environ.pop("REPORT_TITLE")
+        # os.environ.pop("HIDE_TIME_TO_CLOSE")
+        # os.environ.pop("HIDE_TIME_TO_ANSWER")
+        # os.environ.pop("HIDE_LABEL_METRICS")
+
+    def test_writes_markdown_file_with_output_customization(self):
+        """
+        Test that write_to_markdown writes the correct
+        markdown file.
+        """
+
+        # Create mock data
+        issues_with_metrics = [
+            IssueWithMetrics(
+                "Issue 1",
+                "https://github.com/user/repo/issues/1",
+                "alice",
+                timedelta(days=1),
+                timedelta(days=2),
+                timedelta(days=3),
+                {"bug": timedelta(days=1)},
+            ),
+            IssueWithMetrics(
+                "feat| Issue 2",  # title contains a vertical bar
+                "https://github.com/user/repo/issues/2",
+                "bob",
+                timedelta(days=3),
+                timedelta(days=4),
+                timedelta(days=5),
+                {"bug": timedelta(days=2)},
+            ),
+        ]
+        average_time_to_first_response = {
+            "avg": timedelta(days=2),
+            "med": timedelta(days=2),
+            "90p": timedelta(days=2),
+        }
+        average_time_to_close = {
+            "avg": timedelta(days=3),
+            "med": timedelta(days=3),
+            "90p": timedelta(days=3),
+        }
+        average_time_to_answer = {
+            "avg": timedelta(days=4),
+            "med": timedelta(days=4),
+            "90p": timedelta(days=4),
+        }
+        average_time_in_labels = {
+            "avg": {"bug": "1 day, 12:00:00"},
+            "med": {"bug": "1 day, 12:00:00"},
+            "90p": {"bug": "1 day, 12:00:00"},
+        }
+
+        num_issues_opened = 2
+        num_issues_closed = 1
+
+        # Call the function
+        write_to_markdown(
+            issues_with_metrics=issues_with_metrics,
+            average_time_to_first_response=average_time_to_first_response,
+            average_time_to_close=average_time_to_close,
+            average_time_to_answer=average_time_to_answer,
+            average_time_in_labels=average_time_in_labels,
+            num_issues_opened=num_issues_opened,
+            num_issues_closed=num_issues_closed,
+            labels=["bug"],
+            report_title="My Custom Report Title",
+        )
+
+        # Check that the function writes the correct markdown file
+        with open("issue_metrics.md", "r", encoding="utf-8") as file:
+            content = file.read()
+        expected_content = (
+            "# My Custom Report Title\n\n"
+            "| Metric | Average | Median | 90th percentile |\n"
+            "| --- | --- | --- | ---: |\n"
+            "| Time to first response | 2 days, 0:00:00 | 2 days, 0:00:00 | 2 days, 0:00:00 |\n"
+            "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
+            "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
+            "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
+            "\n"
+            "| Metric | Count |\n"
+            "| --- | ---: |\n"
+            "| Number of items that remain open | 2 |\n"
+            "| Number of items closed | 1 |\n"
+            "| Total number of items created | 2 |\n\n"
+            "| Title | URL | Author | Time to first response | Time to close |"
+            " Time to answer | Time spent in bug |\n"
+            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | alice | 1 day, 0:00:00 | "
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
+            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | bob | 3 days, 0:00:00 | "
+            "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")

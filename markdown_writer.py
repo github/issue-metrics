@@ -78,6 +78,7 @@ def write_to_markdown(
     num_issues_closed: Union[int, None],
     labels=None,
     search_query=None,
+    report_title=None,
     hide_label_metrics=False,
 ) -> None:
     """Write the issues with metrics to a markdown file.
@@ -91,11 +92,12 @@ def write_to_markdown(
         average_time_in_labels (dict): A dictionary containing the average time spent in each label.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
-        num_issues_opened (int): The Number of items that remain opened.
+        num_issues_opened (int): The number of items that remain opened.
         num_issues_closed (int): The number of issues that were closed.
         labels (List[str]): A list of the labels that are used in the issues.
         search_query (str): The search query used to find the issues.
-        hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output
+        report_title (str): The title to use at the top of the markdown output.
+        hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output.
 
     Returns:
         None.
@@ -103,7 +105,7 @@ def write_to_markdown(
     """
     columns = get_non_hidden_columns(labels)
     with open("issue_metrics.md", "w", encoding="utf-8") as file:
-        file.write("# Issue Metrics\n\n")
+        file.write(f"# {report_title}\n\n")
 
         # If all the metrics are None, then there are no issues
         if not issues_with_metrics or len(issues_with_metrics) == 0:
