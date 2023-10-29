@@ -12,8 +12,7 @@ Functions:
         average_time_to_close: timedelta,
         average_time_to_answer: timedelta,
         num_issues_opened: int,
-        num_issues_closed: int,
-        file: file object = None
+        num_issues_closed: int
     ) -> None:
         Write the issues with metrics to a markdown file.
     get_non_hidden_columns(
@@ -90,8 +89,6 @@ def write_to_markdown(
         average_time_to_close (datetime.timedelta): The average time to close for the issues.
         average_time_to_answer (datetime.timedelta): The average time to answer the discussions.
         average_time_in_labels (dict): A dictionary containing the average time spent in each label.
-        file (file object, optional): The file object to write to. If not provided,
-            a file named "issue_metrics.md" will be created.
         num_issues_opened (int): The number of items that remain opened.
         num_issues_closed (int): The number of issues that were closed.
         labels (List[str]): A list of the labels that are used in the issues.
