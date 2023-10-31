@@ -100,7 +100,7 @@ def write_to_markdown(
         None.
 
     """
-    columns = get_non_hidden_columns(labels)          
+    columns = get_non_hidden_columns(labels)
     with open("issue_metrics.md", "w", encoding="utf-8") as file:
         file.write(f"# {report_title}\n\n")
 
