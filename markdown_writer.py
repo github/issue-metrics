@@ -77,7 +77,7 @@ def write_to_markdown(
     num_issues_closed: Union[int, None],
     labels=None,
     search_query=None,
-    report_title=None,
+    report_title="Issue Metrics",
     hide_label_metrics=False,
 ) -> None:
     """Write the issues with metrics to a markdown file.
@@ -100,7 +100,7 @@ def write_to_markdown(
         None.
 
     """
-    columns = get_non_hidden_columns(labels)
+    columns = get_non_hidden_columns(labels)          
     with open("issue_metrics.md", "w", encoding="utf-8") as file:
         file.write(f"# {report_title}\n\n")
 

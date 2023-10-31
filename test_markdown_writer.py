@@ -85,7 +85,6 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_closed=num_issues_closed,
             labels=["bug"],
             search_query="is:issue is:open label:bug",
-            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -182,7 +181,6 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             labels=["bug"],
-            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -227,7 +225,6 @@ class TestWriteToMarkdown(unittest.TestCase):
                 average_time_in_labels=None,
                 num_issues_opened=None,
                 num_issues_closed=None,
-                report_title="Issue Metrics",
             )
 
         # Check that the file was written correctly
@@ -315,7 +312,6 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             labels=["label1"],
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
-            report_title="Issue Metrics",
         )
 
         # Check that the function writes the correct markdown file
@@ -344,16 +340,9 @@ class TestWriteToMarkdownWithOutputCustomization(unittest.TestCase):
 
     def setUp(self):
         os.environ["REPORT_TITLE"] = "My Custom Report Title"
-        # os.environ["HIDE_TIME_TO_CLOSE"] = "True"
-        # os.environ["HIDE_TIME_TO_ANSWER"] = "True"
-        # os.environ["HIDE_LABEL_METRICS"] = "True"
 
     def tearDown(self):
-        # Unset the environment variables
         os.environ.pop("REPORT_TITLE")
-        # os.environ.pop("HIDE_TIME_TO_CLOSE")
-        # os.environ.pop("HIDE_TIME_TO_ANSWER")
-        # os.environ.pop("HIDE_LABEL_METRICS")
 
     def test_writes_markdown_file_with_output_customization(self):
         """

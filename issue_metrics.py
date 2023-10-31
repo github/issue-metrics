@@ -69,9 +69,6 @@ def get_env_vars() -> tuple[str, str, List[str]]:
         ignore_users = []
 
     report_title = os.getenv("REPORT_TITLE")
-    if not report_title:
-        report_title = "Issue Metrics"
-
     return search_query, token, ignore_users, report_title
 
 
