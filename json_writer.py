@@ -76,23 +76,42 @@ def write_to_json(
     if not issues_with_metrics:
         return ""
 
+    # time to first response
     average_time_to_first_response = None
+    med_time_to_first_response = None
+    p90_time_to_first_response = None
     if stats_time_to_first_response is not None:
         average_time_to_first_response = stats_time_to_first_response['avg']
+        med_time_to_first_response = stats_time_to_first_response['med']
+        p90_time_to_first_response = stats_time_to_first_response['90p']
 
+    # time to close
     average_time_to_close = None
+    med_time_to_close = None
+    p90_time_to_close = None
     if stats_time_to_close is not None:
         average_time_to_close = stats_time_to_close['avg']
+        med_time_to_close = stats_time_to_close['med']
+        p90_time_to_close = stats_time_to_close['90p']
 
+    # time to answer
     average_time_to_answer = None
+    med_time_to_answer = None
+    p90_time_to_answer = None
     if stats_time_to_answer is not None:
         average_time_to_answer = stats_time_to_answer['avg']
+        med_time_to_answer = stats_time_to_answer['med']
+        p90_time_to_answer = stats_time_to_answer['90p']
 
     average_time_in_labels = {}
-    for stats_type, labels in stats_time_in_labels.items():
-        if stats_type == 'avg':
-            for label, time in labels.items():
-                average_time_in_labels[label] = str(time)
+    med_time_in_labels = {}
+    p90_time_in_labels = {}
+    for label, time in stats_time_in_labels['avg'].items():
+        average_time_in_labels[label] = str(time)
+    for label, time in stats_time_in_labels['med'].items():
+        med_time_in_labels[label] = str(time)
+    for label, time in stats_time_in_labels['90p'].items():
+        p90_time_in_labels[label] = str(time)
 
     # Create a dictionary with the metrics
     metrics = {
@@ -100,6 +119,14 @@ def write_to_json(
         "average_time_to_close": str(average_time_to_close),
         "average_time_to_answer": str(average_time_to_answer),
         "average_time_in_labels": average_time_in_labels,
+        "median_time_to_first_response": str(med_time_to_first_response),
+        "median_time_to_close": str(med_time_to_close),
+        "median_time_to_answer": str(med_time_to_answer),
+        "median_time_in_labels": med_time_in_labels,
+        "90_percentile_time_to_first_response": str(p90_time_to_first_response),
+        "90_percentile_time_to_close": str(p90_time_to_close),
+        "90_percentile_time_to_answer": str(p90_time_to_answer),
+        "90_percentile_time_in_labels": p90_time_in_labels,
         "num_items_opened": num_issues_opened,
         "num_items_closed": num_issues_closed,
         "total_item_count": len(issues_with_metrics),
