@@ -70,9 +70,9 @@ def get_non_hidden_columns(labels) -> List[str]:
 
 def write_to_markdown(
     issues_with_metrics: Union[List[IssueWithMetrics], None],
-    average_time_to_first_response: Union[timedelta, None],
-    average_time_to_close: Union[timedelta, None],
-    average_time_to_answer: Union[timedelta, None],
+    average_time_to_first_response: Union[dict[str, timedelta], None],
+    average_time_to_close: Union[dict[str, timedelta], None],
+    average_time_to_answer: Union[dict[str, timedelta], None],
     average_time_in_labels: Union[dict, None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],

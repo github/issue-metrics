@@ -25,10 +25,10 @@ from classes import IssueWithMetrics
 
 def write_to_json(
     issues_with_metrics: Union[List[IssueWithMetrics], None],
-    average_time_to_first_response: Union[timedelta, None],
-    average_time_to_close: Union[timedelta, None],
-    average_time_to_answer: Union[timedelta, None],
-    average_time_in_labels: Union[dict, None],
+    stats_time_to_first_response: Union[dict[str, timedelta], None],
+    stats_time_to_close: Union[dict[str, timedelta], None],
+    stats_time_to_answer: Union[dict[str, timedelta], None],
+    stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     search_query: str,
@@ -76,16 +76,30 @@ def write_to_json(
     if not issues_with_metrics:
         return ""
 
+    average_time_to_first_response = None
+    if stats_time_to_first_response is not None:
+        average_time_to_first_response = stats_time_to_first_response['avg']
+
+    average_time_to_close = None
+    if stats_time_to_close is not None:
+        average_time_to_close = stats_time_to_close['avg']
+
+    average_time_to_answer = None
+    if stats_time_to_answer is not None:
+        average_time_to_answer = stats_time_to_answer['avg']
+
+    average_time_in_labels = {}
+    for stats_type, labels in stats_time_in_labels.items():
+        if stats_type == 'avg':
+            for label, time in labels.items():
+                average_time_in_labels[label] = str(time)
+
     # Create a dictionary with the metrics
-    labels_metrics = {}
-    if average_time_in_labels:
-        for label, time in average_time_in_labels.items():
-            labels_metrics[label] = str(time)
     metrics = {
         "average_time_to_first_response": str(average_time_to_first_response),
         "average_time_to_close": str(average_time_to_close),
         "average_time_to_answer": str(average_time_to_answer),
-        "average_time_in_labels": labels_metrics,
+        "average_time_in_labels": average_time_in_labels,
         "num_items_opened": num_issues_opened,
         "num_items_closed": num_issues_closed,
         "total_item_count": len(issues_with_metrics),
