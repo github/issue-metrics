@@ -10,6 +10,9 @@ from json_writer import write_to_json
 class TestWriteToJson(unittest.TestCase):
     """Tests for the write_to_json function."""
 
+    # Show differences without omission in assertion
+    maxDiff = None
+
     def test_write_to_json(self):
         """Test that write_to_json writes the correct JSON file."""
         issues_with_metrics = [
@@ -34,9 +37,27 @@ class TestWriteToJson(unittest.TestCase):
                 labels_metrics={},
             ),
         ]
-        average_time_to_first_response = timedelta(days=2.5)
-        average_time_to_close = timedelta(days=5)
-        average_time_to_answer = timedelta(days=1)
+
+        stats_time_to_first_response = {
+            "avg": timedelta(days=2.5),
+            "med": timedelta(days=2.5),
+            "90p": timedelta(days=1.5),
+        }
+        stats_time_to_close = {
+            "avg": timedelta(days=5),
+            "med": timedelta(days=4),
+            "90p": timedelta(days=3),
+        }
+        stats_time_to_answer = {
+            "avg": timedelta(days=1),
+            "med": timedelta(days=2),
+            "90p": timedelta(days=3),
+        }
+        stats_time_in_labels = {
+            "avg": {"bug": timedelta(days=1, hours=16, minutes=24, seconds=12)},
+            "med": {"bug": timedelta(days=1, hours=16, minutes=24, seconds=12)},
+            "90p": {"bug": timedelta(days=1, hours=16, minutes=24, seconds=12)},
+        }
         num_issues_opened = 2
         num_issues_closed = 1
 
@@ -75,12 +96,90 @@ class TestWriteToJson(unittest.TestCase):
         self.assertEqual(
             write_to_json(
                 issues_with_metrics=issues_with_metrics,
-                average_time_to_first_response=average_time_to_first_response,
-                average_time_to_close=average_time_to_close,
-                average_time_to_answer=average_time_to_answer,
-                average_time_in_labels={
-                    "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
+                stats_time_to_first_response=stats_time_to_first_response,
+                stats_time_to_close=stats_time_to_close,
+                stats_time_to_answer=stats_time_to_answer,
+                stats_time_in_labels=stats_time_in_labels,
+                num_issues_opened=num_issues_opened,
+                num_issues_closed=num_issues_closed,
+                search_query="is:issue repo:owner/repo",
+            ),
+            json.dumps(expected_output),
+        )
+
+    def test_write_to_json_with_no_response(self):
+        """Test where there is no answer to a issue."""
+        issues_with_metrics = [
+            IssueWithMetrics(
+                title="Issue 1",
+                html_url="https://github.com/owner/repo/issues/1",
+                author="alice",
+                time_to_first_response=None,
+                time_to_close=None,
+                time_to_answer=None,
+                labels_metrics={},
+            ),
+            IssueWithMetrics(
+                title="Issue 2",
+                html_url="https://github.com/owner/repo/issues/2",
+                author="bob",
+                time_to_first_response=None,
+                time_to_close=None,
+                time_to_answer=None,
+                labels_metrics={},
+            ),
+        ]
+
+        stats_time_to_first_response = None
+        stats_time_to_close = None
+        stats_time_to_answer = None
+        stats_time_in_labels = {
+            "avg": {},
+            "med": {},
+            "90p": {},
+        }
+        num_issues_opened = 2
+        num_issues_closed = 0
+
+        expected_output = {
+            "average_time_to_first_response": "None",
+            "average_time_to_close": "None",
+            "average_time_to_answer": "None",
+            "average_time_in_labels": {},
+            "num_items_opened": 2,
+            "num_items_closed": 0,
+            "total_item_count": 2,
+            "issues": [
+                {
+                    "title": "Issue 1",
+                    "html_url": "https://github.com/owner/repo/issues/1",
+                    "author": "alice",
+                    "time_to_first_response": "None",
+                    "time_to_close": "None",
+                    "time_to_answer": "None",
+                    "label_metrics": {},
                 },
+                {
+                    "title": "Issue 2",
+                    "html_url": "https://github.com/owner/repo/issues/2",
+                    "author": "bob",
+                    "time_to_first_response": "None",
+                    "time_to_close": "None",
+                    "time_to_answer": "None",
+                    "label_metrics": {},
+                },
+            ],
+            "search_query": "is:issue repo:owner/repo",
+        }
+
+        # Call the function and check the output
+        self.assertEqual(
+            write_to_json(
+                issues_with_metrics=issues_with_metrics,
+                stats_time_to_first_response=stats_time_to_first_response,
+                stats_time_to_close=stats_time_to_close,
+                stats_time_to_answer=stats_time_to_answer,
+                stats_time_in_labels=stats_time_in_labels,
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
                 search_query="is:issue repo:owner/repo",
