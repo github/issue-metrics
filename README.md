@@ -127,6 +127,9 @@ Below are the allowed configuration options:
 - [Configuring the `SEARCH_QUERY`](./docs/search-query.md)
 - [Local usage without Docker](./docs/local-usage-without-docker.md)
 
+## Contributions
+We would ❤️ contributions to improve this action. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get involved.
+
 ## License
 
 [MIT](LICENSE)
