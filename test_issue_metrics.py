@@ -60,6 +60,7 @@ class TestAuthToGithub(unittest.TestCase):
     """Test the auth_to_github function."""
 
     @patch("github3.login")
+    @patch.dict(os.environ, {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:open repo:user/repo"})
     def test_auth_to_github_with_token(self, mock_login):
         """Test that auth_to_github works with a token.
 
@@ -72,9 +73,6 @@ class TestAuthToGithub(unittest.TestCase):
         mock_gh = MagicMock()
         mock_login.return_value = mock_gh
 
-        # Set up the environment variable
-        os.environ["GH_TOKEN"] = "test_token"
-
         # Call the function
         github_connection = auth_to_github()
 
@@ -82,11 +80,9 @@ class TestAuthToGithub(unittest.TestCase):
         self.assertEqual(github_connection, mock_gh)
         mock_login.assert_called_once_with(token="test_token")
 
+    @patch.dict(os.environ, {}, clear=True)
     def test_auth_to_github_no_token(self):
         """Test that auth_to_github raises a ValueError if GH_TOKEN is not set."""
-        # Unset the GH_TOKEN environment variable
-        if "GH_TOKEN" in os.environ:
-            del os.environ["GH_TOKEN"]
 
         # Call auth_to_github and check that it raises a ValueError
         with self.assertRaises(ValueError):
@@ -96,15 +92,17 @@ class TestAuthToGithub(unittest.TestCase):
 class TestGetEnvVars(unittest.TestCase):
     """Test suite for the get_env_vars function."""
 
+    @patch.dict(os.environ, {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"})
     def test_get_env_vars(self):
         """Test that the function correctly retrieves the environment variables."""
-        # Set the environment variables
-        os.environ["SEARCH_QUERY"] = "is:issue is:open repo:org/repo"
 
         # Call the function and check the result
-        result = get_env_vars()
-        expected_result = "is:issue is:open repo:org/repo"
-        self.assertEqual(result[0], expected_result)
+        search_query = get_env_vars().search_query
+        gh_token = get_env_vars().gh_token
+        gh_token_expected_result = "test_token"
+        search_query_expected_result = "is:issue is:open repo:user/repo"
+        self.assertEqual(gh_token, gh_token_expected_result)
+        self.assertEqual(search_query, search_query_expected_result)
 
     def test_get_env_vars_missing_query(self):
         """Test that the function raises a ValueError
@@ -138,6 +136,7 @@ class TestMain(unittest.TestCase):
         os.environ,
         {
             "SEARCH_QUERY": "is:open repo:user/repo",
+            "GH_TOKEN": "test_token",
         },
     )
     def test_main(
@@ -198,6 +197,7 @@ class TestMain(unittest.TestCase):
         os.environ,
         {
             "SEARCH_QUERY": "is:open repo:org/repo",
+            "GH_TOKEN": "test_token",
         },
     )
     def test_main_no_issues_found(
