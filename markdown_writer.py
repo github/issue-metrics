@@ -24,11 +24,11 @@ Functions:
         Get the columns that are not hidden.
 """
 
-import os
 from datetime import timedelta
 from typing import List, Union
 
 from classes import IssueWithMetrics
+from config import get_env_vars
 
 
 def get_non_hidden_columns(labels) -> List[str]:
@@ -43,24 +43,27 @@ def get_non_hidden_columns(labels) -> List[str]:
 
     """
     columns = ["Title", "URL"]
+
+    env_vars = get_env_vars()
+
     # Find the number of columns and which are to be hidden
-    hide_author = os.getenv("HIDE_AUTHOR")
+    hide_author = env_vars.hide_author
     if not hide_author:
         columns.append("Author")
 
-    hide_time_to_first_response = os.getenv("HIDE_TIME_TO_FIRST_RESPONSE")
+    hide_time_to_first_response = env_vars.hide_time_to_first_response
     if not hide_time_to_first_response:
         columns.append("Time to first response")
 
-    hide_time_to_close = os.getenv("HIDE_TIME_TO_CLOSE")
+    hide_time_to_close = env_vars.hide_time_to_close
     if not hide_time_to_close:
         columns.append("Time to close")
 
-    hide_time_to_answer = os.getenv("HIDE_TIME_TO_ANSWER")
+    hide_time_to_answer = env_vars.hide_time_to_answer
     if not hide_time_to_answer:
         columns.append("Time to answer")
 
-    hide_label_metrics = os.getenv("HIDE_LABEL_METRICS")
+    hide_label_metrics = env_vars.hide_label_metrics
     if not hide_label_metrics and labels:
         for label in labels:
             columns.append(f"Time spent in {label}")

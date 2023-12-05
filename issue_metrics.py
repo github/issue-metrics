@@ -6,7 +6,7 @@ the average time to first response and time to close and writes the issues with
 their metrics to a markdown file.
 
 Functions:
-    get_env_vars() -> tuple[str, str]: Get the environment variables for use
+    get_env_vars() -> EnvVars: Get the environment variables for use
         in the script.
     search_issues(search_query: str, github_connection: github3.GitHub)
         -> github3.structs.SearchIterator:
@@ -21,7 +21,6 @@ Functions:
     main(): Run the issue-metrics script.
 """
 
-import os
 from os.path import dirname, join
 import sys
 from typing import List, Union
@@ -42,32 +41,7 @@ from time_to_first_response import (
     get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
-
-
-def get_env_vars() -> tuple[str, str, List[str]]:
-    """
-    Get the environment variables for use in the script.
-
-    Returns:
-        str: the search query used to filter issues, prs, and discussions
-        str: the github token used to authenticate to github.com
-        List[str]: a list of users to ignore when calculating metrics
-    """
-    search_query = os.getenv("SEARCH_QUERY")
-    if not search_query:
-        raise ValueError("SEARCH_QUERY environment variable not set")
-
-    token = os.getenv("GH_TOKEN")
-    if not token:
-        raise ValueError("GITHUB_TOKEN environment variable not set")
-
-    ignore_users = os.getenv("IGNORE_USERS")
-    if ignore_users:
-        ignore_users = ignore_users.split(",")
-    else:
-        ignore_users = []
-
-    return search_query, token, ignore_users
+from config import get_env_vars
 
 
 def search_issues(
@@ -123,17 +97,16 @@ def auth_to_github() -> github3.GitHub:
     Returns:
         github3.GitHub: A github api connection.
     """
-    if token := os.getenv("GH_TOKEN"):
-        if not os.getenv("GITHUB_SERVER_URL"):
-            github_connection = github3.login(token=token)
-        elif os.getenv("GITHUB_SERVER_URL") == "https://github.com":
-            github_connection = github3.login(token=token)
-        else:
-            github_connection = github3.GitHubEnterprise(
-                os.getenv("GITHUB_SERVER_URL"), token=token
-            )
+    env_vars = get_env_vars()
+    token = env_vars.gh_token
+    github_server_url = env_vars.github_server_url
+
+    if github_server_url and github_server_url != "https://github.com":
+        github_connection = github3.GitHubEnterprise(
+            github_server_url, token=token
+        )
     else:
-        raise ValueError("GH_TOKEN environment variable not set")
+        github_connection = github3.login(token=token)
 
     return github_connection  # type: ignore
 
@@ -269,9 +242,9 @@ def main():
 
     # Get the environment variables for use in the script
     env_vars = get_env_vars()
-    search_query = env_vars[0]
-    token = env_vars[1]
-    ignore_users = env_vars[2]
+    search_query = env_vars.search_query
+    token = env_vars.gh_token
+    ignore_users = env_vars.ignore_users
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -284,7 +257,7 @@ def main():
         )
 
     # Determine if there are label to measure
-    labels = os.environ.get("LABELS_TO_MEASURE")
+    labels = env_vars.labels_to_measure
     if labels:
         labels = labels.split(",")
     else:

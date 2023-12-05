@@ -15,6 +15,13 @@ from classes import IssueWithMetrics
 from markdown_writer import write_to_markdown
 
 
+@patch.dict(
+    os.environ,
+    {
+        "SEARCH_QUERY": "is:open repo:user/repo",
+        "GH_TOKEN": "test_token"
+    },
+)
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
 
@@ -234,22 +241,19 @@ class TestWriteToMarkdown(unittest.TestCase):
         )
 
 
+@patch.dict(
+    os.environ,
+    {
+        "SEARCH_QUERY": "is:open repo:user/repo",
+        "GH_TOKEN": "test_token",
+        "HIDE_TIME_TO_FIRST_RESPONSE": "True",
+        "HIDE_TIME_TO_CLOSE": "True",
+        "HIDE_TIME_TO_ANSWER": "True",
+        "HIDE_LABEL_METRICS": "True"
+    },
+)
 class TestWriteToMarkdownWithEnv(unittest.TestCase):
     """Test the write_to_markdown function with the HIDE* environment variables set."""
-
-    def setUp(self):
-        # Set the HIDE* environment variables to True
-        os.environ["HIDE_TIME_TO_FIRST_RESPONSE"] = "True"
-        os.environ["HIDE_TIME_TO_CLOSE"] = "True"
-        os.environ["HIDE_TIME_TO_ANSWER"] = "True"
-        os.environ["HIDE_LABEL_METRICS"] = "True"
-
-    def tearDown(self):
-        # Unset the HIDE* environment variables
-        os.environ.pop("HIDE_TIME_TO_FIRST_RESPONSE")
-        os.environ.pop("HIDE_TIME_TO_CLOSE")
-        os.environ.pop("HIDE_TIME_TO_ANSWER")
-        os.environ.pop("HIDE_LABEL_METRICS")
 
     def test_writes_markdown_file_with_non_hidden_columns_only(self):
         """
