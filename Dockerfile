@@ -1,5 +1,14 @@
 FROM python:3.12-slim
-LABEL org.opencontainers.image.source https://github.com/github/issue-metrics
+LABEL com.github.actions.name="issue-metrics" \
+    com.github.actions.description="Gather metrics on issues/prs/discussions such as time to first response, count of issues opened, closed, etc." \
+    com.github.actions.icon="check-square" \
+    com.github.actions.color="white" \
+    maintainer="@zkoppert" \
+    org.opencontainers.image.url="https://github.com/github/issue-metrics" \
+    org.opencontainers.image.source="https://github.com/github/issue-metrics" \
+    org.opencontainers.image.documentation="https://github.com/github/issue-metrics" \
+    org.opencontainers.image.vendor="GitHub" \
+    org.opencontainers.image.description="Gather metrics on issues/prs/discussions such as time to first response, count of issues opened, closed, etc."
 
 WORKDIR /action/workspace
 COPY requirements.txt *.py /action/workspace/
