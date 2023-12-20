@@ -258,10 +258,6 @@ def main():
 
     # Determine if there are label to measure
     labels = env_vars.labels_to_measure
-    if labels:
-        labels = labels.split(",")
-    else:
-        labels = []
 
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
