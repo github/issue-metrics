@@ -4,6 +4,6 @@ pytz==2023.3.post1
 Requests==2.31.0
 pytest==7.4.3
 pytest-cov==4.1.0
-flake8==6.1.0
+flake8==7.0.0
 pylint==3.0.3
 numpy==1.26.2
