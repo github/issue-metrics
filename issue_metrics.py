@@ -137,8 +137,6 @@ def get_per_issue_metrics(
     issues_with_metrics = []
     num_issues_open = 0
     num_issues_closed = 0
-    if ignore_users is None:
-        ignore_users = []
 
     for issue in issues:
         if discussions:
@@ -258,10 +256,6 @@ def main():
 
     # Determine if there are label to measure
     labels = env_vars.labels_to_measure
-    if labels:
-        labels = labels.split(",")
-    else:
-        labels = []
 
     # Search for issues
     # If type:discussions is in the search_query, search for discussions using get_discussions()
