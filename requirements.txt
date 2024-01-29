@@ -1,6 +1,6 @@
 github3.py==4.0.1
 python-dotenv==1.0.1
-pytz==2023.3.post1
+pytz==2023.4
 Requests==2.31.0
 pytest==7.4.4
 pytest-cov==4.1.0
