@@ -73,7 +73,7 @@ jobs:
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
 
     - name: Create issue
-      uses: peter-evans/create-issue-from-file@v4
+      uses: peter-evans/create-issue-from-file@v5
       with:
         title: Monthly issue metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
