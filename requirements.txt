@@ -2,7 +2,7 @@ github3.py==4.0.1
 python-dotenv==1.0.1
 pytz==2024.1
 Requests==2.31.0
-pytest==8.0.0
+pytest==8.0.1
 pytest-cov==4.1.0
 flake8==7.0.0
 pylint==3.0.3
