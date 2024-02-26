@@ -5,5 +5,5 @@ Requests==2.31.0
 pytest==8.0.1
 pytest-cov==4.1.0
 flake8==7.0.0
-pylint==3.0.3
+pylint==3.1.0
 numpy==1.26.4
