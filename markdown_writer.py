@@ -155,7 +155,7 @@ def write_to_markdown(
 
             file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
             if "Author" in columns:
-                file.write(f" {issue.author} |")
+                file.write(f" [{issue.author}](https://github.com/{issue.author}) |")
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
             if "Time to close" in columns:
