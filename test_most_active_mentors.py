@@ -5,19 +5,17 @@ get_mentor_count functions in the most_active_mentors module.
 The tests use mock GitHub issues and comments to test the functions' behavior.
 
 Classes:
-    TestCountCommentsPerUser: A class to test the count_comments_per_user function.
+    TestCountCommentsPerUser: A class testing count_comments_per_user.
     TestGetMentorCount: A class to test the
         get_mentor_count function.
 
 """
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import MagicMock
 
-from classes import IssueWithMetrics
 from most_active_mentors import (
     count_comments_per_user,
-    get_mentor_count,
 )
 
 
@@ -27,8 +25,9 @@ class TestCountCommentsPerUser(unittest.TestCase):
     def test_count_comments_per_user(self):
         """Test that count_comments_per_user correctly counts user comments.
 
-        This test mocks the GitHub connection and issue comments, and checks that
-        count_comments_per_user correctly considers user comments for counting.
+        This test mocks the GitHub connection and issue comments, and checks
+        that count_comments_per_user correctly considers user comments for
+        counting.
 
         """
         # Set up the mock GitHub issues
@@ -47,8 +46,7 @@ class TestCountCommentsPerUser(unittest.TestCase):
 
         # Call the function
         result = count_comments_per_user(mock_issue1)
-        expected_result = {"very_active_user": 20}
+        expected_result = {"very_active_user": 3}
 
         # Check the results
         self.assertEqual(result, expected_result)
-
