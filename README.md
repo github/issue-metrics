@@ -45,13 +45,15 @@ on:
     - cron: '3 2 1 * *'
 
 permissions:
-  issues: write
-  pull-requests: read
+  contents: read
 
 jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+        pull-requests: read
     steps:
     - name: Get dates for last month
       shell: bash
@@ -106,17 +108,37 @@ If you need support using this project or have questions about it, please [open 
 
 Below are the allowed configuration options:
 
-| field                 | required | default | description |
-|-----------------------|----------|---------|-------------|
-| `GH_TOKEN`            | True     |         | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
-| `SEARCH_QUERY`        | True     |         | The query by which you can filter issues/prs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
-| `LABELS_TO_MEASURE`   | False    |         | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
-| `HIDE_AUTHOR` | False |         | If set to any value, the author will not be displayed in the generated markdown file. |
-| `HIDE_TIME_TO_FIRST_RESPONSE` | False |         | If set to any value, the time to first response will not be displayed in the generated markdown file. |
-| `HIDE_TIME_TO_CLOSE` | False |         | If set to any value, the time to close will not be displayed in the generated markdown file. |
-| `HIDE_TIME_TO_ANSWER` | False |         | If set to any value, the time to answer a discussion will not be displayed in the generated markdown file. |
-| `HIDE_LABEL_METRICS` | False |         | If set to any value, the time in label metrics will not be displayed in the generated markdown file. |
-| `IGNORE_USERS` | False |         | A comma separated list of users to ignore when calculating metrics. (ie. `IGNORE_USERS: 'user1,user2'`). To ignore bots, append `[bot]` to the user (ie. `IGNORE_USERS: 'github-actions[bot]'`)  |
+#### Authentication
+
+This action can be configured to authenticate with GitHub App Installation or Personal Access Token (PAT). If all configuration options are provided, the GitHub App Installation configuration has precedence. You can choose one of the following methods to authenticate:
+
+##### GitHub App Installation
+
+| field                         | required | default | description |
+|-------------------------------|----------|---------|-------------|
+| `GH_APP_ID`                   | True     | `""`    | GitHub Application ID. See [documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app) for more details. |
+| `GH_APP_INSTALLATION_ID`      | True     | `""`    | GitHub Application Installation ID. See [documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app) for more details. |
+| `GH_APP_PRIVATE_KEY`          | True     | `""`    | GitHub Application Private Key. See [documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app) for more details. |
+
+##### Personal Access Token (PAT)
+
+| field                         | required | default | description |
+|-------------------------------|----------|---------|-------------|
+| `GH_TOKEN`                    | True     | `""`    | The GitHub Token used to scan the repository. Must have read access to all repository you are interested in scanning. |
+
+#### Other Configuration Options
+
+| field                         | required | default | description |
+|-------------------------------|----------|---------|-------------|
+| `GH_ENTERPRISE_URL`           | False    | `""`    | URL of GitHub Enterprise instance to use for auth instead of github.com                                                                 |
+| `HIDE_AUTHOR`                 | False    | False   | If set to `true`, the author will not be displayed in the generated markdown file. |
+| `HIDE_LABEL_METRICS`          | False | False      | If set to `true`, the time in label metrics will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_ANSWER`         | False | False      | If set to `true`, the time to answer a discussion will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_CLOSE`          | False | False      | If set to `true`, the time to close will not be displayed in the generated markdown file. |
+| `HIDE_TIME_TO_FIRST_RESPONSE` | False    | False   | If set to `true`, the time to first response will not be displayed in the generated markdown file. |
+| `IGNORE_USERS`                | False | False      | A comma separated list of users to ignore when calculating metrics. (ie. `IGNORE_USERS: 'user1,user2'`). To ignore bots, append `[bot]` to the user (ie. `IGNORE_USERS: 'github-actions[bot]'`)  |
+| `LABELS_TO_MEASURE`           | False    | `""`    | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
+| `SEARCH_QUERY`                | True     | `""`    | The query by which you can filter issues/PRs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
 
 ## Further Documentation
 
@@ -126,8 +148,10 @@ Below are the allowed configuration options:
 - [Example using the JSON output instead of the markdown output](./docs/example-using-json-instead-markdown-output.md)
 - [Configuring the `SEARCH_QUERY`](./docs/search-query.md)
 - [Local usage without Docker](./docs/local-usage-without-docker.md)
+- [Authenticating with GitHub App Installation](./docs/authenticating-with-github-app-installation.md)
 
 ## Contributions
+
 We would ❤️ contributions to improve this action. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get involved.
 
 ## License

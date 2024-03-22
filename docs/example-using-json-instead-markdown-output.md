@@ -10,13 +10,15 @@ on:
     - cron: '3 2 1 * *'
 
 permissions:
-  issues: write
-  pull-requests: read
+  contents: read
 
 jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
 
     steps:
     - name: Run issue-metrics tool

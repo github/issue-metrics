@@ -8,8 +8,9 @@ Classes:
     TestGetTimeToReadyForReview: A class to test the get_time_to_ready_for_review function.
 
 """
-from datetime import datetime
+
 import unittest
+from datetime import datetime
 from unittest.mock import MagicMock
 
 from time_to_ready_for_review import get_time_to_ready_for_review

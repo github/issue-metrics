@@ -11,6 +11,7 @@ Functions:
         Measure the time it takes to merge a pull request.
 
 """
+
 from datetime import datetime, timedelta
 from typing import Union
 

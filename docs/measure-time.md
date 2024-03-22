@@ -12,13 +12,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  issues: write
-  pull-requests: read
+  content: read
 
 jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
 
     steps:
 

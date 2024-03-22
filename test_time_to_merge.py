@@ -8,8 +8,9 @@ Classes:
     TestMeasureTimeToMerge: A class to test the measure_time_to_merge function.
 
 """
-from datetime import timedelta, datetime
+
 import unittest
+from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
 from time_to_merge import measure_time_to_merge

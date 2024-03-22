@@ -12,11 +12,13 @@ Classes:
     TestMain: A class to test the main function.
 
 """
+
 import os
 import unittest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 
+import github3
 import issue_metrics
 from issue_metrics import (
     IssueWithMetrics,
@@ -59,40 +61,49 @@ class TestSearchIssues(unittest.TestCase):
 class TestAuthToGithub(unittest.TestCase):
     """Test the auth_to_github function."""
 
-    @patch("github3.login")
-    @patch.dict(os.environ, {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:open repo:user/repo"})
-    def test_auth_to_github_with_token(self, mock_login):
-        """Test that auth_to_github works with a token.
-
-        This test sets the GH_TOKEN environment variable and checks that
-        auth_to_github returns the expected GitHub connection.
-
+    @patch("github3.github.GitHub.login_as_app_installation")
+    def test_auth_to_github_with_github_app(self, mock_login):
         """
+        Test the auth_to_github function when GitHub app
+        parameters provided.
+        """
+        mock_login.return_value = MagicMock()
+        result = auth_to_github(12345, 678910, b"hello", "", "")
 
-        # Set up the mock GitHub connection
-        mock_gh = MagicMock()
-        mock_login.return_value = mock_gh
+        self.assertIsInstance(result, github3.github.GitHub)
 
-        # Call the function
-        github_connection = auth_to_github()
+    def test_auth_to_github_with_token(self):
+        """
+        Test the auth_to_github function when the token is provided.
+        """
+        result = auth_to_github(None, None, b"", "token", "")
 
-        # Check the results
-        self.assertEqual(github_connection, mock_gh)
-        mock_login.assert_called_once_with(token="test_token")
+        self.assertIsInstance(result, github3.github.GitHub)
 
-    @patch.dict(os.environ, {}, clear=True)
-    def test_auth_to_github_no_token(self):
-        """Test that auth_to_github raises a ValueError if GH_TOKEN is not set."""
-
-        # Call auth_to_github and check that it raises a ValueError
+    def test_auth_to_github_without_authentication_information(self):
+        """
+        Test the auth_to_github function when authentication information is not provided.
+        Expect a ValueError to be raised.
+        """
         with self.assertRaises(ValueError):
-            issue_metrics.auth_to_github()
+            auth_to_github(None, None, b"", "", "")
+
+    def test_auth_to_github_with_ghe(self):
+        """
+        Test the auth_to_github function when the GitHub Enterprise URL is provided.
+        """
+        result = auth_to_github(None, None, b"", "token", "https://github.example.com")
+
+        self.assertIsInstance(result, github3.github.GitHubEnterprise)
 
 
 class TestGetEnvVars(unittest.TestCase):
     """Test suite for the get_env_vars function."""
 
-    @patch.dict(os.environ, {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"})
+    @patch.dict(
+        os.environ,
+        {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"},
+    )
     def test_get_env_vars(self):
         """Test that the function correctly retrieves the environment variables."""
 

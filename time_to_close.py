@@ -15,12 +15,12 @@ Functions:
         Calculate stats describing the time to close for a list of issues with metrics.
 
 """
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
 import numpy
-
 from classes import IssueWithMetrics
 
 

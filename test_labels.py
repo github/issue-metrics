@@ -1,4 +1,5 @@
 """ Unit tests for labels.py """
+
 import unittest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
@@ -6,8 +7,7 @@ from unittest.mock import MagicMock
 import github3
 import pytz
 from classes import IssueWithMetrics
-
-from labels import get_stats_time_in_labels, get_label_events, get_label_metrics
+from labels import get_label_events, get_label_metrics, get_stats_time_in_labels
 
 
 class TestLabels(unittest.TestCase):
@@ -84,9 +84,9 @@ class TestGetAverageTimeInLabels(unittest.TestCase):
         labels = ["bug", "feature"]
         metrics = get_stats_time_in_labels(self.issues_with_metrics, labels)
         print(metrics)
-        self.assertEqual(len(metrics['avg']), 2)
-        self.assertEqual(metrics['avg']["bug"], timedelta(days=2))
-        self.assertIsNone(metrics['avg'].get("feature"))
+        self.assertEqual(len(metrics["avg"]), 2)
+        self.assertEqual(metrics["avg"]["bug"], timedelta(days=2))
+        self.assertIsNone(metrics["avg"].get("feature"))
 
 
 if __name__ == "__main__":

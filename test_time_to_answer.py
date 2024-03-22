@@ -53,13 +53,19 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
 
         # Arrange
         issues_with_metrics = [
-            IssueWithMetrics("issue1", "url1", "alice", None, None, timedelta(seconds=10)),
-            IssueWithMetrics("issue2", "url2", "bob", None, None, timedelta(seconds=20)),
-            IssueWithMetrics("issue3", "url3", "carol", None, None, timedelta(seconds=30)),
+            IssueWithMetrics(
+                "issue1", "url1", "alice", None, None, timedelta(seconds=10)
+            ),
+            IssueWithMetrics(
+                "issue2", "url2", "bob", None, None, timedelta(seconds=20)
+            ),
+            IssueWithMetrics(
+                "issue3", "url3", "carol", None, None, timedelta(seconds=30)
+            ),
         ]
 
         # Act
-        result = get_stats_time_to_answer(issues_with_metrics)['avg']
+        result = get_stats_time_to_answer(issues_with_metrics)["avg"]
 
         # Assert
         self.assertEqual(result, timedelta(seconds=20))

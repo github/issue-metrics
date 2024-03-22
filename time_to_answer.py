@@ -14,11 +14,11 @@ Functions:
         Measure the time it takes to answer a GitHub discussion.
 
 """
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import numpy
-
 from classes import IssueWithMetrics
 
 

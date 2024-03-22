@@ -17,12 +17,12 @@ Functions:
         Calculate stats describing time to first response for a list of issues with metrics.
 
 """
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
 import numpy
-
 from classes import IssueWithMetrics
 
 

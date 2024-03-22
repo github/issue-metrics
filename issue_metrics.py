@@ -21,27 +21,26 @@ Functions:
     main(): Run the issue-metrics script.
 """
 
-from os.path import dirname, join
 import sys
 from typing import List, Union
 
 import github3
-from dotenv import load_dotenv
-
 from classes import IssueWithMetrics
+from config import get_env_vars
 from discussions import get_discussions
 from json_writer import write_to_json
-from labels import get_stats_time_in_labels, get_label_metrics
+from labels import get_label_metrics, get_stats_time_in_labels
 from markdown_writer import write_to_markdown
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
-from time_to_ready_for_review import get_time_to_ready_for_review
-from time_to_merge import measure_time_to_merge
 from time_to_first_response import (
     get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
-from config import get_env_vars
+from time_to_merge import measure_time_to_merge
+from time_to_ready_for_review import get_time_to_ready_for_review
+
+GITHUB_BASE_URL = "https://github.com"
 
 
 def search_issues(
@@ -90,23 +89,34 @@ def search_issues(
     return issues
 
 
-def auth_to_github() -> github3.GitHub:
+def auth_to_github(
+    gh_app_id: str,
+    gh_app_installation_id: int,
+    gh_app_private_key_bytes: bytes,
+    token: str,
+    ghe: str,
+) -> github3.GitHub:
     """
     Connect to GitHub.com or GitHub Enterprise, depending on env variables.
 
     Returns:
         github3.GitHub: A github api connection.
     """
-    env_vars = get_env_vars()
-    token = env_vars.gh_token
-    github_server_url = env_vars.github_server_url
 
-    if github_server_url and github_server_url != "https://github.com":
-        github_connection = github3.GitHubEnterprise(
-            github_server_url, token=token
+    if gh_app_id and gh_app_private_key_bytes and gh_app_installation_id:
+        gh = github3.github.GitHub()
+        gh.login_as_app_installation(
+            gh_app_private_key_bytes, gh_app_id, gh_app_installation_id
         )
-    else:
+        github_connection = gh
+    elif ghe and token:
+        github_connection = github3.github.GitHubEnterprise(ghe, token=token)
+    elif token:
         github_connection = github3.login(token=token)
+    else:
+        raise ValueError(
+            "GH_TOKEN or the set of [GH_APP_ID, GH_APP_INSTALLATION_ID, GH_APP_PRIVATE_KEY] environment variables are not set"
+        )
 
     return github_connection  # type: ignore
 
@@ -182,9 +192,13 @@ def get_per_issue_metrics(
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
                 if pull_request:
-                    issue_with_metrics.time_to_close = measure_time_to_merge(pull_request, ready_for_review_at)
+                    issue_with_metrics.time_to_close = measure_time_to_merge(
+                        pull_request, ready_for_review_at
+                    )
                 else:
-                    issue_with_metrics.time_to_close = measure_time_to_close(issue, None)
+                    issue_with_metrics.time_to_close = measure_time_to_close(
+                        issue, None
+                    )
                 num_issues_closed += 1
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
@@ -231,18 +245,20 @@ def main():
 
     print("Starting issue-metrics search...")
 
-    # Load env variables from file
-    dotenv_path = join(dirname(__file__), ".env")
-    load_dotenv(dotenv_path)
-
-    # Auth to GitHub.com
-    github_connection = auth_to_github()
-
     # Get the environment variables for use in the script
     env_vars = get_env_vars()
     search_query = env_vars.search_query
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
+
+    # Auth to GitHub.com
+    github_connection = auth_to_github(
+        env_vars.gh_app_id,
+        env_vars.gh_app_installation_id,
+        env_vars.gh_app_private_key_bytes,
+        token,
+        env_vars.ghe,
+    )
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -284,9 +300,7 @@ def main():
         ignore_users=ignore_users,
     )
 
-    stats_time_to_first_response = get_stats_time_to_first_response(
-        issues_with_metrics
-    )
+    stats_time_to_first_response = get_stats_time_to_first_response(issues_with_metrics)
     stats_time_to_close = None
     if num_issues_closed > 0:
         stats_time_to_close = get_stats_time_to_close(issues_with_metrics)
