@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-        pull-requests: read
+      pull-requests: read
     steps:
     - name: Get dates for last month
       shell: bash
