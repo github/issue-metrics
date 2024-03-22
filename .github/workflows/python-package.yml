@@ -10,13 +10,16 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11, 3.12 ]
+        python-version: [3.11, 3.12]
 
     steps:
     - uses: actions/checkout@v4
@@ -27,8 +30,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pylint pytest pytest-cov
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -r requirements.txt -r requirements-test.txt
     - name: Lint with flake8 and pylint
       run: |
         make lint

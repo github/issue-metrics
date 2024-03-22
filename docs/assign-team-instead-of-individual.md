@@ -2,7 +2,13 @@
 
 The assignee part of this workflow action comes from [a different GitHub action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
 
-By way of work around, you could use the [GitHub API to retrieve the members of the team](https://docs.github.com/en/rest/teams/members?apiVersion=2022-11-28#list-team-members) and then put them in a comma separated string that you provide as the assignee. This requires setting up a new GitHub API token (referred to below as `CUSTOM_TOKEN`) which has `read:org` permissions assigned and single sign on authorization as needed. To do this, create a [GitHub API token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with permissions to read the org (`read:org`). Then take the value of the API token you just created, and [create a repository secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) where the name of the secret is `CUSTOM_TOKEN` and the value of the secret the API token.
+By way of work around, you could use the [GitHub API to retrieve the members of the team](https://docs.github.com/en/rest/teams/members?apiVersion=2022-11-28#list-team-members) and then put them in a comma separated string that you provide as the assignee.
+
+This requires setting up a new GitHub API token (referred to below as `CUSTOM_TOKEN`) which has `read:org` permissions assigned and single sign on authorization as needed.
+
+To do this, create a [GitHub API token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with permissions to read the org (`read:org`).
+
+Then take the value of the API token you just created, and [create a repository secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) where the name of the secret is `CUSTOM_TOKEN` and the value of the secret the API token.
 
 That might look something like the workflow below where `ORG` is your organization name and `TEAM_SLUG` is the name of the team:
 
