@@ -20,7 +20,7 @@ class TestGetAverageTimeToAnswer(unittest.TestCase):
     def test_returns_none_for_empty_list(self):
         """Tests that the function returns None when given an empty list of issues."""
         # Arrange
-        issues_with_metrics: List[IssueWithMetrics] = []
+        issues_with_metrics = []
 
         # Act
         result = get_stats_time_to_answer(issues_with_metrics)

@@ -17,7 +17,7 @@ Functions:
 import json
 import os
 from datetime import timedelta
-from typing import List, Union
+from typing import Any, List, Union
 
 from classes import IssueWithMetrics
 
@@ -114,7 +114,7 @@ def write_to_json(
             p90_time_in_labels[label] = str(time)
 
     # Create a dictionary with the metrics
-    metrics = {
+    metrics: dict[str, Any] = {
         "average_time_to_first_response": str(average_time_to_first_response),
         "average_time_to_close": str(average_time_to_close),
         "average_time_to_answer": str(average_time_to_answer),
