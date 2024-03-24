@@ -24,7 +24,7 @@ from classes import IssueWithMetrics
 
 def get_stats_time_to_answer(
     issues_with_metrics: List[IssueWithMetrics],
-) -> Union[timedelta, None]:
+) -> Union[dict[str, timedelta], None]:
     """
     Calculate stats describing the time to answer for a list of issues.
     """

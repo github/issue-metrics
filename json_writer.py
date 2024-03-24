@@ -105,12 +105,13 @@ def write_to_json(
     average_time_in_labels = {}
     med_time_in_labels = {}
     p90_time_in_labels = {}
-    for label, time in stats_time_in_labels["avg"].items():
-        average_time_in_labels[label] = str(time)
-    for label, time in stats_time_in_labels["med"].items():
-        med_time_in_labels[label] = str(time)
-    for label, time in stats_time_in_labels["90p"].items():
-        p90_time_in_labels[label] = str(time)
+    if stats_time_in_labels is not None:
+        for label, time in stats_time_in_labels["avg"].items():
+            average_time_in_labels[label] = str(time)
+        for label, time in stats_time_in_labels["med"].items():
+            med_time_in_labels[label] = str(time)
+        for label, time in stats_time_in_labels["90p"].items():
+            p90_time_in_labels[label] = str(time)
 
     # Create a dictionary with the metrics
     metrics = {

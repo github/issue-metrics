@@ -57,7 +57,7 @@ def measure_time_to_close(
 
 def get_stats_time_to_close(
     issues_with_metrics: List[IssueWithMetrics],
-) -> Union[timedelta, None]:
+) -> Union[dict[str, timedelta], None]:
     """Calculate stats describing the time to close for a list of issues.
 
     Args:
