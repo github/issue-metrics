@@ -25,7 +25,7 @@ class EnvVars:
         gh_app_id (int | None): The GitHub App ID to use for authentication
         gh_app_installation_id (int | None): The GitHub App Installation ID to use for authentication
         gh_app_private_key_bytes (bytes): The GitHub App Private Key as bytes to use for authentication
-        gh_token (str): GitHub personal access token (PAT) for API authentication
+        gh_token (str | None): GitHub personal access token (PAT) for API authentication
         ghe (str): The GitHub Enterprise URL to use for authentication
         hide_author (bool): If true, the author's information is hidden in the output
         hide_label_metrics (bool): If true, the label metrics are hidden in the output
@@ -39,11 +39,11 @@ class EnvVars:
 
     def __init__(
         self,
-        gh_app_id: int,
-        gh_app_installation_id: int,
+        gh_app_id: int | None,
+        gh_app_installation_id: int | None,
         gh_app_private_key_bytes: bytes,
-        gh_token: str,
-        ghe: str,
+        gh_token: str | None,
+        ghe: str | None,
         hide_author: bool,
         hide_label_metrics: bool,
         hide_time_to_answer: bool,
@@ -150,17 +150,15 @@ def get_env_vars(test: bool = False) -> EnvVars:
 
     ghe = os.getenv("GH_ENTERPRISE_URL", default="").strip()
 
-    labels_to_measure = os.getenv("LABELS_TO_MEASURE")
+    labels_to_measure_list: List[str] = []
+    labels_to_measure: str | None = os.getenv("LABELS_TO_MEASURE")
     if labels_to_measure:
-        labels_to_measure = labels_to_measure.split(",")
-    else:
-        labels_to_measure = []
+        labels_to_measure_list = labels_to_measure.split(",")
 
-    ignore_users = os.getenv("IGNORE_USERS")
+    ignore_users_list: List[str] = []
+    ignore_users: str | None = os.getenv("IGNORE_USERS")
     if ignore_users:
-        ignore_users = ignore_users.split(",")
-    else:
-        ignore_users = []
+        ignore_users_list = ignore_users.split(",")
 
     # Hidden columns
     hide_author = get_bool_env_var("HIDE_AUTHOR")
@@ -180,7 +178,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         hide_time_to_answer,
         hide_time_to_close,
         hide_time_to_first_response,
-        ignore_users,
-        labels_to_measure,
+        ignore_users_list,
+        labels_to_measure_list,
         search_query,
     )

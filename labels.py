@@ -41,7 +41,7 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
     Returns:
         dict: A dictionary containing the time spent in each label or None.
     """
-    label_metrics = {}
+    label_metrics: dict = {}
     label_events = get_label_events(issue, labels)
 
     for label in labels:

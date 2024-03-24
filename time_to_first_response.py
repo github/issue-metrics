@@ -31,7 +31,7 @@ def measure_time_to_first_response(
     discussion: Union[dict, None],
     pull_request: Union[github3.pulls.PullRequest, None] = None,
     ready_for_review_at: Union[datetime, None] = None,
-    ignore_users: List[str] = None,
+    ignore_users: List[str] = [],
 ) -> Union[timedelta, None]:
     """Measure the time to first response for a single issue, pull request, or a discussion.
 
@@ -136,7 +136,7 @@ def ignore_comment(
 
 def get_stats_time_to_first_response(
     issues: List[IssueWithMetrics],
-) -> Union[timedelta, None]:
+) -> Union[dict[str, timedelta], None]:
     """Calculate the stats describing time to first response for a list of issues.
 
     Args:

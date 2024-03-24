@@ -14,4 +14,5 @@ lint:
 	flake8 . --config=.github/linters/.flake8 --count --exit-zero --max-complexity=15 --max-line-length=127
 	isort --settings-file=.github/linters/.isort.cfg .
 	pylint --rcfile=.github/linters/.python-lint --fail-under=9.0 *.py
+	mypy --config-file=.github/linters/.mypy.ini *.py
 	black .
