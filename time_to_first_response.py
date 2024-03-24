@@ -31,7 +31,7 @@ def measure_time_to_first_response(
     discussion: Union[dict, None],
     pull_request: Union[github3.pulls.PullRequest, None] = None,
     ready_for_review_at: Union[datetime, None] = None,
-    ignore_users: List[str] = [],
+    ignore_users: Union[List[str], None] = None,
 ) -> Union[timedelta, None]:
     """Measure the time to first response for a single issue, pull request, or a discussion.
 

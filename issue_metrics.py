@@ -125,7 +125,7 @@ def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
     discussions: bool = False,
     labels: Union[List[str], None] = None,
-    ignore_users: List[str] = [],
+    ignore_users: Union[List[str], None] = None,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
