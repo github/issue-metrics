@@ -6,6 +6,7 @@ Functions:
         Get a list of discussions in a GitHub repository that match the search query.
 
 """
+
 import requests
 
 

@@ -1,11 +1,11 @@
 """ Functions for calculating time spent in labels. """
+
 from datetime import datetime, timedelta
 from typing import List
 
 import github3
 import numpy
 import pytz
-
 from classes import IssueWithMetrics
 
 
@@ -41,7 +41,7 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
     Returns:
         dict: A dictionary containing the time spent in each label or None.
     """
-    label_metrics = {}
+    label_metrics: dict = {}
     label_events = get_label_events(issue, labels)
 
     for label in labels:
@@ -91,8 +91,8 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
 
 def get_stats_time_in_labels(
     issues_with_metrics: List[IssueWithMetrics],
-    labels: List[str],
-) -> dict[str, timedelta]:
+    labels: dict[str, timedelta],
+) -> dict[str, dict[str, timedelta | None]]:
     """Calculate stats describing time spent in each label."""
     time_in_labels = {}
     for issue in issues_with_metrics:
@@ -107,9 +107,9 @@ def get_stats_time_in_labels(
                         issue.label_metrics[label].total_seconds()
                     )
 
-    average_time_in_labels = {}
-    med_time_in_labels = {}
-    ninety_percentile_in_labels = {}
+    average_time_in_labels: dict[str, timedelta | None] = {}
+    med_time_in_labels: dict[str, timedelta | None] = {}
+    ninety_percentile_in_labels: dict[str, timedelta | None] = {}
     for label, time_list in time_in_labels.items():
         average_time_in_labels[label] = timedelta(
             seconds=numpy.round(numpy.average(time_list))

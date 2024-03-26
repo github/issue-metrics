@@ -4,8 +4,10 @@ Classes:
     TestGetDiscussions: A class to test the get_discussions function with mock GraphQL responses.
 
 """
+
 import unittest
 from unittest.mock import patch
+
 from discussions import get_discussions
 
 

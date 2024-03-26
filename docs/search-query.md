@@ -1,7 +1,9 @@
 # Configuring the `SEARCH_QUERY`
 
 Issues or Pull Requests? Open or closed?
-This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window. Further query options are listed in the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API.
+This action can be configured to run metrics on discussions, pull requests and/or issues. It is also configurable by whether they were open or closed in the specified time window.
+
+Further query options are listed in the documentation on [searching issues and pull requests](https://docs.github.com/en/issues/tracking-your-work-with-issues/filtering-and-searching-issues-and-pull-requests) or [searching discussions](https://docs.github.com/en/search-github/searching-on-github/searching-discussions). Search results are limited to 1000 results by the GitHub API.
 
 ## Examples
 
@@ -49,13 +51,15 @@ on:
     - cron: '3 2 1 * *'
 
 permissions:
-  issues: write
-  pull-requests: read
+  contents: read
 
 jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+        pull-requests: read
 
     steps:
 

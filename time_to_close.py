@@ -15,12 +15,12 @@ Functions:
         Calculate stats describing the time to close for a list of issues with metrics.
 
 """
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
 import numpy
-
 from classes import IssueWithMetrics
 
 
@@ -57,7 +57,7 @@ def measure_time_to_close(
 
 def get_stats_time_to_close(
     issues_with_metrics: List[IssueWithMetrics],
-) -> Union[timedelta, None]:
+) -> Union[dict[str, timedelta], None]:
     """Calculate stats describing the time to close for a list of issues.
 
     Args:

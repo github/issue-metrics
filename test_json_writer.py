@@ -3,6 +3,7 @@
 import json
 import unittest
 from datetime import timedelta
+
 from classes import IssueWithMetrics
 from json_writer import write_to_json
 

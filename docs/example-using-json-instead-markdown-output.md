@@ -1,6 +1,6 @@
-# Example using the JSON output instead of the markdown output
+# Example using the JSON output instead of the Markdown output
 
-There is JSON output available as well. You could use it for any number of possibilities, but here is one example that demonstrates retreiving the JSON output and then printing it out.
+There is JSON output available as well. You could use it for any number of possibilities, but here is one example that demonstrates retrieving the JSON output and then printing it out.
 
 ```yaml
 name: Monthly issue metrics
@@ -10,13 +10,15 @@ on:
     - cron: '3 2 1 * *'
 
 permissions:
-  issues: write
-  pull-requests: read
+  contents: read
 
 jobs:
   build:
     name: issue metrics
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
 
     steps:
     - name: Run issue-metrics tool

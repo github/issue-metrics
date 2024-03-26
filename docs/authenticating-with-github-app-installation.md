@@ -1,16 +1,8 @@
-# Assigning teams instead of individuals
+# Authenticating with a GitHub App Installation
 
-The assignee part of this workflow action comes from [a different GitHub action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
+Authenticating as an app installation lets your app access resources that are owned by the user or organization that installed the app. Authenticating as an app installation is ideal for automation workflows that don't involve user input.
 
-By way of work around, you could use the [GitHub API to retrieve the members of the team](https://docs.github.com/en/rest/teams/members?apiVersion=2022-11-28#list-team-members) and then put them in a comma separated string that you provide as the assignee.
-
-This requires setting up a new GitHub API token (referred to below as `CUSTOM_TOKEN`) which has `read:org` permissions assigned and single sign on authorization as needed.
-
-To do this, create a [GitHub API token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with permissions to read the org (`read:org`).
-
-Then take the value of the API token you just created, and [create a repository secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) where the name of the secret is `CUSTOM_TOKEN` and the value of the secret the API token.
-
-That might look something like the workflow below where `ORG` is your organization name and `TEAM_SLUG` is the name of the team:
+[Documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app#authentication-as-an-app-installation) for more details.
 
 ```yaml
 name: Monthly issue metrics
@@ -48,7 +40,9 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v2
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_APP_ID: ${{ secrets.GITHUB_APP_ID }}
+        GH_APP_INSTALLATION_ID: ${{ secrets.GITHUB_APP_INSTALLATION_ID }}
+        GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
 
     - name: Get user names from team

@@ -17,12 +17,12 @@ Functions:
         Calculate stats describing time to first response for a list of issues with metrics.
 
 """
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
 import github3
 import numpy
-
 from classes import IssueWithMetrics
 
 
@@ -31,7 +31,7 @@ def measure_time_to_first_response(
     discussion: Union[dict, None],
     pull_request: Union[github3.pulls.PullRequest, None] = None,
     ready_for_review_at: Union[datetime, None] = None,
-    ignore_users: List[str] = None,
+    ignore_users: Union[List[str], None] = None,
 ) -> Union[timedelta, None]:
     """Measure the time to first response for a single issue, pull request, or a discussion.
 
@@ -99,7 +99,7 @@ def measure_time_to_first_response(
         if ready_for_review_at:
             issue_time = ready_for_review_at
         else:
-            issue_time = datetime.fromisoformat(issue.created_at)  # type: ignore
+            issue_time = datetime.fromisoformat(issue.created_at)
 
     if discussion and len(discussion["comments"]["nodes"]) > 0:
         earliest_response = datetime.fromisoformat(
@@ -107,9 +107,11 @@ def measure_time_to_first_response(
         )
         issue_time = datetime.fromisoformat(discussion["createdAt"])
 
-    # Calculate the time between the issue and the first comment
     if earliest_response and issue_time:
-        return earliest_response - issue_time
+        time_between_issue_and_first_comment: timedelta | None = (
+            earliest_response - issue_time
+        )
+        return time_between_issue_and_first_comment
 
     return None
 
@@ -122,21 +124,27 @@ def ignore_comment(
     ready_for_review_at: Union[datetime, None],
 ) -> bool:
     """Check if a comment should be ignored."""
-    return (
-        # ignore comments by IGNORE_USERS
-        comment_user.login in ignore_users
-        # ignore comments by bots
-        or comment_user.type == "Bot"
-        # ignore comments by the issue creator
-        or comment_user.login == issue_user.login
-        # ignore comments created before the issue was ready for review
-        or (ready_for_review_at and comment_created_at < ready_for_review_at)
+
+    user_is_ignored: bool = comment_user.login in ignore_users
+    user_is_a_bot: bool = str(comment_user.type.lower()) == "bot"
+    user_is_issue_creator: bool = str(comment_user.login) == str(issue_user.login)
+    issue_was_created_before_ready_for_review: bool = False
+    if ready_for_review_at:
+        issue_was_created_before_ready_for_review = (
+            comment_created_at < ready_for_review_at
+        )
+    result: bool = (
+        user_is_ignored
+        or user_is_a_bot
+        or user_is_issue_creator
+        or issue_was_created_before_ready_for_review
     )
+    return result
 
 
 def get_stats_time_to_first_response(
     issues: List[IssueWithMetrics],
-) -> Union[timedelta, None]:
+) -> Union[dict[str, timedelta], None]:
     """Calculate the stats describing time to first response for a list of issues.
 
     Args:

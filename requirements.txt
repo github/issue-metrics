@@ -1,9 +1,5 @@
 github3.py==4.0.1
+numpy==1.26.4
 python-dotenv==1.0.1
 pytz==2024.1
-Requests==2.31.0
-pytest==8.1.1
-pytest-cov==5.0.0
-flake8==7.0.0
-pylint==3.1.0
-numpy==1.26.4
+requests==2.31.0

@@ -6,6 +6,7 @@ Classes:
         environment variables set.
 
 """
+
 import os
 import unittest
 from datetime import timedelta
@@ -17,10 +18,7 @@ from markdown_writer import write_to_markdown
 
 @patch.dict(
     os.environ,
-    {
-        "SEARCH_QUERY": "is:open repo:user/repo",
-        "GH_TOKEN": "test_token"
-    },
+    {"SEARCH_QUERY": "is:open repo:user/repo", "GH_TOKEN": "test_token"},
 )
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
@@ -249,7 +247,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         "HIDE_TIME_TO_FIRST_RESPONSE": "True",
         "HIDE_TIME_TO_CLOSE": "True",
         "HIDE_TIME_TO_ANSWER": "True",
-        "HIDE_LABEL_METRICS": "True"
+        "HIDE_LABEL_METRICS": "True",
     },
 )
 class TestWriteToMarkdownWithEnv(unittest.TestCase):

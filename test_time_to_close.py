@@ -9,11 +9,12 @@ Classes:
     TestGetStatsTimeToClose: A class to test the get_stats_time_to_close function.
 
 """
-from datetime import timedelta
-import unittest
-from unittest.mock import MagicMock
-from classes import IssueWithMetrics
 
+import unittest
+from datetime import timedelta
+from unittest.mock import MagicMock
+
+from classes import IssueWithMetrics
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 
 
@@ -44,7 +45,7 @@ class TestGetAverageTimeToClose(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        result = get_stats_time_to_close(issues_with_metrics)['avg']
+        result = get_stats_time_to_close(issues_with_metrics)["avg"]
         expected_result = timedelta(days=3)
         self.assertEqual(result, expected_result)
 

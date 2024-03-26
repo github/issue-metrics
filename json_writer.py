@@ -14,11 +14,10 @@ Functions:
 
 """
 
-
 import json
-from datetime import timedelta
 import os
-from typing import List, Union
+from datetime import timedelta
+from typing import Any, List, Union
 
 from classes import IssueWithMetrics
 
@@ -81,40 +80,41 @@ def write_to_json(
     med_time_to_first_response = None
     p90_time_to_first_response = None
     if stats_time_to_first_response is not None:
-        average_time_to_first_response = stats_time_to_first_response['avg']
-        med_time_to_first_response = stats_time_to_first_response['med']
-        p90_time_to_first_response = stats_time_to_first_response['90p']
+        average_time_to_first_response = stats_time_to_first_response["avg"]
+        med_time_to_first_response = stats_time_to_first_response["med"]
+        p90_time_to_first_response = stats_time_to_first_response["90p"]
 
     # time to close
     average_time_to_close = None
     med_time_to_close = None
     p90_time_to_close = None
     if stats_time_to_close is not None:
-        average_time_to_close = stats_time_to_close['avg']
-        med_time_to_close = stats_time_to_close['med']
-        p90_time_to_close = stats_time_to_close['90p']
+        average_time_to_close = stats_time_to_close["avg"]
+        med_time_to_close = stats_time_to_close["med"]
+        p90_time_to_close = stats_time_to_close["90p"]
 
     # time to answer
     average_time_to_answer = None
     med_time_to_answer = None
     p90_time_to_answer = None
     if stats_time_to_answer is not None:
-        average_time_to_answer = stats_time_to_answer['avg']
-        med_time_to_answer = stats_time_to_answer['med']
-        p90_time_to_answer = stats_time_to_answer['90p']
+        average_time_to_answer = stats_time_to_answer["avg"]
+        med_time_to_answer = stats_time_to_answer["med"]
+        p90_time_to_answer = stats_time_to_answer["90p"]
 
     average_time_in_labels = {}
     med_time_in_labels = {}
     p90_time_in_labels = {}
-    for label, time in stats_time_in_labels['avg'].items():
-        average_time_in_labels[label] = str(time)
-    for label, time in stats_time_in_labels['med'].items():
-        med_time_in_labels[label] = str(time)
-    for label, time in stats_time_in_labels['90p'].items():
-        p90_time_in_labels[label] = str(time)
+    if stats_time_in_labels is not None:
+        for label, time in stats_time_in_labels["avg"].items():
+            average_time_in_labels[label] = str(time)
+        for label, time in stats_time_in_labels["med"].items():
+            med_time_in_labels[label] = str(time)
+        for label, time in stats_time_in_labels["90p"].items():
+            p90_time_in_labels[label] = str(time)
 
     # Create a dictionary with the metrics
-    metrics = {
+    metrics: dict[str, Any] = {
         "average_time_to_first_response": str(average_time_to_first_response),
         "average_time_to_close": str(average_time_to_close),
         "average_time_to_answer": str(average_time_to_answer),
