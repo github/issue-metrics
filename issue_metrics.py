@@ -181,7 +181,7 @@ def get_per_issue_metrics(
 
             # Check if issue is actually a pull request
             pull_request, ready_for_review_at = None, None
-            if issue.issue.pull_request_urls:
+            if issue.issue.pull_request_urls:  # type: ignore
                 pull_request = issue.issue.pull_request()
                 ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
 
