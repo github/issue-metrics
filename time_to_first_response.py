@@ -128,8 +128,8 @@ def ignore_comment(
     user_is_ignored: bool = comment_user.login in ignore_users
     user_is_a_bot: bool = str(comment_user.type.lower()) == "bot"
     user_is_issue_creator: bool = str(comment_user.login) == str(issue_user.login)
-    issue_was_created_before_ready_for_review: bool = (
-        ready_for_review_at and (comment_created_at < ready_for_review_at)
+    issue_was_created_before_ready_for_review: bool = ready_for_review_at and (
+        comment_created_at < ready_for_review_at
     )
     result: bool = (
         user_is_ignored

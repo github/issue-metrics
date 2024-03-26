@@ -2,7 +2,6 @@
 
 import unittest
 from datetime import timedelta
-from typing import List
 
 from classes import IssueWithMetrics
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
