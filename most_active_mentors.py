@@ -36,11 +36,15 @@ Functions:
 from datetime import datetime
 from typing import List, Union
 
+from collections import Counter
+
 import github3
 
+from classes import IssueWithMetrics
 
 def count_comments_per_user(
     issue: Union[github3.issues.Issue, None],  # type: ignore
+    discussion: Union[dict, None] = None,
     pull_request: Union[github3.pulls.PullRequest, None] = None,
     ready_for_review_at: Union[datetime, None] = None,
     ignore_users: List[str] = None,
@@ -132,22 +136,29 @@ def ignore_comment(
 
 
 def get_mentor_count(
-    mentor_activity: dict,
+    issues_with_metrics: List[IssueWithMetrics],
     cutoff: int
 ) -> int:
     """ Calculate the number of active mentors on the project.
 
     Args:
-        mentor_activity (dict: A dictionary with usernames to count of comments
-        left.  cutoff (int: the minimum number of comments a user has to leave
+        issues_with_metrics (List[IssueWithMetrics]): A list of issues w/
+        metrics
+        cutoff (int: the minimum number of comments a user has to leave
         to count as active mentor.)
 
     Returns:
         int: Number of active mentors
 
     """
+
+    mentor_count = Counter({})
+    for issueWithMetrics in issues_with_metrics:
+        current_counter = Counter(issueWithMetrics.mentor_activity)
+        mentor_count = mentor_count + current_counter
+
     active_mentor_count = 0
-    for count in mentor_activity.values():
+    for count in mentor_count.values():
         if count >= cutoff:
             active_mentor_count += 1
 

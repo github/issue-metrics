@@ -220,7 +220,7 @@ class TestMain(unittest.TestCase):
         # Call main and check that it writes 'No issues found'
         issue_metrics.main()
         mock_write_to_markdown.assert_called_once_with(
-            None, None, None, None, None, None, None
+            None, None, None, None, None, None, None, None
         )
 
 

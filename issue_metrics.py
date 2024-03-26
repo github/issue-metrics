@@ -41,6 +41,10 @@ from time_to_first_response import (
     get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
+from most_active_mentors import (
+    count_comments_per_user,
+    get_mentor_count
+)
 from config import get_env_vars
 
 
@@ -148,9 +152,14 @@ def get_per_issue_metrics(
                 None,
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 None, issue, ignore_users
+            )
+            issue_with_metrics.mentor_activity = count_comments_per_user(
+                None, issue, ignore_users
+                # TODO review arguments max_comments_to_eval, heavily_involved
             )
             issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
@@ -178,6 +187,10 @@ def get_per_issue_metrics(
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 issue, None, pull_request, ready_for_review_at, ignore_users
             )
+            issue_with_metrics.mentor_activity = count_comments_per_user(
+                issue, None, pull_request, ready_for_review_at, ignore_users
+            )
+            # TODO review arguments max_comments_to_eval, heavily_involved
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
@@ -244,6 +257,8 @@ def main():
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
 
+    min_mentor_count = 10
+
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
 
@@ -267,13 +282,13 @@ def main():
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None, None)
             return
     else:
         issues = search_issues(search_query, github_connection)
         if len(issues) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None, None)
             return
 
     # Get all the metrics
@@ -293,6 +308,8 @@ def main():
 
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
 
+    num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_comments)
+
     # Get stats describing the time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time
     stats_time_in_labels = get_stats_time_in_labels(issues_with_metrics, labels)
@@ -306,6 +323,7 @@ def main():
         stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        num_mentor_count,
         search_query,
     )
     write_to_markdown(
@@ -316,6 +334,7 @@ def main():
         stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        num_mentor_count,
         labels,
         search_query,
     )

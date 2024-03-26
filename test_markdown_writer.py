@@ -80,6 +80,7 @@ class TestWriteToMarkdown(unittest.TestCase):
 
         num_issues_opened = 2
         num_issues_closed = 1
+        num_mentor_count = 5
 
         # Call the function
         write_to_markdown(
@@ -90,6 +91,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_in_labels=time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
+            num_mentor_count=num_mentor_count,
             labels=["bug"],
             search_query="is:issue is:open label:bug",
         )
@@ -110,6 +112,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
+            "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time spent in bug |\n"
@@ -177,6 +180,7 @@ class TestWriteToMarkdown(unittest.TestCase):
 
         num_issues_opened = 2
         num_issues_closed = 1
+        num_mentor_count = 5
 
         # Call the function
         write_to_markdown(
@@ -187,6 +191,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_in_labels=average_time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
+            num_mentor_count=num_mentor_count,
             labels=["bug"],
         )
 
@@ -206,6 +211,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
+            "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time spent in bug |\n"
@@ -223,7 +229,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         """Test that write_to_markdown writes the correct markdown file when no issues are found."""
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
-            write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None, None)
 
         # Check that the file was written correctly
         expected_output = [
@@ -294,6 +300,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         }
         num_issues_opened = 2
         num_issues_closed = 1
+        num_mentor_count = 5
 
         # Call the function
         write_to_markdown(
@@ -304,6 +311,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             average_time_in_labels=average_time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
+            num_mentor_count=num_mentor_count,
             labels=["label1"],
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
@@ -318,6 +326,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
+            "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author |\n"
             "| --- | --- | --- |\n"

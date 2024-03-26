@@ -14,8 +14,10 @@ import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
 
+from classes import IssueWithMetrics
 from most_active_mentors import (
     count_comments_per_user,
+    get_mentor_count,
 )
 
 
@@ -49,4 +51,23 @@ class TestCountCommentsPerUser(unittest.TestCase):
         expected_result = {"very_active_user": 3}
 
         # Check the results
+        self.assertEqual(result, expected_result)
+
+    def test_get_mentor_count(self):
+        """ Test that get_mentor_count correctly counts comments per user.
+
+        """
+        mentor_activity = {"sue": 15, "bob": 10}
+
+        # Create moc data
+        issues_with_metrics = [
+            IssueWithMetrics("Issue 1", "https://github.com/user/repo/issues/1",
+            "alice", None, mentor_activity=mentor_activity),
+            IssueWithMetrics("Issue 2", "https://github.com/user/repo/issues/2",
+            "bob", None, mentor_activity=mentor_activity),
+        ]
+
+        # Call the function and check the result
+        result = get_mentor_count(issues_with_metrics, 2)
+        expected_result = 2
         self.assertEqual(result, expected_result)
