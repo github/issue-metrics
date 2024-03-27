@@ -263,6 +263,7 @@ def main():
     search_query = env_vars.search_query
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
+    enable_mentor_count = env_vars.enable_mentor_count
 
     # Auth to GitHub.com
     github_connection = auth_to_github(
@@ -272,7 +273,7 @@ def main():
         token,
         env_vars.ghe,
     )
-    min_mentor_count = 10
+    min_mentor_count = int(env_vars.min_mentor_comments)
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -321,7 +322,9 @@ def main():
 
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
 
-    num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_comments)
+    num_mentor_count = 0
+    if enable_mentor_count == "TRUE":
+        num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_comments)
 
     # Get stats describing the time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time
