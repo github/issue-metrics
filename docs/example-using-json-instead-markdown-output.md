@@ -23,7 +23,7 @@ jobs:
     steps:
     - name: Run issue-metrics tool
       id: issue-metrics
-      uses: github/issue-metrics@v2
+      uses: github/issue-metrics@v3
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
