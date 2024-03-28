@@ -123,7 +123,7 @@ class TestGetEnvVars(unittest.TestCase):
 
         # Call the function and check that it raises a ValueError
         with self.assertRaises(ValueError):
-            get_env_vars()
+            get_env_vars(test=True)
 
 
 class TestMain(unittest.TestCase):

@@ -55,6 +55,10 @@ class EnvVars:
         hide_time_to_first_response: bool,
         ignore_user: List[str],
         labels_to_measure: List[str],
+        enable_mentor_count: str,
+        min_mentor_comments: str,
+        max_comments_eval: str,
+        heavily_involved_cutoff: str ,
         search_query: str,
     ):
         self.gh_app_id = gh_app_id
@@ -196,9 +200,9 @@ def get_env_vars(test: bool = False) -> EnvVars:
         hide_time_to_first_response,
         ignore_users_list,
         labels_to_measure_list,
-        search_query,
         enable_mentor_count,
-        min_mentor_comments
+        min_mentor_comments,
         max_comments_eval,
-        heavily_involved_cutoff
+        heavily_involved_cutoff,
+        search_query,
     )

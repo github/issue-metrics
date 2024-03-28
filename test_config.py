@@ -118,6 +118,10 @@ class TestGetEnvVars(unittest.TestCase):
             False,
             [],
             [],
+            "FALSE",
+            "10",
+            "20",
+            "3",
             SEARCH_QUERY,
         )
         result = get_env_vars(True)
@@ -157,6 +161,10 @@ class TestGetEnvVars(unittest.TestCase):
             False,
             [],
             [],
+            "FALSE",
+            "10",
+            "20",
+            "3",
             SEARCH_QUERY,
         )
         result = get_env_vars(True)
@@ -195,6 +203,10 @@ class TestGetEnvVars(unittest.TestCase):
             True,
             [],
             ["waiting-for-review", "waiting-for-manager"],
+            "FALSE",
+            10,
+            20,
+            3,
             SEARCH_QUERY,
         )
         result = get_env_vars(True)
