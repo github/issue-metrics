@@ -42,6 +42,7 @@ import github3
 
 from classes import IssueWithMetrics
 
+
 def count_comments_per_user(
     issue: Union[github3.issues.Issue, None],  # type: ignore
     discussion: Union[dict, None] = None,
@@ -112,6 +113,23 @@ def count_comments_per_user(
                 else:
                     mentor_count[review_comment.user.login] = 1
 
+        if discussion and len(discussion["comments"]["nodes"]) > 0:
+            for comment in discussion["comments"]["nodes"]:
+                if ignore_comment(
+                    comment.user,
+                    comment.user,
+                    ignore_users,
+                    comment.submitted_at,
+                    comment.ready_for_review_at
+                ):
+                    continue
+
+                # increase the number of comments left by current user by 1
+                if comment.user.login in mentor_count:
+                    mentor_count[comment.user.login] += 1
+                else:
+                    mentor_count[comment.user.login] = 1
+
     return mentor_count
 
 
@@ -153,8 +171,8 @@ def get_mentor_count(
     """
 
     mentor_count = Counter({})
-    for issueWithMetrics in issues_with_metrics:
-        current_counter = Counter(issueWithMetrics.mentor_activity)
+    for issue_with_metrics in issues_with_metrics:
+        current_counter = Counter(issue_with_metrics.mentor_activity)
         mentor_count = mentor_count + current_counter
 
     active_mentor_count = 0

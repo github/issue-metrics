@@ -130,6 +130,8 @@ def get_per_issue_metrics(
     discussions: bool = False,
     labels: Union[List[str], None] = None,
     ignore_users: Union[List[str], None] = None,
+    max_comments_to_eval: int = 20,
+    heavily_involved: int = 3
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -168,8 +170,8 @@ def get_per_issue_metrics(
                 None, issue, ignore_users
             )
             issue_with_metrics.mentor_activity = count_comments_per_user(
-                None, issue, ignore_users
-                # TODO review arguments max_comments_to_eval, heavily_involved
+                None, issue, ignore_users, None, None,
+                max_comments_to_eval, heavily_involved
             )
             issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
@@ -198,9 +200,9 @@ def get_per_issue_metrics(
                 issue, None, pull_request, ready_for_review_at, ignore_users
             )
             issue_with_metrics.mentor_activity = count_comments_per_user(
-                issue, None, pull_request, ready_for_review_at, ignore_users
+                issue, None, pull_request, ready_for_review_at, ignore_users,
+                max_comments_to_eval, heavily_involved
             )
-            # TODO review arguments max_comments_to_eval, heavily_involved
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
             if issue.state == "closed":  # type: ignore
@@ -263,7 +265,6 @@ def main():
     search_query = env_vars.search_query
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
-    enable_mentor_count = env_vars.enable_mentor_count
 
     # Auth to GitHub.com
     github_connection = auth_to_github(
@@ -273,7 +274,10 @@ def main():
         token,
         env_vars.ghe,
     )
+    enable_mentor_count = env_vars.enable_mentor_count
     min_mentor_count = int(env_vars.min_mentor_comments)
+    max_comments_eval = int(env_vars.max_comments_eval)
+    heavily_involved_cutoff = int(env_vars.heavily_involved_cutoff)
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -313,6 +317,8 @@ def main():
         discussions="type:discussions" in search_query,
         labels=labels,
         ignore_users=ignore_users,
+        max_comments_to_eval=max_comments_eval,
+        heavily_involved=heavily_involved_cutoff,
     )
 
     stats_time_to_first_response = get_stats_time_to_first_response(issues_with_metrics)
@@ -324,7 +330,7 @@ def main():
 
     num_mentor_count = 0
     if enable_mentor_count == "TRUE":
-        num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_comments)
+        num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_count)
 
     # Get stats describing the time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time

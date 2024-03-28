@@ -143,6 +143,8 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 | `IGNORE_USERS`                | False | False      | A comma separated list of users to ignore when calculating metrics. (ie. `IGNORE_USERS: 'user1,user2'`). To ignore bots, append `[bot]` to the user (ie. `IGNORE_USERS: 'github-actions[bot]'`)  |
 | `ENABLE_MENTOR_COUNT` | False | False | If set to 'TRUE' count number of comments users left on discussions, issues and PRs and display number of active mentors |
 | `MIN_MENTOR_COMMENTS` | False | 10 | Minimum number of comments to count as a mentor |
+| `MAX_COMMENTS_EVAL` | False | 20 | Maximum number of comments per thread to evaluate for mentor stats |
+| `HEAVILY_INVOLVED_CUTOFF` | False | 3 | Cutoff after which a mentor's comments in one issue are no longer counted against their total score |
 | `LABELS_TO_MEASURE`           | False    | `""`    | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
 | `SEARCH_QUERY`                | True     | `""`    | The query by which you can filter issues/PRs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
 

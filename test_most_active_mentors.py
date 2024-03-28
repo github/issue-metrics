@@ -61,10 +61,12 @@ class TestCountCommentsPerUser(unittest.TestCase):
 
         # Create moc data
         issues_with_metrics = [
-            IssueWithMetrics("Issue 1", "https://github.com/user/repo/issues/1",
-            "alice", None, mentor_activity=mentor_activity),
-            IssueWithMetrics("Issue 2", "https://github.com/user/repo/issues/2",
-            "bob", None, mentor_activity=mentor_activity),
+            IssueWithMetrics(
+                "Issue 1", "https://github.com/user/repo/issues/1",
+                "alice", None, mentor_activity=mentor_activity),
+            IssueWithMetrics(
+                "Issue 2", "https://github.com/user/repo/issues/2",
+                "bob", None, mentor_activity=mentor_activity),
         ]
 
         # Call the function and check the result

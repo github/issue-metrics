@@ -61,6 +61,7 @@ class TestWriteToJson(unittest.TestCase):
         }
         num_issues_opened = 2
         num_issues_closed = 1
+        num_mentor_count = 5
 
         expected_output = {
             "average_time_to_first_response": "2 days, 12:00:00",
@@ -77,6 +78,7 @@ class TestWriteToJson(unittest.TestCase):
             "90_percentile_time_in_labels": {"bug": "1 day, 16:24:12"},
             "num_items_opened": 2,
             "num_items_closed": 1,
+            "num_mentor_count": 5,
             "total_item_count": 2,
             "issues": [
                 {
@@ -111,6 +113,7 @@ class TestWriteToJson(unittest.TestCase):
                 stats_time_in_labels=stats_time_in_labels,
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
+                num_mentor_count=num_mentor_count,
                 search_query="is:issue repo:owner/repo",
             ),
             json.dumps(expected_output),
@@ -149,6 +152,7 @@ class TestWriteToJson(unittest.TestCase):
         }
         num_issues_opened = 2
         num_issues_closed = 0
+        num_mentor_count = 5
 
         expected_output = {
             "average_time_to_first_response": "None",
@@ -165,6 +169,7 @@ class TestWriteToJson(unittest.TestCase):
             "90_percentile_time_in_labels": {},
             "num_items_opened": 2,
             "num_items_closed": 0,
+            "num_mentor_count": 5,
             "total_item_count": 2,
             "issues": [
                 {
@@ -199,6 +204,7 @@ class TestWriteToJson(unittest.TestCase):
                 stats_time_in_labels=stats_time_in_labels,
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
+                num_mentor_count=num_mentor_count,
                 search_query="is:issue repo:owner/repo",
             ),
             json.dumps(expected_output),

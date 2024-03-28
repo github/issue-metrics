@@ -30,6 +30,7 @@ def write_to_json(
     stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
+    num_mentor_count: Union[int, None],
     search_query: str,
 ) -> str:
     """
@@ -42,6 +43,7 @@ def write_to_json(
         "average_time_to_answer": "1 day, 0:00:00",
         "num_items_opened": 2,
         "num_items_closed": 1,
+        "num_mentor_count": 5,
         "total_item_count": 2,
         "issues": [
             {
@@ -129,6 +131,7 @@ def write_to_json(
         "90_percentile_time_in_labels": p90_time_in_labels,
         "num_items_opened": num_issues_opened,
         "num_items_closed": num_issues_closed,
+        "num_mentor_count": num_mentor_count,
         "total_item_count": len(issues_with_metrics),
     }
 
