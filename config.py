@@ -58,7 +58,7 @@ class EnvVars:
         enable_mentor_count: str,
         min_mentor_comments: str,
         max_comments_eval: str,
-        heavily_involved_cutoff: str ,
+        heavily_involved_cutoff: str,
         search_query: str,
     ):
         self.gh_app_id = gh_app_id
@@ -101,6 +101,7 @@ class EnvVars:
             f"{self.heavily_involved_cutoff},"
             f"{self.search_query})"
         )
+
 
 def get_bool_env_var(env_var_name: str) -> bool:
     """Get a boolean environment variable.

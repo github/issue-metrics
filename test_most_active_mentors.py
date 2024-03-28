@@ -15,10 +15,7 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 from classes import IssueWithMetrics
-from most_active_mentors import (
-    count_comments_per_user,
-    get_mentor_count,
-)
+from most_active_mentors import count_comments_per_user, get_mentor_count
 
 
 class TestCountCommentsPerUser(unittest.TestCase):

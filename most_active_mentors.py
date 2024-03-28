@@ -33,13 +33,11 @@ Functions:
         Count the number of mentors active at least n times
 
 """
+from collections import Counter
 from datetime import datetime
 from typing import List, Union
 
-from collections import Counter
-
 import github3
-
 from classes import IssueWithMetrics
 
 

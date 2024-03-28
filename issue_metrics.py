@@ -31,6 +31,7 @@ from discussions import get_discussions
 from json_writer import write_to_json
 from labels import get_label_metrics, get_stats_time_in_labels
 from markdown_writer import write_to_markdown
+from most_active_mentors import count_comments_per_user, get_mentor_count
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_first_response import (
@@ -39,12 +40,6 @@ from time_to_first_response import (
 )
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
-
-from most_active_mentors import (
-    count_comments_per_user,
-    get_mentor_count
-)
-from config import get_env_vars
 
 
 def search_issues(
