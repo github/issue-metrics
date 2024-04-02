@@ -10,6 +10,7 @@ Classes:
         get_mentor_count function.
 
 """
+
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
@@ -40,7 +41,10 @@ class TestCountCommentsPerUser(unittest.TestCase):
         for i in range(22):
             mock_comment1 = MagicMock()
             mock_comment1.user.login = "very_active_user"
-            mock_comment1.created_at = datetime.fromisoformat(f"2023-01-02T{i:02d}:00:00Z")
+            mock_comment1.created_at = datetime.fromisoformat(
+                f"2023-01-02T{i:02d}:00:00Z"
+            )
+            # pylint: disable=maybe-no-member
             mock_issue1.issue.comments.return_value.append(mock_comment1)
 
         # Call the function
@@ -51,19 +55,25 @@ class TestCountCommentsPerUser(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_get_mentor_count(self):
-        """ Test that get_mentor_count correctly counts comments per user.
-
-        """
+        """Test that get_mentor_count correctly counts comments per user."""
         mentor_activity = {"sue": 15, "bob": 10}
 
         # Create moc data
         issues_with_metrics = [
             IssueWithMetrics(
-                "Issue 1", "https://github.com/user/repo/issues/1",
-                "alice", None, mentor_activity=mentor_activity),
+                "Issue 1",
+                "https://github.com/user/repo/issues/1",
+                "alice",
+                None,
+                mentor_activity=mentor_activity,
+            ),
             IssueWithMetrics(
-                "Issue 2", "https://github.com/user/repo/issues/2",
-                "bob", None, mentor_activity=mentor_activity),
+                "Issue 2",
+                "https://github.com/user/repo/issues/2",
+                "bob",
+                None,
+                mentor_activity=mentor_activity,
+            ),
         ]
 
         # Call the function and check the result

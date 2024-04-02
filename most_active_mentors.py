@@ -33,9 +33,10 @@ Functions:
         Count the number of mentors active at least n times
 
 """
+
 from collections import Counter
 from datetime import datetime
-from typing import List, Union
+from typing import Dict, List, Union
 
 import github3
 from classes import IssueWithMetrics
@@ -46,7 +47,7 @@ def count_comments_per_user(
     discussion: Union[dict, None] = None,
     pull_request: Union[github3.pulls.PullRequest, None] = None,
     ready_for_review_at: Union[datetime, None] = None,
-    ignore_users: List[str] = None,
+    ignore_users: List[str] | None = None,
     max_comments_to_eval=20,
     heavily_involved=3,
 ) -> dict:
@@ -67,7 +68,7 @@ def count_comments_per_user(
     """
     if ignore_users is None:
         ignore_users = []
-    mentor_count = {}
+    mentor_count: Dict[str, int] = {}
 
     # Get the first comments
     if issue:
@@ -118,7 +119,7 @@ def count_comments_per_user(
                     comment.user,
                     ignore_users,
                     comment.submitted_at,
-                    comment.ready_for_review_at
+                    comment.ready_for_review_at,
                 ):
                     continue
 
@@ -139,7 +140,7 @@ def ignore_comment(
     ready_for_review_at: Union[datetime, None],
 ) -> bool:
     """Check if a comment should be ignored."""
-    return (
+    return bool(
         # ignore comments by IGNORE_USERS
         comment_user.login in ignore_users
         # ignore comments by bots
@@ -151,11 +152,8 @@ def ignore_comment(
     )
 
 
-def get_mentor_count(
-    issues_with_metrics: List[IssueWithMetrics],
-    cutoff: int
-) -> int:
-    """ Calculate the number of active mentors on the project.
+def get_mentor_count(issues_with_metrics: List[IssueWithMetrics], cutoff: int) -> int:
+    """Calculate the number of active mentors on the project.
 
     Args:
         issues_with_metrics (List[IssueWithMetrics]): A list of issues w/
@@ -168,7 +166,7 @@ def get_mentor_count(
 
     """
 
-    mentor_count = Counter({})
+    mentor_count: Counter[str] = Counter({})
     for issue_with_metrics in issues_with_metrics:
         current_counter = Counter(issue_with_metrics.mentor_activity)
         mentor_count = mentor_count + current_counter

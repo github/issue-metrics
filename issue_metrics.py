@@ -126,7 +126,7 @@ def get_per_issue_metrics(
     labels: Union[List[str], None] = None,
     ignore_users: Union[List[str], None] = None,
     max_comments_to_eval: int = 20,
-    heavily_involved: int = 3
+    heavily_involved: int = 3,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -165,8 +165,13 @@ def get_per_issue_metrics(
                 None, issue, ignore_users
             )
             issue_with_metrics.mentor_activity = count_comments_per_user(
-                None, issue, ignore_users, None, None,
-                max_comments_to_eval, heavily_involved
+                None,
+                issue,
+                ignore_users,
+                None,
+                None,
+                max_comments_to_eval,
+                heavily_involved,
             )
             issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
@@ -195,8 +200,13 @@ def get_per_issue_metrics(
                 issue, None, pull_request, ready_for_review_at, ignore_users
             )
             issue_with_metrics.mentor_activity = count_comments_per_user(
-                issue, None, pull_request, ready_for_review_at, ignore_users,
-                max_comments_to_eval, heavily_involved
+                issue,
+                None,
+                pull_request,
+                ready_for_review_at,
+                ignore_users,
+                max_comments_to_eval,
+                heavily_involved,
             )
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
