@@ -58,7 +58,7 @@ class TestCountCommentsPerUser(unittest.TestCase):
         """Test that get_mentor_count correctly counts comments per user."""
         mentor_activity = {"sue": 15, "bob": 10}
 
-        # Create moc data
+        # Create mock data
         issues_with_metrics = [
             IssueWithMetrics(
                 "Issue 1",
