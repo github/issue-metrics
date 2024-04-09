@@ -64,7 +64,6 @@ class EnvVars:
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
         self.gh_app_private_key_bytes = gh_app_private_key_bytes
-        self.search_query = search_query
         self.gh_token = gh_token
         self.ghe = ghe
         self.ignore_users = ignore_user
