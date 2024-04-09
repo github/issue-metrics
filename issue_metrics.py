@@ -334,7 +334,7 @@ def main():
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
 
     num_mentor_count = 0
-    if enable_mentor_count == "TRUE":
+    if enable_mentor_count:
         num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_count)
 
     # Get stats describing the time in label for each label and store it in a dictionary
