@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Ask a question
+    url: https://github.com/github/issue-metrics/discussions/new
+    about: Ask a question or start a discussion
+  - name: GitHub OSPO GitHub Action Overall Issue
+    url: https://github.com/github/github-ospo/issues/new
+    about: File issue for multiple GitHub OSPO GitHub Actions
