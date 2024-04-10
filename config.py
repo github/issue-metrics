@@ -34,7 +34,7 @@ class EnvVars:
         hide_time_to_first_response (bool): If true, the time to first response metric is hidden in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
         labels_to_measure (List[str]): List of labels to measure how much time the lable is applied
-        enable_mentor_count (str): If set to TRUE, compute number of mentors
+        enable_mentor_count (bool): If set to TRUE, compute number of mentors
         min_mentor_comments (str): If set, defines the minimum number of comments for mentors
         max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
         heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
