@@ -55,7 +55,7 @@ class EnvVars:
         hide_time_to_first_response: bool,
         ignore_user: List[str],
         labels_to_measure: List[str],
-        enable_mentor_count: str,
+        enable_mentor_count: bool,
         min_mentor_comments: str,
         max_comments_eval: str,
         heavily_involved_cutoff: str,
