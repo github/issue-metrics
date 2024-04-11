@@ -31,6 +31,7 @@ from discussions import get_discussions
 from json_writer import write_to_json
 from labels import get_label_metrics, get_stats_time_in_labels
 from markdown_writer import write_to_markdown
+from most_active_mentors import count_comments_per_user, get_mentor_count
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_first_response import (
@@ -39,8 +40,6 @@ from time_to_first_response import (
 )
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
-
-GITHUB_BASE_URL = "https://github.com"
 
 
 def search_issues(
@@ -126,6 +125,8 @@ def get_per_issue_metrics(
     discussions: bool = False,
     labels: Union[List[str], None] = None,
     ignore_users: Union[List[str], None] = None,
+    max_comments_to_eval: int = 20,
+    heavily_involved: int = 3,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -158,9 +159,19 @@ def get_per_issue_metrics(
                 None,
                 None,
                 None,
+                None,
             )
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 None, issue, ignore_users
+            )
+            issue_with_metrics.mentor_activity = count_comments_per_user(
+                None,
+                issue,
+                ignore_users,
+                None,
+                None,
+                max_comments_to_eval,
+                heavily_involved,
             )
             issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
             if issue["closedAt"]:
@@ -187,6 +198,15 @@ def get_per_issue_metrics(
 
             issue_with_metrics.time_to_first_response = measure_time_to_first_response(
                 issue, None, pull_request, ready_for_review_at, ignore_users
+            )
+            issue_with_metrics.mentor_activity = count_comments_per_user(
+                issue,
+                None,
+                pull_request,
+                ready_for_review_at,
+                ignore_users,
+                max_comments_to_eval,
+                heavily_involved,
             )
             if labels:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
@@ -259,6 +279,10 @@ def main():
         token,
         env_vars.ghe,
     )
+    enable_mentor_count = env_vars.enable_mentor_count
+    min_mentor_count = int(env_vars.min_mentor_comments)
+    max_comments_eval = int(env_vars.max_comments_eval)
+    heavily_involved_cutoff = int(env_vars.heavily_involved_cutoff)
 
     # Get the repository owner and name from the search query
     owner = get_owner(search_query)
@@ -283,13 +307,13 @@ def main():
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None, None)
             return
     else:
         issues = search_issues(search_query, github_connection)
         if len(issues) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None, None, None)
+            write_to_markdown(None, None, None, None, None, None, None, None)
             return
 
     # Get all the metrics
@@ -298,6 +322,8 @@ def main():
         discussions="type:discussions" in search_query,
         labels=labels,
         ignore_users=ignore_users,
+        max_comments_to_eval=max_comments_eval,
+        heavily_involved=heavily_involved_cutoff,
     )
 
     stats_time_to_first_response = get_stats_time_to_first_response(issues_with_metrics)
@@ -306,6 +332,10 @@ def main():
         stats_time_to_close = get_stats_time_to_close(issues_with_metrics)
 
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
+
+    num_mentor_count = 0
+    if enable_mentor_count:
+        num_mentor_count = get_mentor_count(issues_with_metrics, min_mentor_count)
 
     # Get stats describing the time in label for each label and store it in a dictionary
     # where the key is the label and the value is the average time
@@ -320,6 +350,7 @@ def main():
         stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        num_mentor_count,
         search_query,
     )
     write_to_markdown(
@@ -330,6 +361,7 @@ def main():
         stats_time_in_labels,
         num_issues_open,
         num_issues_closed,
+        num_mentor_count,
         labels,
         search_query,
     )

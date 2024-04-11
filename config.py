@@ -34,6 +34,10 @@ class EnvVars:
         hide_time_to_first_response (bool): If true, the time to first response metric is hidden in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
         labels_to_measure (List[str]): List of labels to measure how much time the lable is applied
+        enable_mentor_count (bool): If set to TRUE, compute number of mentors
+        min_mentor_comments (str): If set, defines the minimum number of comments for mentors
+        max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
+        heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
         search_query (str): Search query used to filter issues/prs/discussions on GitHub
     """
 
@@ -51,6 +55,10 @@ class EnvVars:
         hide_time_to_first_response: bool,
         ignore_user: List[str],
         labels_to_measure: List[str],
+        enable_mentor_count: bool,
+        min_mentor_comments: str,
+        max_comments_eval: str,
+        heavily_involved_cutoff: str,
         search_query: str,
     ):
         self.gh_app_id = gh_app_id
@@ -65,6 +73,10 @@ class EnvVars:
         self.hide_time_to_answer = hide_time_to_answer
         self.hide_time_to_close = hide_time_to_close
         self.hide_time_to_first_response = hide_time_to_first_response
+        self.enable_mentor_count = enable_mentor_count
+        self.min_mentor_comments = min_mentor_comments
+        self.max_comments_eval = max_comments_eval
+        self.heavily_involved_cutoff = heavily_involved_cutoff
         self.search_query = search_query
 
     def __repr__(self):
@@ -82,6 +94,10 @@ class EnvVars:
             f"{self.hide_time_to_first_response},"
             f"{self.ignore_users},"
             f"{self.labels_to_measure},"
+            f"{self.enable_mentor_count},"
+            f"{self.min_mentor_comments},"
+            f"{self.max_comments_eval},"
+            f"{self.heavily_involved_cutoff},"
             f"{self.search_query})"
         )
 
@@ -166,6 +182,10 @@ def get_env_vars(test: bool = False) -> EnvVars:
     hide_time_to_answer = get_bool_env_var("HIDE_TIME_TO_ANSWER")
     hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE")
     hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE")
+    enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT")
+    min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
+    max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
+    heavily_involved_cutoff = os.getenv("HEAVILY_INVOLVED_CUTOFF", "3")
 
     return EnvVars(
         gh_app_id,
@@ -180,5 +200,9 @@ def get_env_vars(test: bool = False) -> EnvVars:
         hide_time_to_first_response,
         ignore_users_list,
         labels_to_measure_list,
+        enable_mentor_count,
+        min_mentor_comments,
+        max_comments_eval,
+        heavily_involved_cutoff,
         search_query,
     )

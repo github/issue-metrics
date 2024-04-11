@@ -19,8 +19,11 @@ class IssueWithMetrics:
         time_to_answer (timedelta, optional): The time it took to answer the
             discussions in the issue.
         label_metrics (dict, optional): A dictionary containing the label metrics
+        mentor_activity (dict, optional): A dictionary containing active mentors
 
     """
+
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
@@ -31,6 +34,7 @@ class IssueWithMetrics:
         time_to_close=None,
         time_to_answer=None,
         labels_metrics=None,
+        mentor_activity=None,
     ):
         self.title = title
         self.html_url = html_url
@@ -39,3 +43,4 @@ class IssueWithMetrics:
         self.time_to_close = time_to_close
         self.time_to_answer = time_to_answer
         self.label_metrics = labels_metrics
+        self.mentor_activity = mentor_activity

@@ -123,7 +123,7 @@ class TestGetEnvVars(unittest.TestCase):
 
         # Call the function and check that it raises a ValueError
         with self.assertRaises(ValueError):
-            get_env_vars()
+            get_env_vars(test=True)
 
 
 class TestMain(unittest.TestCase):
@@ -231,7 +231,7 @@ class TestMain(unittest.TestCase):
         # Call main and check that it writes 'No issues found'
         issue_metrics.main()
         mock_write_to_markdown.assert_called_once_with(
-            None, None, None, None, None, None, None
+            None, None, None, None, None, None, None, None
         )
 
 
