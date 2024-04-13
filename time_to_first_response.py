@@ -129,7 +129,7 @@ def ignore_comment(
     user_is_a_bot: bool = str(comment_user.type.lower()) == "bot"
     user_is_issue_creator: bool = str(comment_user.login) == str(issue_user.login)
     issue_was_created_before_ready_for_review: bool = False
-    is_pending_comment: bool = not isinstance(comment_created_at,datetime)
+    is_pending_comment: bool = not isinstance(comment_created_at, datetime)
     if ready_for_review_at and not is_pending_comment:
         issue_was_created_before_ready_for_review = (
             comment_created_at < ready_for_review_at

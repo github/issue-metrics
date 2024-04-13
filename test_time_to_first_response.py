@@ -232,26 +232,23 @@ class TestMeasureTimeToFirstResponse(unittest.TestCase):
 
         # Check the results
         self.assertEqual(result, expected_result)
-        
+
     def test_measure_time_to_first_response_ignore_pending_review(self):
-        """Test that measure_time_to_first_response ignores pending reviews """
-        
-        
+        """Test that measure_time_to_first_response ignores pending reviews"""
+
         mock_issue1 = MagicMock()
         mock_issue1.comments = 2
         mock_issue1.issue.user.login = "issue_owner"
         mock_issue1.created_at = "2023-01-01T00:00:00Z"
-        
+
         # Set up the mock GitHub pull request comments (one ignored, one not ignored)
         # Pending Review
         mock_pr_comment1 = MagicMock()
         mock_pr_comment1.submitted_at = None
         # Submitted Comment
         mock_pr_comment2 = MagicMock()
-        mock_pr_comment2.submitted_at = datetime.fromisoformat(
-            "2023-01-04T00:00:00Z"
-        )
-       
+        mock_pr_comment2.submitted_at = datetime.fromisoformat("2023-01-04T00:00:00Z")
+
         mock_pull_request = MagicMock()
         mock_pull_request.reviews.return_value = [mock_pr_comment1, mock_pr_comment2]
 
