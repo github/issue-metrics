@@ -147,6 +147,8 @@ def ignore_comment(
         or comment_user.type == "Bot"
         # ignore comments by the issue creator
         or comment_user.login == issue_user.login
+        # ignore pending reviews
+        or not comment_created_at
         # ignore comments created before the issue was ready for review
         or (ready_for_review_at and comment_created_at < ready_for_review_at)
     )
