@@ -108,8 +108,8 @@ class TestGetEnvVars(unittest.TestCase):
         """Test that the function correctly retrieves the environment variables."""
 
         # Call the function and check the result
-        search_query = get_env_vars().search_query
-        gh_token = get_env_vars().gh_token
+        search_query = get_env_vars(test=True).search_query
+        gh_token = get_env_vars(test=True).gh_token
         gh_token_expected_result = "test_token"
         search_query_expected_result = "is:issue is:open repo:user/repo"
         self.assertEqual(gh_token, gh_token_expected_result)
@@ -238,6 +238,10 @@ class TestMain(unittest.TestCase):
 class TestGetPerIssueMetrics(unittest.TestCase):
     """Test suite for the get_per_issue_metrics function."""
 
+    @patch.dict(
+        os.environ,
+        {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"},
+    )
     def test_get_per_issue_metrics(self):
         """Test that the function correctly calculates the metrics for a list of GitHub issues."""
         # Create mock data
@@ -286,7 +290,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
                 result_issues_with_metrics,
                 result_num_issues_open,
                 result_num_issues_closed,
-            ) = get_per_issue_metrics(issues)
+            ) = get_per_issue_metrics(issues, env_vars=get_env_vars(test=True))
         expected_issues_with_metrics = [
             IssueWithMetrics(
                 "Issue 1",
@@ -364,6 +368,10 @@ class TestDiscussionMetrics(unittest.TestCase):
             "closedAt": "2023-01-07T00:00:00Z",
         }
 
+    @patch.dict(
+        os.environ,
+        {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"},
+    )
     def test_get_per_issue_metrics_with_discussion(self):
         """
         Test that the function correctly calculates
@@ -371,7 +379,9 @@ class TestDiscussionMetrics(unittest.TestCase):
         """
 
         issues = [self.issue1, self.issue2]
-        metrics = get_per_issue_metrics(issues, discussions=True)
+        metrics = get_per_issue_metrics(
+            issues, discussions=True, env_vars=get_env_vars(test=True)
+        )
 
         # get_per_issue_metrics returns a tuple of
         # (issues_with_metrics, num_issues_open, num_issues_closed)
