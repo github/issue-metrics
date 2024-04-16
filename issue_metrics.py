@@ -127,7 +127,7 @@ def get_per_issue_metrics(
     ignore_users: Union[List[str], None] = None,
     max_comments_to_eval: int = 20,
     heavily_involved: int = 3,
-    env_vars: EnvVars = None,
+    env_vars: EnvVars = get_env_vars(),
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
