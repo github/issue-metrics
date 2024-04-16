@@ -122,12 +122,12 @@ def auth_to_github(
 
 def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
+    env_vars: EnvVars,
     discussions: bool = False,
     labels: Union[List[str], None] = None,
     ignore_users: Union[List[str], None] = None,
     max_comments_to_eval: int = 20,
     heavily_involved: int = 3,
-    env_vars: EnvVars = get_env_vars(),
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
