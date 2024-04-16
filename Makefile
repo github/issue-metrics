@@ -1,6 +1,7 @@
 .PHONY: test
 test:
 	pytest -v --cov=. --cov-config=.coveragerc --cov-fail-under=80 --cov-report term-missing
+	.github/scripts/env_vars_check.sh
 
 .PHONY: clean
 clean:
