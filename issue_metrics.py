@@ -26,7 +26,7 @@ from typing import List, Union
 
 import github3
 from classes import IssueWithMetrics
-from config import get_env_vars
+from config import EnvVars, get_env_vars
 from discussions import get_discussions
 from json_writer import write_to_json
 from labels import get_label_metrics, get_stats_time_in_labels
@@ -127,6 +127,7 @@ def get_per_issue_metrics(
     ignore_users: Union[List[str], None] = None,
     max_comments_to_eval: int = 20,
     heavily_involved: int = 3,
+    env_vars: EnvVars = None,
 ) -> tuple[List, int, int]:
     """
     Calculate the metrics for each issue/pr/discussion in a list provided.
@@ -138,6 +139,7 @@ def get_per_issue_metrics(
             Defaults to False.
         labels (List[str]): A list of labels to measure time spent in. Defaults to empty list.
         ignore_users (List[str]): A list of users to ignore when calculating metrics.
+        env_vars (EnvVars): The environment variables for the script.
 
     Returns:
         tuple[List[IssueWithMetrics], int, int]: A tuple containing a
@@ -161,24 +163,30 @@ def get_per_issue_metrics(
                 None,
                 None,
             )
-            issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-                None, issue, ignore_users
-            )
-            issue_with_metrics.mentor_activity = count_comments_per_user(
-                None,
-                issue,
-                ignore_users,
-                None,
-                None,
-                max_comments_to_eval,
-                heavily_involved,
-            )
-            issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
-            if issue["closedAt"]:
-                issue_with_metrics.time_to_close = measure_time_to_close(None, issue)
-                num_issues_closed += 1
-            else:
-                num_issues_open += 1
+            if env_vars.hide_time_to_first_response is False:
+                issue_with_metrics.time_to_first_response = (
+                    measure_time_to_first_response(None, issue, ignore_users)
+                )
+            if env_vars.enable_mentor_count:
+                issue_with_metrics.mentor_activity = count_comments_per_user(
+                    None,
+                    issue,
+                    ignore_users,
+                    None,
+                    None,
+                    max_comments_to_eval,
+                    heavily_involved,
+                )
+            if env_vars.hide_time_to_answer is False:
+                issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
+            if env_vars.hide_time_to_close is False:
+                if issue["closedAt"]:
+                    issue_with_metrics.time_to_close = measure_time_to_close(
+                        None, issue
+                    )
+                    num_issues_closed += 1
+                else:
+                    num_issues_open += 1
         else:
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
@@ -196,32 +204,37 @@ def get_per_issue_metrics(
                 pull_request = issue.issue.pull_request()  # type: ignore
                 ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
 
-            issue_with_metrics.time_to_first_response = measure_time_to_first_response(
-                issue, None, pull_request, ready_for_review_at, ignore_users
-            )
-            issue_with_metrics.mentor_activity = count_comments_per_user(
-                issue,
-                None,
-                pull_request,
-                ready_for_review_at,
-                ignore_users,
-                max_comments_to_eval,
-                heavily_involved,
-            )
-            if labels:
+            if env_vars.hide_time_to_first_response is False:
+                issue_with_metrics.time_to_first_response = (
+                    measure_time_to_first_response(
+                        issue, None, pull_request, ready_for_review_at, ignore_users
+                    )
+                )
+            if env_vars.enable_mentor_count:
+                issue_with_metrics.mentor_activity = count_comments_per_user(
+                    issue,
+                    None,
+                    pull_request,
+                    ready_for_review_at,
+                    ignore_users,
+                    max_comments_to_eval,
+                    heavily_involved,
+                )
+            if labels and env_vars.hide_label_metrics is False:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
-            if issue.state == "closed":  # type: ignore
-                if pull_request:
-                    issue_with_metrics.time_to_close = measure_time_to_merge(
-                        pull_request, ready_for_review_at
-                    )
-                else:
-                    issue_with_metrics.time_to_close = measure_time_to_close(
-                        issue, None
-                    )
-                num_issues_closed += 1
-            elif issue.state == "open":  # type: ignore
-                num_issues_open += 1
+            if env_vars.hide_time_to_close is False:
+                if issue.state == "closed":  # type: ignore
+                    if pull_request:
+                        issue_with_metrics.time_to_close = measure_time_to_merge(
+                            pull_request, ready_for_review_at
+                        )
+                    else:
+                        issue_with_metrics.time_to_close = measure_time_to_close(
+                            issue, None
+                        )
+                    num_issues_closed += 1
+                elif issue.state == "open":  # type: ignore
+                    num_issues_open += 1
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed
@@ -324,6 +337,7 @@ def main():
         ignore_users=ignore_users,
         max_comments_to_eval=max_comments_eval,
         heavily_involved=heavily_involved_cutoff,
+        env_vars=env_vars,
     )
 
     stats_time_to_first_response = get_stats_time_to_first_response(issues_with_metrics)
