@@ -4,9 +4,9 @@ tag-template: 'v$RESOLVED_VERSION'
 template: |
   # Changelog
   $CHANGES
-  
-  See details of [all code changes](https://github.com/github/issue-metrics/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION) since previous release 
-  
+
+  See details of [all code changes](https://github.com/github/issue-metrics/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION) since previous release
+
 categories:
   - title: '🚀 Features'
     labels:
@@ -23,6 +23,8 @@ categories:
       - 'automation'
       - 'documentation'
       - 'dependencies'
+      - 'maintenance'
+      - 'revert'
   - title: '🏎 Performance'
     label: 'performance'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
@@ -35,7 +37,32 @@ version-resolver:
       - 'enhancement'
   patch:
     labels:
-      - 'bug'
-      - 'maintenance'
+      - 'fix'
       - 'documentation'
+      - 'maintenance'
   default: patch
+autolabeler:
+  - label: 'automation'
+    title:
+      - '/^(build|ci|perf|refactor|test).*/i'
+  - label: 'enhancement'
+    title:
+      - '/^(style).*/i'
+  - label: 'documentation'
+    title:
+      - '/^(docs).*/i'
+  - label: 'feature'
+    title:
+      - '/^(feat).*/i'
+  - label: 'fix'
+    title:
+      - '/^(fix).*/i'
+  - label: 'infrastructure'
+    title:
+      - '/^(infrastructure).*/i'
+  - label: 'maintenance'
+    title:
+      - '/^(chore|maintenance).*/i'
+  - label: 'revert'
+    title:
+      - '/^(revert).*/i'
