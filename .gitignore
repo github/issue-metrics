@@ -10,6 +10,9 @@ __pycache__/
 # C extensions
 *.so
 
+# JSCPD
+report/
+
 # Distribution / packaging
 .Python
 build/
