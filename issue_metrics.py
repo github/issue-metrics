@@ -43,7 +43,7 @@ from time_to_ready_for_review import get_time_to_ready_for_review
 
 
 def search_issues(
-    search_query: str, github_connection: github3.GitHub
+    search_query: str, github_connection: github3.GitHub, owner: str, repository: str
 ) -> List[github3.search.IssueSearchResult]:  # type: ignore
     """
     Searches for issues/prs/discussions in a GitHub repository that match
@@ -52,6 +52,8 @@ def search_issues(
     Args:
         search_query (str): The search query to use for finding issues/prs/discussions.
         github_connection (github3.GitHub): A connection to the GitHub API.
+        owner (str): The owner of the repository to search in.
+        repository (str): The repository to search in.
 
     Returns:
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
@@ -67,11 +69,13 @@ def search_issues(
             issues.append(issue)
     except github3.exceptions.ForbiddenError:
         print(
-            "You do not have permission to view this repository; Check you API Token."
+            f"You do not have permission to view this repository '{repository}'; Check your API Token."
         )
         sys.exit(1)
     except github3.exceptions.NotFoundError:
-        print("The repository could not be found; Check the repository owner and name.")
+        print(
+            f"The repository could not be found; Check the repository owner and name: '{owner}/{repository}"
+        )
         sys.exit(1)
     except github3.exceptions.ConnectionError:
         print(
@@ -240,27 +244,28 @@ def get_per_issue_metrics(
     return issues_with_metrics, num_issues_open, num_issues_closed
 
 
-def get_owner(
+def get_owner_and_repository(
     search_query: str,
-) -> Union[str, None]:
-    """Get the owner from the search query.
+) -> dict:
+    """Get the owner and repository from the search query.
 
     Args:
         search_query (str): The search query used to search for issues.
 
     Returns:
-        Union[str, None]: The owner.
+        dict: A dictionary of owner and repository.
 
     """
     search_query_split = search_query.split(" ")
-    owner = None
+    result = {}
     for item in search_query_split:
         if "repo:" in item and "/" in item:
-            owner = item.split(":")[1].split("/")[0]
+            result["owner"] = item.split(":")[1].split("/")[0]
+            result["repository"] = item.split(":")[1].split("/")[1]
         if "org:" in item or "owner:" in item or "user:" in item:
-            owner = item.split(":")[1]
+            result["owner"] = item.split(":")[1]
 
-    return owner
+    return result
 
 
 def main():
@@ -297,8 +302,10 @@ def main():
     max_comments_eval = int(env_vars.max_comments_eval)
     heavily_involved_cutoff = int(env_vars.heavily_involved_cutoff)
 
-    # Get the repository owner and name from the search query
-    owner = get_owner(search_query)
+    # Get the owner and repository from the search query
+    owner_and_repository = get_owner_and_repository(search_query)
+    owner = owner_and_repository.get("owner")
+    repository = owner_and_repository.get("repository")
 
     if owner is None:
         raise ValueError(
@@ -323,7 +330,7 @@ def main():
             write_to_markdown(None, None, None, None, None, None, None, None)
             return
     else:
-        issues = search_issues(search_query, github_connection)
+        issues = search_issues(search_query, github_connection, owner, repository)
         if len(issues) <= 0:
             print("No issues found")
             write_to_markdown(None, None, None, None, None, None, None, None)

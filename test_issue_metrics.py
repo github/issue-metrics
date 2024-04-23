@@ -24,6 +24,7 @@ from issue_metrics import (
     IssueWithMetrics,
     auth_to_github,
     get_env_vars,
+    get_owner_and_repository,
     get_per_issue_metrics,
     measure_time_to_close,
     measure_time_to_first_response,
@@ -54,8 +55,43 @@ class TestSearchIssues(unittest.TestCase):
         mock_connection.search_issues.return_value = mock_issues
 
         # Call search_issues and check that it returns the correct issues
-        issues = search_issues("is:open", mock_connection)
+        issues = search_issues(
+            "is:open", mock_connection, "fakeowner", "fakerepository"
+        )
         self.assertEqual(issues, mock_issues)
+
+
+class TestGetOwnerAndRepository(unittest.TestCase):
+    """Unit tests for the get_owner_and_repository function.
+
+    This class contains unit tests for the get_owner_and_repository function in the
+    issue_metrics module. The tests use the unittest module and the unittest.mock
+    module to mock the GitHub API and test the function in isolation.
+
+    Methods:
+        test_get_owner_with_owner_and_repo_in_query: Test get both owner and repo.
+        test_get_owner_and_repository_with_repo_in_query: Test get just owner.
+        test_get_owner_and_repository_without_either_in_query: Test get neither.
+
+    """
+
+    def test_get_owner_with_owner_and_repo_in_query(self):
+        """Test get both owner and repo."""
+        result = get_owner_and_repository("repo:owner1/repo1")
+        self.assertEqual(result.get("owner"), "owner1")
+        self.assertEqual(result.get("repository"), "repo1")
+
+    def test_get_owner_and_repository_with_repo_in_query(self):
+        """Test get just owner."""
+        result = get_owner_and_repository("org:owner1")
+        self.assertEqual(result.get("owner"), "owner1")
+        self.assertIsNone(result.get("repository"))
+
+    def test_get_owner_and_repository_without_either_in_query(self):
+        """Test get neither."""
+        result = get_owner_and_repository("is:blah")
+        self.assertIsNone(result.get("owner"))
+        self.assertIsNone(result.get("repository"))
 
 
 class TestAuthToGithub(unittest.TestCase):
