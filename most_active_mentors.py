@@ -56,8 +56,8 @@ def count_comments_per_user(
     Args:
         issue (Union[github3.issues.Issue, None]): A GitHub issue.
         pull_request (Union[github3.pulls.PullRequest, None]): A GitHub pull
-        request.  ignore_users (List[str]): A list of GitHub usernames to
-        ignore.
+        request.
+        ignore_users (List[str]): A list of GitHub usernames to ignore.
         max_comments_to_eval: Maximum number of comments per item to look at.
         heavily_involved: Maximum number of comments to count for one
         user per issue.
