@@ -6,7 +6,6 @@ issues and comments to test the functions' behavior.
 
 Classes:
     TestSearchIssues: A class to test the search_issues function.
-    TestAuthToGithub: A class to test the auth_to_github function.
     TestGetPerIssueMetrics: A class to test the get_per_issue_metrics function.
     TestGetEnvVars: A class to test the get_env_vars function.
     TestMain: A class to test the main function.
@@ -18,11 +17,9 @@ import unittest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 
-import github3
 import issue_metrics
 from issue_metrics import (
     IssueWithMetrics,
-    auth_to_github,
     get_env_vars,
     get_owner_and_repository,
     get_per_issue_metrics,
@@ -92,45 +89,6 @@ class TestGetOwnerAndRepository(unittest.TestCase):
         result = get_owner_and_repository("is:blah")
         self.assertIsNone(result.get("owner"))
         self.assertIsNone(result.get("repository"))
-
-
-class TestAuthToGithub(unittest.TestCase):
-    """Test the auth_to_github function."""
-
-    @patch("github3.github.GitHub.login_as_app_installation")
-    def test_auth_to_github_with_github_app(self, mock_login):
-        """
-        Test the auth_to_github function when GitHub app
-        parameters provided.
-        """
-        mock_login.return_value = MagicMock()
-        result = auth_to_github(12345, 678910, b"hello", "", "")
-
-        self.assertIsInstance(result, github3.github.GitHub)
-
-    def test_auth_to_github_with_token(self):
-        """
-        Test the auth_to_github function when the token is provided.
-        """
-        result = auth_to_github(None, None, b"", "token", "")
-
-        self.assertIsInstance(result, github3.github.GitHub)
-
-    def test_auth_to_github_without_authentication_information(self):
-        """
-        Test the auth_to_github function when authentication information is not provided.
-        Expect a ValueError to be raised.
-        """
-        with self.assertRaises(ValueError):
-            auth_to_github(None, None, b"", "", "")
-
-    def test_auth_to_github_with_ghe(self):
-        """
-        Test the auth_to_github function when the GitHub Enterprise URL is provided.
-        """
-        result = auth_to_github(None, None, b"", "token", "https://github.example.com")
-
-        self.assertIsInstance(result, github3.github.GitHubEnterprise)
 
 
 class TestGetEnvVars(unittest.TestCase):

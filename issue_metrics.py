@@ -11,7 +11,6 @@ Functions:
     search_issues(search_query: str, github_connection: github3.GitHub)
         -> github3.structs.SearchIterator:
         Searches for issues in a GitHub repository that match the given search query.
-    auth_to_github() -> github3.GitHub: Connect to GitHub API with token authentication.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
         discussions: bool = False), labels: Union[List[str], None] = None,
         ignore_users: List[str] = [] -> tuple[List, int, int]:
@@ -25,6 +24,7 @@ import sys
 from typing import List, Union
 
 import github3
+from auth import auth_to_github, get_github_app_installation_token
 from classes import IssueWithMetrics
 from config import EnvVars, get_env_vars
 from discussions import get_discussions
@@ -92,38 +92,6 @@ def search_issues(
     return issues
 
 
-def auth_to_github(
-    gh_app_id: str,
-    gh_app_installation_id: int,
-    gh_app_private_key_bytes: bytes,
-    token: str,
-    ghe: str,
-) -> github3.GitHub:
-    """
-    Connect to GitHub.com or GitHub Enterprise, depending on env variables.
-
-    Returns:
-        github3.GitHub: A github api connection.
-    """
-
-    if gh_app_id and gh_app_private_key_bytes and gh_app_installation_id:
-        gh = github3.github.GitHub()
-        gh.login_as_app_installation(
-            gh_app_private_key_bytes, gh_app_id, gh_app_installation_id
-        )
-        github_connection = gh
-    elif ghe and token:
-        github_connection = github3.github.GitHubEnterprise(ghe, token=token)
-    elif token:
-        github_connection = github3.login(token=token)
-    else:
-        raise ValueError(
-            "GH_TOKEN or the set of [GH_APP_ID, GH_APP_INSTALLATION_ID, GH_APP_PRIVATE_KEY] environment variables are not set"
-        )
-
-    return github_connection  # type: ignore
-
-
 def get_per_issue_metrics(
     issues: Union[List[dict], List[github3.search.IssueSearchResult]],  # type: ignore
     env_vars: EnvVars,
@@ -175,9 +143,9 @@ def get_per_issue_metrics(
                 issue_with_metrics.mentor_activity = count_comments_per_user(
                     None,
                     issue,
+                    None,
+                    None,
                     ignore_users,
-                    None,
-                    None,
                     max_comments_to_eval,
                     heavily_involved,
                 )
@@ -289,11 +257,20 @@ def main():
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
 
+    gh_app_id = env_vars.gh_app_id
+    gh_app_installation_id = env_vars.gh_app_installation_id
+    gh_app_private_key_bytes = env_vars.gh_app_private_key_bytes
+
+    if not token and gh_app_id and gh_app_installation_id and gh_app_private_key_bytes:
+        token = get_github_app_installation_token(
+            gh_app_id, gh_app_private_key_bytes, gh_app_installation_id
+        )
+
     # Auth to GitHub.com
     github_connection = auth_to_github(
-        env_vars.gh_app_id,
-        env_vars.gh_app_installation_id,
-        env_vars.gh_app_private_key_bytes,
+        gh_app_id,
+        gh_app_installation_id,
+        gh_app_private_key_bytes,
         token,
         env_vars.ghe,
     )
