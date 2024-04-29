@@ -22,7 +22,7 @@ from most_active_mentors import count_comments_per_user, get_mentor_count
 class TestCountCommentsPerUser(unittest.TestCase):
     """Test the count_comments_per_user function."""
 
-    def test_count_comments_per_user(self):
+    def test_count_comments_per_user_limit(self):
         """Test that count_comments_per_user correctly counts user comments.
 
         This test mocks the GitHub connection and issue comments, and checks
@@ -53,6 +53,45 @@ class TestCountCommentsPerUser(unittest.TestCase):
 
         # Check the results
         self.assertEqual(result, expected_result)
+
+    def test_count_comments_per_user_with_ignores(self):
+        """Test that count_comments_per_user correctly counts user comments with some users ignored."""
+        # Set up the mock GitHub issues
+        mock_issue1 = MagicMock()
+        mock_issue1.comments = 2
+        mock_issue1.issue.user.login = "issue_owner"
+        mock_issue1.created_at = "2023-01-01T00:00:00Z"
+
+        # Set up mock GitHub issue comments by several users
+        mock_issue1.issue.comments.return_value = []
+        for i in range(5):
+            mock_comment1 = MagicMock()
+            mock_comment1.user.login = "very_active_user"
+            mock_comment1.created_at = datetime.fromisoformat(
+                f"2023-01-02T{i:02d}:00:00Z"
+            )
+            # pylint: disable=maybe-no-member
+            mock_issue1.issue.comments.return_value.append(mock_comment1)
+        for i in range(5):
+            mock_comment1 = MagicMock()
+            mock_comment1.user.login = "very_active_user_ignored"
+            mock_comment1.created_at = datetime.fromisoformat(
+                f"2023-01-02T{i:02d}:00:00Z"
+            )
+            # pylint: disable=maybe-no-member
+            mock_issue1.issue.comments.return_value.append(mock_comment1)
+
+        # Call the function
+        result = count_comments_per_user(
+            mock_issue1, ignore_users=["very_active_user_ignored"]
+        )
+        # Only the comments by "very_active_user" should be counted,
+        # so the count should be 3 since that is the threshold for heavily involved
+        expected_result = {"very_active_user": 3}
+
+        # Check the results
+        self.assertEqual(result, expected_result)
+        self.assertNotIn("very_active_user_ignored", result)
 
     def test_get_mentor_count(self):
         """Test that get_mentor_count correctly counts comments per user."""
