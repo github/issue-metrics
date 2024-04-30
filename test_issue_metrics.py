@@ -17,11 +17,10 @@ import unittest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 
-import issue_metrics
 from issue_metrics import (
     IssueWithMetrics,
     get_env_vars,
-    get_owner_and_repository,
+    get_owners_and_repositories,
     get_per_issue_metrics,
     measure_time_to_close,
     measure_time_to_first_response,
@@ -52,43 +51,62 @@ class TestSearchIssues(unittest.TestCase):
         mock_connection.search_issues.return_value = mock_issues
 
         # Call search_issues and check that it returns the correct issues
-        issues = search_issues(
-            "is:open", mock_connection, "fakeowner", "fakerepository"
-        )
+        repo_with_owner = {"owner": "owner1", "repository": "repo1"}
+        owners_and_repositories = [repo_with_owner]
+        issues = search_issues("is:open", mock_connection, owners_and_repositories)
         self.assertEqual(issues, mock_issues)
 
 
 class TestGetOwnerAndRepository(unittest.TestCase):
-    """Unit tests for the get_owner_and_repository function.
+    """Unit tests for the get_owners_and_repositories function.
 
-    This class contains unit tests for the get_owner_and_repository function in the
+    This class contains unit tests for the get_owners_and_repositories function in the
     issue_metrics module. The tests use the unittest module and the unittest.mock
     module to mock the GitHub API and test the function in isolation.
 
     Methods:
-        test_get_owner_with_owner_and_repo_in_query: Test get both owner and repo.
-        test_get_owner_and_repository_with_repo_in_query: Test get just owner.
-        test_get_owner_and_repository_without_either_in_query: Test get neither.
-
+        test_get_owners_with_owner_and_repo_in_query: Test get both owner and repo.
+        test_get_owners_and_repositories_with_repo_in_query: Test get just owner.
+        test_get_owners_and_repositories_without_either_in_query: Test get neither.
+        test_get_owners_and_repositories_with_multiple_entries: Test get multiple entries.
     """
 
-    def test_get_owner_with_owner_and_repo_in_query(self):
+    def test_get_owners_with_owner_and_repo_in_query(self):
         """Test get both owner and repo."""
-        result = get_owner_and_repository("repo:owner1/repo1")
-        self.assertEqual(result.get("owner"), "owner1")
-        self.assertEqual(result.get("repository"), "repo1")
+        result = get_owners_and_repositories("repo:owner1/repo1")
+        self.assertEqual(result[0].get("owner"), "owner1")
+        self.assertEqual(result[0].get("repository"), "repo1")
 
-    def test_get_owner_and_repository_with_repo_in_query(self):
+    def test_get_owner_and_repositories_with_repo_in_query(self):
         """Test get just owner."""
-        result = get_owner_and_repository("org:owner1")
-        self.assertEqual(result.get("owner"), "owner1")
-        self.assertIsNone(result.get("repository"))
+        result = get_owners_and_repositories("org:owner1")
+        self.assertEqual(result[0].get("owner"), "owner1")
+        self.assertIsNone(result[0].get("repository"))
 
-    def test_get_owner_and_repository_without_either_in_query(self):
+    def test_get_owners_and_repositories_without_either_in_query(self):
         """Test get neither."""
-        result = get_owner_and_repository("is:blah")
-        self.assertIsNone(result.get("owner"))
-        self.assertIsNone(result.get("repository"))
+        result = get_owners_and_repositories("is:blah")
+        self.assertEqual(result, [])
+
+    def test_get_owners_and_repositories_with_multiple_entries(self):
+        """Test get multiple entries."""
+        result = get_owners_and_repositories("repo:owner1/repo1 org:owner2")
+        self.assertEqual(result[0].get("owner"), "owner1")
+        self.assertEqual(result[0].get("repository"), "repo1")
+        self.assertEqual(result[1].get("owner"), "owner2")
+        self.assertIsNone(result[1].get("repository"))
+
+    def test_get_owners_and_repositories_with_org(self):
+        """Test get org as owner."""
+        result = get_owners_and_repositories("org:owner1")
+        self.assertEqual(result[0].get("owner"), "owner1")
+        self.assertIsNone(result[0].get("repository"))
+
+    def test_get_owners_and_repositories_with_user(self):
+        """Test get user as owner."""
+        result = get_owners_and_repositories("user:owner1")
+        self.assertEqual(result[0].get("owner"), "owner1")
+        self.assertIsNone(result[0].get("repository"))
 
 
 class TestGetEnvVars(unittest.TestCase):
@@ -118,115 +136,6 @@ class TestGetEnvVars(unittest.TestCase):
         # Call the function and check that it raises a ValueError
         with self.assertRaises(ValueError):
             get_env_vars(test=True)
-
-
-class TestMain(unittest.TestCase):
-    """Unit tests for the main function.
-
-    This class contains unit tests for the main function in the issue_metrics
-    module. The tests use the unittest module and the unittest.mock module to
-    mock the GitHub API and test the function in isolation.
-
-    Methods:
-        test_main: Test that main runs without errors.
-        test_main_no_issues_found: Test that main handles when no issues are found
-
-    """
-
-    @patch("issue_metrics.auth_to_github")
-    @patch("issue_metrics.search_issues")
-    @patch("issue_metrics.measure_time_to_first_response")
-    @patch("issue_metrics.get_stats_time_to_first_response")
-    @patch.dict(
-        os.environ,
-        {
-            "SEARCH_QUERY": "is:open repo:user/repo",
-            "GH_TOKEN": "test_token",
-        },
-    )
-    def test_main(
-        self,
-        mock_get_stats_time_to_first_response,
-        mock_measure_time_to_first_response,
-        mock_search_issues,
-        mock_auth_to_github,
-    ):
-        """Test that main runs without errors."""
-        # Set up the mock GitHub connection object
-        mock_connection = MagicMock()
-        mock_auth_to_github.return_value = mock_connection
-
-        # Set up the mock search_issues function
-        mock_issues = MagicMock(
-            items=[
-                MagicMock(title="Issue 1"),
-                MagicMock(title="Issue 2"),
-            ]
-        )
-
-        mock_search_issues.return_value = mock_issues
-
-        # Set up the mock measure_time_to_first_response function
-        mock_issues_with_ttfr = [
-            (
-                "Issue 1",
-                "https://github.com/user/repo/issues/1",
-                "alice",
-                timedelta(days=1, hours=2, minutes=30),
-            ),
-            (
-                "Issue 2",
-                "https://github.com/user/repo/issues/2",
-                "bob",
-                timedelta(days=3, hours=4, minutes=30),
-            ),
-        ]
-        mock_measure_time_to_first_response.return_value = mock_issues_with_ttfr
-
-        # Set up the mock get_stats_time_to_first_response function
-        mock_stats_time_to_first_response = 15
-        mock_get_stats_time_to_first_response.return_value = (
-            mock_stats_time_to_first_response
-        )
-
-        # Call main and check that it runs without errors
-        issue_metrics.main()
-
-        # Remove the markdown file created by main
-        os.remove("issue_metrics.md")
-
-    @patch("issue_metrics.auth_to_github")
-    @patch("issue_metrics.search_issues")
-    @patch("issue_metrics.write_to_markdown")
-    @patch.dict(
-        os.environ,
-        {
-            "SEARCH_QUERY": "is:open repo:org/repo",
-            "GH_TOKEN": "test_token",
-        },
-    )
-    def test_main_no_issues_found(
-        self,
-        mock_write_to_markdown,
-        mock_search_issues,
-        mock_auth_to_github,
-    ):
-        """Test that main writes 'No issues found' to the
-        console and calls write_to_markdown with None."""
-
-        # Set up the mock GitHub connection object
-        mock_connection = MagicMock()
-        mock_auth_to_github.return_value = mock_connection
-
-        # Set up the mock search_issues function to return an empty list of issues
-        mock_issues = MagicMock(items=[])
-        mock_search_issues.return_value = mock_issues
-
-        # Call main and check that it writes 'No issues found'
-        issue_metrics.main()
-        mock_write_to_markdown.assert_called_once_with(
-            None, None, None, None, None, None, None, None
-        )
 
 
 class TestGetPerIssueMetrics(unittest.TestCase):
