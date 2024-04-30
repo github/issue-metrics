@@ -77,4 +77,6 @@ We are using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.
 
 ## Releases
 
-Releases are automated but if you need to manually initiate a release you can do so through the GitHub Actions UI.  If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button.  This will allow you to select the branch to release from and the version to release.
+Releases are automated if a pull request is labelled with our [SemVer related labels](.github/release-drafter.yml) or with the `vuln` or `release` labels.
+
+You can also manually initiate a release you can do so through the GitHub Actions UI.  If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button.  This will allow you to select the branch to release from and the version to release.

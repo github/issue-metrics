@@ -3,7 +3,9 @@
 
   on:
     workflow_dispatch:
-    push:
+    pull_request:
+      types:
+        - closed
       branches:
         - main
 
@@ -12,6 +14,16 @@
 
   jobs:
     create_release:
+      # release if
+      # manual deployment OR
+      # merged to main and labelled with release labels
+      if: |
+        (github.event_name == 'workflow_dispatch') ||
+        (github.event.pull_request.merged == true &&
+        (contains(github.event.pull_request.labels.*.name, 'breaking') ||
+        contains(github.event.pull_request.labels.*.name, 'enhancement') ||
+        contains(github.event.pull_request.labels.*.name, 'vuln') ||
+        contains(github.event.pull_request.labels.*.name, 'release')))
       outputs:
         full-tag: ${{ steps.release-drafter.outputs.tag_name }}
         short-tag: ${{ steps.get_tag_name.outputs.SHORT_TAG }}
