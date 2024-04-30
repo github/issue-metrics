@@ -8,7 +8,7 @@ their metrics to a markdown file.
 Functions:
     get_env_vars() -> EnvVars: Get the environment variables for use
         in the script.
-    search_issues(search_query: str, github_connection: github3.GitHub)
+    search_issues(search_query: str, github_connection: github3.GitHub, owners_and_repositories: List[dict])
         -> github3.structs.SearchIterator:
         Searches for issues in a GitHub repository that match the given search query.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
@@ -43,7 +43,9 @@ from time_to_ready_for_review import get_time_to_ready_for_review
 
 
 def search_issues(
-    search_query: str, github_connection: github3.GitHub, owner: str, repository: str
+    search_query: str,
+    github_connection: github3.GitHub,
+    owners_and_repositories: List[dict],
 ) -> List[github3.search.IssueSearchResult]:  # type: ignore
     """
     Searches for issues/prs/discussions in a GitHub repository that match
@@ -52,8 +54,8 @@ def search_issues(
     Args:
         search_query (str): The search query to use for finding issues/prs/discussions.
         github_connection (github3.GitHub): A connection to the GitHub API.
-        owner (str): The owner of the repository to search in.
-        repository (str): The repository to search in.
+        owners_and_repositories (List[dict]): A list of dictionaries containing
+            the owner and repository names.
 
     Returns:
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
@@ -63,18 +65,22 @@ def search_issues(
 
     # Print the issue titles
     issues = []
+    repos_and_owners_string = ""
+    for item in owners_and_repositories:
+        repos_and_owners_string += f"{item['owner']}/{item['repository']} "
+
     try:
         for issue in issues_iterator:
             print(issue.title)  # type: ignore
             issues.append(issue)
     except github3.exceptions.ForbiddenError:
         print(
-            f"You do not have permission to view this repository '{repository}'; Check your API Token."
+            f"You do not have permission to view a repository from: '{repos_and_owners_string}'; Check your API Token."
         )
         sys.exit(1)
     except github3.exceptions.NotFoundError:
         print(
-            f"The repository could not be found; Check the repository owner and name: '{owner}/{repository}"
+            f"The repository could not be found; Check the repository owner and names: '{repos_and_owners_string}"
         )
         sys.exit(1)
     except github3.exceptions.ConnectionError:
@@ -212,28 +218,35 @@ def get_per_issue_metrics(
     return issues_with_metrics, num_issues_open, num_issues_closed
 
 
-def get_owner_and_repository(
+def get_owners_and_repositories(
     search_query: str,
-) -> dict:
-    """Get the owner and repository from the search query.
+) -> List[dict]:
+    """Get the owners and repositories from the search query.
 
     Args:
         search_query (str): The search query used to search for issues.
 
     Returns:
-        dict: A dictionary of owner and repository.
+        List[dict]: A list of dictionaries of owners and repositories.
 
     """
     search_query_split = search_query.split(" ")
-    result = {}
+    results_list = []
     for item in search_query_split:
+        result = {}
         if "repo:" in item and "/" in item:
             result["owner"] = item.split(":")[1].split("/")[0]
             result["repository"] = item.split(":")[1].split("/")[1]
         if "org:" in item or "owner:" in item or "user:" in item:
             result["owner"] = item.split(":")[1]
+        if "user:" in item:
+            result["owner"] = item.split(":")[1]
+        if "owner:" in item:
+            result["owner"] = item.split(":")[1]
+        if result:
+            results_list.append(result)
 
-    return result
+    return results_list
 
 
 def main():
@@ -279,17 +292,17 @@ def main():
     max_comments_eval = int(env_vars.max_comments_eval)
     heavily_involved_cutoff = int(env_vars.heavily_involved_cutoff)
 
-    # Get the owner and repository from the search query
-    owner_and_repository = get_owner_and_repository(search_query)
-    owner = owner_and_repository.get("owner")
-    repository = owner_and_repository.get("repository")
+    # Get the owners and repositories from the search query
+    owners_and_repositories = get_owners_and_repositories(search_query)
 
-    if owner is None:
-        raise ValueError(
-            "The search query must include a repository owner and name \
-            (ie. repo:owner/repo), an organization (ie. org:organization), \
-            a user (ie. user:login) or an owner (ie. owner:user-or-organization)"
-        )
+    # Every search query must include a repository owner for each repository, organization, or user
+    for item in owners_and_repositories:
+        if item["owner"] is None:
+            raise ValueError(
+                "The search query must include a repository owner and name \
+                (ie. repo:owner/repo), an organization (ie. org:organization), \
+                a user (ie. user:login) or an owner (ie. owner:user-or-organization)"
+            )
 
     # Determine if there are label to measure
     labels = env_vars.labels_to_measure
@@ -307,7 +320,7 @@ def main():
             write_to_markdown(None, None, None, None, None, None, None, None)
             return
     else:
-        issues = search_issues(search_query, github_connection, owner, repository)
+        issues = search_issues(search_query, github_connection, owners_and_repositories)
         if len(issues) <= 0:
             print("No issues found")
             write_to_markdown(None, None, None, None, None, None, None, None)
