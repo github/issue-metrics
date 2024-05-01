@@ -20,6 +20,7 @@ Functions:
     main(): Run the issue-metrics script.
 """
 
+import shutil
 import sys
 from typing import List, Union
 
@@ -30,6 +31,7 @@ from config import EnvVars, get_env_vars
 from discussions import get_discussions
 from json_writer import write_to_json
 from labels import get_label_metrics, get_stats_time_in_labels
+from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_file
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
@@ -364,6 +366,7 @@ def main():
         num_mentor_count,
         search_query,
     )
+
     write_to_markdown(
         issues_with_metrics,
         stats_time_to_first_response,
@@ -376,6 +379,18 @@ def main():
         labels,
         search_query,
     )
+
+    max_char_count = 65535
+    if markdown_too_large_for_issue_body("issue_metrics.md", max_char_count):
+        split_markdown_file("issue_metrics.md", max_char_count)
+        shutil.move("issue_metrics.md", "issue_metrics_full.md")
+        shutil.move("issue_metrics_0.md", "issue_metrics.md")
+        print(
+            "Issue metrics markdown file is too large for GitHub issue body and has been \
+            split into multiple files. ie. issue_metrics.md, issue_metrics_1.md, etc. \
+            The full file is saved as issue_metrics_full.md\n\
+            See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+        )
 
 
 if __name__ == "__main__":

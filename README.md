@@ -161,6 +161,7 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 - [Configuring the `SEARCH_QUERY`](./docs/search-query.md)
 - [Local usage without Docker](./docs/local-usage-without-docker.md)
 - [Authenticating with GitHub App Installation](./docs/authenticating-with-github-app-installation.md)
+- [Dealing with large issue_metrics.md files](./docs/dealing-with-large-issue-metrics.md)
 
 ## Contributions
 
