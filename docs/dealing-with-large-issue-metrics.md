@@ -6,7 +6,7 @@ When working with lots of issues/pull requests/discussion results, the resulting
 Pull request creation failed. Validation failed: Body is too long (maximum is 65536 characters)
 ```
 
-To work around this limitation, the issue-metrics action detects the issue and splits the issue_metrics.md file into smaller files. So instead of issue_metrics.md, you will get issue_metrics_0.md, issue_metrics_1.md, etc.
+To work around this limitation, the issue-metrics action detects the large file size and splits the issue_metrics.md file into smaller files. So instead of issue_metrics.md, you will get issue_metrics_0.md, issue_metrics_1.md, etc.
 Since we don't want the action to fail, it has been designed to have the same name as usual for the first split file (issue_metrics.md) and then append a number to the name for the subsequent split files.
 
 You can choose one of the following strategies to deal with the split files:
