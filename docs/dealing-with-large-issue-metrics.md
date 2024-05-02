@@ -1,6 +1,6 @@
 # Dealing with large issue metrics Markdown files
 
-When working with lots of issues/pull requests/discussion results, the resulting issue_metrics.md  file can become very large. This can cause the GitHub API to return an error when trying to create an issue with the contents of the file.
+When working with lots of issues/pull requests/discussion results, the resulting issue_metrics.md file can become very large. This can cause the GitHub API to return an error when trying to create an issue with the contents of the file.
 
 ```shell
 Pull request creation failed. Validation failed: Body is too long (maximum is 65536 characters)
