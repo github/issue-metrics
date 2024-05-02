@@ -23,6 +23,7 @@ Functions:
 import shutil
 import sys
 from typing import List, Union
+from time import sleep
 
 import github3
 from auth import auth_to_github, get_github_app_installation_token
@@ -62,19 +63,38 @@ def search_issues(
     Returns:
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
     """
-    print("Searching for issues...")
-    issues_iterator = github_connection.search_issues(search_query, per_page=100)
 
-    # Print the issue titles
+    def wait_for_GH_api_refresh(iterator):
+        # Rate Limit Handling: API only allows 30 requests per minute
+        while iterator.ratelimit_remaining < 5:
+            print(
+                "Github API Rate Limit Low, waiting 1 minute to refresh"
+            )
+            sleep(65)
+
+    ISSUES_PER_PAGE = 100
+
+    print("Searching for issues...")
+    issues_iterator = github_connection.search_issues(
+        search_query, per_page=ISSUES_PER_PAGE
+    )
+    wait_for_GH_api_refresh(issues_iterator)
+
+
     issues = []
     repos_and_owners_string = ""
     for item in owners_and_repositories:
         repos_and_owners_string += f"{item['owner']}/{item['repository']} "
 
+    # Print the issue titles
     try:
-        for issue in issues_iterator:
+        for idx, issue in enumerate(issues_iterator, 1):
             print(issue.title)  # type: ignore
             issues.append(issue)
+
+            # requests are sent once per page of issues
+            if idx % ISSUES_PER_PAGE == 0:
+                wait_for_GH_api_refresh(issues_iterator)
     except github3.exceptions.ForbiddenError:
         print(
             f"You do not have permission to view a repository from: '{repos_and_owners_string}'; Check your API Token."
