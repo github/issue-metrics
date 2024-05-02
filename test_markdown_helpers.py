@@ -37,7 +37,7 @@ class TestMarkdownHelpers(unittest.TestCase):
         Test the split_markdown_file function.
         """
 
-        # Define a sample markdown file content with 3 times the maximum character count
+        # Define a sample markdown file content with 4 times the maximum character count
         multiple_of_max = 4
         max_char_count = 65535
         repeated_content = "a\n"
