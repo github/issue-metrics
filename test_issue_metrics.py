@@ -42,13 +42,20 @@ class TestSearchIssues(unittest.TestCase):
 
     def test_search_issues(self):
         """Test that search_issues returns the correct issues."""
+
         # Set up the mock GitHub connection object
-        mock_connection = MagicMock()
         mock_issues = [
             MagicMock(title="Issue 1"),
             MagicMock(title="Issue 2"),
         ]
-        mock_connection.search_issues.return_value = mock_issues
+
+        # simulating github3.structs.SearchIterator return value
+        mock_search_result = MagicMock()
+        mock_search_result.__iter__.return_value = iter(mock_issues)
+        mock_search_result.ratelimit_remaining = 30
+
+        mock_connection = MagicMock()
+        mock_connection.search_issues.return_value = mock_search_result
 
         # Call search_issues and check that it returns the correct issues
         repo_with_owner = {"owner": "owner1", "repository": "repo1"}
