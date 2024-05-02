@@ -1,5 +1,5 @@
 [flake8]
 exclude = venv,.venv,.git,__pycache__
-extend-ignore = C901
+extend-ignore = C901, E203
 max-line-length = 150
 statistics = True
