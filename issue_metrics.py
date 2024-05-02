@@ -65,11 +65,24 @@ def search_issues(
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
     """
 
+    # Rate Limit Handling: API only allows 30 requests per minute
     def wait_for_api_refresh(iterator: github3.structs.SearchIterator):
-        # Rate Limit Handling: API only allows 30 requests per minute
+        max_retries = 5
+        retry_count = 0
+        sleep_time = 70
+
         while iterator.ratelimit_remaining < 5:
-            print("Github API Rate Limit Low, waiting 1 minute to refresh")
-            sleep(65)
+            if retry_count >= max_retries:
+                raise RuntimeError("Exceeded maximum retries for API rate limit")
+
+            print(
+                f"GitHub API Rate Limit Low, waiting {sleep_time} seconds to refresh."
+            )
+            sleep(sleep_time)
+
+            # Exponentially increase the sleep time for the next retry
+            sleep_time *= 2
+            retry_count += 1
 
     issues_per_page = 100
 
