@@ -28,7 +28,7 @@ jobs:
         echo "END_DATE=$end_date" >> "$GITHUB_ENV"
 
     - name: Run contributor action
-      uses: github/contributors@v1
+      uses: github/contributors@832b6518181710ef277bc9ddafda6696e6b312bd
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         START_DATE: ${{ env.START_DATE }}
@@ -37,7 +37,7 @@ jobs:
         SPONSOR_INFO: "true"
 
     - name: Create issue
-      uses: peter-evans/create-issue-from-file@v5
+      uses: peter-evans/create-issue-from-file@24452a72d85239eacf1468b0f1982a9f3fec4c94
       with:
         title: Monthly contributor report
         token: ${{ secrets.GITHUB_TOKEN }}
