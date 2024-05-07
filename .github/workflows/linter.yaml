@@ -18,7 +18,7 @@ jobs:
       statuses: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b
         with:
           # Full git history is needed to get a proper
           # list of changed files within `super-linter`
@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-test.txt
       - name: Lint Code Base
-        uses: super-linter/super-linter@v6
+        uses: super-linter/super-linter@4758be622215d0954c8353ee4877ffd60111cf8e
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
