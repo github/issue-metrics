@@ -22,9 +22,11 @@ Functions:
 
 import shutil
 import sys
+from time import sleep
 from typing import List, Union
 
 import github3
+import github3.structs
 from auth import auth_to_github, get_github_app_installation_token
 from classes import IssueWithMetrics
 from config import EnvVars, get_env_vars
@@ -62,19 +64,49 @@ def search_issues(
     Returns:
         List[github3.search.IssueSearchResult]: A list of issues that match the search query.
     """
-    print("Searching for issues...")
-    issues_iterator = github_connection.search_issues(search_query, per_page=100)
 
-    # Print the issue titles
+    # Rate Limit Handling: API only allows 30 requests per minute
+    def wait_for_api_refresh(iterator: github3.structs.SearchIterator):
+        max_retries = 5
+        retry_count = 0
+        sleep_time = 70
+
+        while iterator.ratelimit_remaining < 5:
+            if retry_count >= max_retries:
+                raise RuntimeError("Exceeded maximum retries for API rate limit")
+
+            print(
+                f"GitHub API Rate Limit Low, waiting {sleep_time} seconds to refresh."
+            )
+            sleep(sleep_time)
+
+            # Exponentially increase the sleep time for the next retry
+            sleep_time *= 2
+            retry_count += 1
+
+    issues_per_page = 100
+
+    print("Searching for issues...")
+    issues_iterator = github_connection.search_issues(
+        search_query, per_page=issues_per_page
+    )
+    wait_for_api_refresh(issues_iterator)
+
     issues = []
     repos_and_owners_string = ""
     for item in owners_and_repositories:
         repos_and_owners_string += f"{item['owner']}/{item['repository']} "
 
+    # Print the issue titles
     try:
-        for issue in issues_iterator:
+        for idx, issue in enumerate(issues_iterator, 1):
             print(issue.title)  # type: ignore
             issues.append(issue)
+
+            # requests are sent once per page of issues
+            if idx % issues_per_page == 0:
+                wait_for_api_refresh(issues_iterator)
+
     except github3.exceptions.ForbiddenError:
         print(
             f"You do not have permission to view a repository from: '{repos_and_owners_string}'; Check your API Token."
