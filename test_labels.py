@@ -51,7 +51,6 @@ class TestLabels(unittest.TestCase):
         self.assertEqual(events[1].label["name"], "bug")
         self.assertEqual(events[2].label["name"], "bug")
 
-
     def test_get_label_metrics_closed_issue(self):
         """Test get_label_metrics using a closed issue"""
         labels = ["bug", "feature"]
@@ -64,8 +63,14 @@ class TestLabels(unittest.TestCase):
         self.issue.state = "open"
         labels = ["bug", "feature"]
         metrics = get_label_metrics(self.issue, labels)
-        self.assertLessEqual(metrics["bug"], datetime.now(pytz.utc) - datetime(2021, 1, 2, tzinfo=pytz.UTC))
-        self.assertGreater(metrics["bug"], datetime.now(pytz.utc) - datetime(2021, 1, 3, tzinfo=pytz.UTC))
+        self.assertLessEqual(
+            metrics["bug"],
+            datetime.now(pytz.utc) - datetime(2021, 1, 2, tzinfo=pytz.UTC),
+        )
+        self.assertGreater(
+            metrics["bug"],
+            datetime.now(pytz.utc) - datetime(2021, 1, 3, tzinfo=pytz.UTC),
+        )
         self.assertLessEqual(
             metrics["feature"],
             datetime.now(pytz.utc) - datetime(2021, 1, 2, tzinfo=pytz.UTC),
