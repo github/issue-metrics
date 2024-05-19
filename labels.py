@@ -74,7 +74,7 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
 
     for label in labels:
         # if the label is still on there, add the time from the last event to now
-        if label in labeled and label not in unlabeled:
+        if label in labeled:
             # if the issue is closed, add the time from the issue creation to the closed_at time
             if issue.state == "closed":
                 label_metrics[label] += datetime.fromisoformat(
