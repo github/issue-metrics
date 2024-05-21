@@ -40,6 +40,12 @@ class TestLabels(unittest.TestCase):
                 label={"name": "bug"},
                 created_at=datetime(2021, 1, 4, tzinfo=pytz.UTC),
             ),
+            # Label labeled after issue close date
+            MagicMock(
+                event="labeled",
+                label={"name": "foo"},
+                created_at=datetime(2021, 1, 20, tzinfo=pytz.UTC),
+            ),
         ]
 
     def test_get_label_events(self):
@@ -79,6 +85,13 @@ class TestLabels(unittest.TestCase):
             metrics["feature"],
             datetime.now(pytz.utc) - datetime(2021, 1, 4, tzinfo=pytz.UTC),
         )
+
+    def test_get_label_metrics_closed_issue_labeled_past_closed_at(self):
+        """Test get_label_metrics using a closed issue that was labeled past issue closed_at"""
+        self.issue.state = "closed"
+        labels = ["foo"]
+        metrics = get_label_metrics(self.issue, labels)
+        self.assertEqual(metrics["foo"], None)
 
 
 class TestGetAverageTimeInLabels(unittest.TestCase):
