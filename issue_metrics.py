@@ -95,7 +95,9 @@ def search_issues(
     issues = []
     repos_and_owners_string = ""
     for item in owners_and_repositories:
-        repos_and_owners_string += f"{item['owner']}/{item['repository']} "
+        repos_and_owners_string += (
+            f"{item.get('owner', '')}/{item.get('repository', '')} "
+        )
 
     # Print the issue titles
     try:
