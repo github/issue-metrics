@@ -75,6 +75,7 @@ def get_stats_time_to_close(
 
     # Calculate the total time to close for all issues
     close_times = []
+    total_time_to_close = None
     if issues_with_time_to_close:
         total_time_to_close = 0
         for issue in issues_with_time_to_close:

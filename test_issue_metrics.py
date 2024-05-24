@@ -36,12 +36,13 @@ class TestSearchIssues(unittest.TestCase):
     module to mock the GitHub API and test the function in isolation.
 
     Methods:
-        test_search_issues: Test that search_issues returns the correct issues.
+        test_search_issues_with_owner_and_repository: Test that search_issues with owner/repo returns the correct issues.
+        test_search_issues_with_just_owner_or_org: Test that search_issues with just an owner/org returns the correct issues.
 
     """
 
-    def test_search_issues(self):
-        """Test that search_issues returns the correct issues."""
+    def test_search_issues_with_owner_and_repository(self):
+        """Test that search_issues with owner/repo returns the correct issues."""
 
         # Set up the mock GitHub connection object
         mock_issues = [
@@ -61,6 +62,30 @@ class TestSearchIssues(unittest.TestCase):
         repo_with_owner = {"owner": "owner1", "repository": "repo1"}
         owners_and_repositories = [repo_with_owner]
         issues = search_issues("is:open", mock_connection, owners_and_repositories)
+        self.assertEqual(issues, mock_issues)
+
+    def test_search_issues_with_just_owner_or_org(self):
+        """Test that search_issues with just an owner/org returns the correct issues."""
+
+        # Set up the mock GitHub connection object
+        mock_issues = [
+            MagicMock(title="Issue 1"),
+            MagicMock(title="Issue 2"),
+            MagicMock(title="Issue 3"),
+        ]
+
+        # simulating github3.structs.SearchIterator return value
+        mock_search_result = MagicMock()
+        mock_search_result.__iter__.return_value = iter(mock_issues)
+        mock_search_result.ratelimit_remaining = 30
+
+        mock_connection = MagicMock()
+        mock_connection.search_issues.return_value = mock_search_result
+
+        # Call search_issues and check that it returns the correct issues
+        org = {"owner": "org1"}
+        owners = [org]
+        issues = search_issues("is:open", mock_connection, owners)
         self.assertEqual(issues, mock_issues)
 
 
@@ -84,7 +109,7 @@ class TestGetOwnerAndRepository(unittest.TestCase):
         self.assertEqual(result[0].get("owner"), "owner1")
         self.assertEqual(result[0].get("repository"), "repo1")
 
-    def test_get_owner_and_repositories_with_repo_in_query(self):
+    def test_get_owner_and_repositories_without_repo_in_query(self):
         """Test get just owner."""
         result = get_owners_and_repositories("org:owner1")
         self.assertEqual(result[0].get("owner"), "owner1")
