@@ -1,6 +1,6 @@
 # Issue Metrics Action
 
-[![CodeQL](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/github/issue-metrics/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/github-code-scanning/codeql)
 [![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml)
 [![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/github/issue-metrics/badge)](https://scorecard.dev/viewer/?uri=github.com/github/issue-metrics)
