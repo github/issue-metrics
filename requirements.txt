@@ -2,4 +2,4 @@ github3.py==4.0.1
 numpy==1.26.4
 python-dotenv==1.0.1
 pytz==2024.1
-requests==2.32.2
+requests==2.32.3
