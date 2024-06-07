@@ -1,24 +1,24 @@
 ---
-  name: Auto Labeler
+name: Auto Labeler
 
-  on:
-    # pull_request_target event is required for autolabeler to support all PRs including forks
-    pull_request_target:
-      types: [opened, reopened, synchronize]
+on:
+  # pull_request_target event is required for autolabeler to support all PRs including forks
+  pull_request_target:
+    types: [ opened, reopened, edited, synchronize ]
 
-  permissions:
-    contents: read
+permissions:
+  contents: read
 
-  jobs:
-    main:
-      permissions:
-        contents: write
-        pull-requests: write
-      name: Auto label pull requests
-      runs-on: ubuntu-latest
-      steps:
-        - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            config-name: release-drafter.yml
+jobs:
+  main:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Auto label pull requests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-name: release-drafter.yml

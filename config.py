@@ -102,16 +102,20 @@ class EnvVars:
         )
 
 
-def get_bool_env_var(env_var_name: str) -> bool:
+def get_bool_env_var(env_var_name: str, default: bool = False) -> bool:
     """Get a boolean environment variable.
 
     Args:
         env_var_name: The name of the environment variable to retrieve.
+        default: The default value to return if the environment variable is not set.
 
     Returns:
         The value of the environment variable as a boolean.
     """
-    return os.environ.get(env_var_name, "").strip().lower() == "true"
+    ev = os.environ.get(env_var_name, "")
+    if ev == "" and default:
+        return default
+    return ev.strip().lower() == "true"
 
 
 def get_int_env_var(env_var_name: str) -> int | None:
@@ -177,12 +181,12 @@ def get_env_vars(test: bool = False) -> EnvVars:
         ignore_users_list = ignore_users.split(",")
 
     # Hidden columns
-    hide_author = get_bool_env_var("HIDE_AUTHOR")
-    hide_label_metrics = get_bool_env_var("HIDE_LABEL_METRICS")
-    hide_time_to_answer = get_bool_env_var("HIDE_TIME_TO_ANSWER")
-    hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE")
-    hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE")
-    enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT")
+    hide_author = get_bool_env_var("HIDE_AUTHOR", False)
+    hide_label_metrics = get_bool_env_var("HIDE_LABEL_METRICS", False)
+    hide_time_to_answer = get_bool_env_var("HIDE_TIME_TO_ANSWER", False)
+    hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE", False)
+    hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE", False)
+    enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT", False)
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
     heavily_involved_cutoff = os.getenv("HEAVILY_INVOLVED_CUTOFF", "3")
