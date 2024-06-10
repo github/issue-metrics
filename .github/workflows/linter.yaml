@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-test.txt
       - name: Lint Code Base
-        uses: super-linter/super-linter@5b638caee6ba65e25e07143887b669a1233847a0
+        uses: super-linter/super-linter@88ea3923a7e1f89dd485d079f6eb5f5e8f937589
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
