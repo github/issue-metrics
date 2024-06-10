@@ -297,7 +297,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "label1": timedelta(days=1),
         }
         num_issues_opened = 2
-        num_issues_closed = 1
+        num_issues_closed = 2
         num_mentor_count = 5
 
         # Call the function
@@ -323,7 +323,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Metric | Count |\n"
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
-            "| Number of items closed | 1 |\n"
+            "| Number of items closed | 2 |\n"
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author |\n"

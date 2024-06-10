@@ -175,10 +175,22 @@ class TestGetPerIssueMetrics(unittest.TestCase):
 
     @patch.dict(
         os.environ,
-        {"GH_TOKEN": "test_token", "SEARCH_QUERY": "is:issue is:open repo:user/repo"},
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "HIDE_AUTHOR": "true",
+            "HIDE_LABEL_METRICS": "true",
+            "HIDE_TIME_TO_ANSWER": "true",
+            "HIDE_TIME_TO_CLOSE": "true",
+            "HIDE_TIME_TO_FIRST_RESPONSE": "true",
+        },
     )
-    def test_get_per_issue_metrics(self):
-        """Test that the function correctly calculates the metrics for a list of GitHub issues."""
+    def test_get_per_issue_metrics_with_hide_envs(self):
+        """
+        Test that the function correctly calculates the metrics for
+        a list of GitHub issues where HIDE_* envs are set true
+        """
+
         # Create mock data
         mock_issue1 = MagicMock(
             title="Issue 1",
@@ -225,7 +237,119 @@ class TestGetPerIssueMetrics(unittest.TestCase):
                 result_issues_with_metrics,
                 result_num_issues_open,
                 result_num_issues_closed,
-            ) = get_per_issue_metrics(issues, env_vars=get_env_vars(test=True))
+            ) = get_per_issue_metrics(
+                issues,
+                env_vars=get_env_vars(test=True),
+            )
+        expected_issues_with_metrics = [
+            IssueWithMetrics(
+                "Issue 1",
+                "https://github.com/user/repo/issues/1",
+                "alice",
+                None,
+                None,
+                None,
+                None,
+            ),
+            IssueWithMetrics(
+                "Issue 2",
+                "https://github.com/user/repo/issues/2",
+                "bob",
+                None,
+                None,
+                None,
+                None,
+            ),
+        ]
+        expected_num_issues_open = 1
+        expected_num_issues_closed = 1
+        self.assertEqual(result_num_issues_open, expected_num_issues_open)
+        self.assertEqual(result_num_issues_closed, expected_num_issues_closed)
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_first_response,
+            expected_issues_with_metrics[0].time_to_first_response,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_close,
+            expected_issues_with_metrics[0].time_to_close,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[1].time_to_first_response,
+            expected_issues_with_metrics[1].time_to_first_response,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[1].time_to_close,
+            expected_issues_with_metrics[1].time_to_close,
+        )
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "HIDE_AUTHOR": "false",
+            "HIDE_LABEL_METRICS": "false",
+            "HIDE_TIME_TO_ANSWER": "false",
+            "HIDE_TIME_TO_CLOSE": "false",
+            "HIDE_TIME_TO_FIRST_RESPONSE": "false",
+        },
+    )
+    def test_get_per_issue_metrics_without_hide_envs(self):
+        """
+        Test that the function correctly calculates the metrics for
+        a list of GitHub issues where HIDE_* envs are set false
+        """
+
+        # Create mock data
+        mock_issue1 = MagicMock(
+            title="Issue 1",
+            html_url="https://github.com/user/repo/issues/1",
+            author="alice",
+            state="open",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+        )
+
+        mock_comment1 = MagicMock()
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
+        mock_issue1.issue.comments.return_value = [mock_comment1]
+        mock_issue1.issue.pull_request_urls = None
+
+        mock_issue2 = MagicMock(
+            title="Issue 2",
+            html_url="https://github.com/user/repo/issues/2",
+            author="bob",
+            state="closed",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+            closed_at="2023-01-04T00:00:00Z",
+        )
+
+        mock_comment2 = MagicMock()
+        mock_comment2.created_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
+        mock_issue2.issue.comments.return_value = [mock_comment2]
+        mock_issue2.issue.pull_request_urls = None
+
+        issues = [
+            mock_issue1,
+            mock_issue2,
+        ]
+
+        # Call the function and check the result
+        with unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_first_response",
+            measure_time_to_first_response,
+        ), unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_close", measure_time_to_close
+        ):
+            (
+                result_issues_with_metrics,
+                result_num_issues_open,
+                result_num_issues_closed,
+            ) = get_per_issue_metrics(
+                issues,
+                env_vars=get_env_vars(test=True),
+            )
         expected_issues_with_metrics = [
             IssueWithMetrics(
                 "Issue 1",
@@ -336,6 +460,49 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.assertEqual(metrics[0][1].time_to_answer, timedelta(days=4))
         self.assertEqual(metrics[0][1].time_to_close, timedelta(days=6))
         self.assertEqual(metrics[0][1].time_to_first_response, timedelta(days=2))
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "HIDE_AUTHOR": "true",
+            "HIDE_LABEL_METRICS": "true",
+            "HIDE_TIME_TO_ANSWER": "true",
+            "HIDE_TIME_TO_CLOSE": "true",
+            "HIDE_TIME_TO_FIRST_RESPONSE": "true",
+        },
+    )
+    def test_get_per_issue_metrics_with_discussion_with_hide_envs(self):
+        """
+        Test that the function correctly calculates
+        the metrics for a list of GitHub issues with discussions
+        and HIDE_* env vars set to True
+        """
+
+        issues = [self.issue1, self.issue2]
+        metrics = get_per_issue_metrics(
+            issues, discussions=True, env_vars=get_env_vars(test=True)
+        )
+
+        # get_per_issue_metrics returns a tuple of
+        # (issues_with_metrics, num_issues_open, num_issues_closed)
+        self.assertEqual(len(metrics), 3)
+
+        # Check that the metrics are correct, 0 issues open, 2 issues closed
+        self.assertEqual(metrics[1], 0)
+        self.assertEqual(metrics[2], 2)
+
+        # Check that the issues_with_metrics has 2 issues in it
+        self.assertEqual(len(metrics[0]), 2)
+
+        # Check that the issues_with_metrics has the correct metrics,
+        self.assertEqual(metrics[0][0].time_to_answer, None)
+        self.assertEqual(metrics[0][0].time_to_close, None)
+        self.assertEqual(metrics[0][0].time_to_first_response, None)
+        self.assertEqual(metrics[0][1].time_to_answer, None)
+        self.assertEqual(metrics[0][1].time_to_close, None)
+        self.assertEqual(metrics[0][1].time_to_first_response, None)
 
 
 if __name__ == "__main__":

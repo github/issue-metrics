@@ -193,14 +193,12 @@ def get_per_issue_metrics(
                 )
             if env_vars.hide_time_to_answer is False:
                 issue_with_metrics.time_to_answer = measure_time_to_answer(issue)
-            if env_vars.hide_time_to_close is False:
-                if issue["closedAt"]:
-                    issue_with_metrics.time_to_close = measure_time_to_close(
-                        None, issue
-                    )
-                    num_issues_closed += 1
-                else:
-                    num_issues_open += 1
+            if env_vars.hide_time_to_close is False and issue["closedAt"]:
+                issue_with_metrics.time_to_close = measure_time_to_close(None, issue)
+            if issue["closedAt"]:
+                num_issues_closed += 1
+            else:
+                num_issues_open += 1
         else:
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
@@ -236,19 +234,19 @@ def get_per_issue_metrics(
                 )
             if labels and env_vars.hide_label_metrics is False:
                 issue_with_metrics.label_metrics = get_label_metrics(issue, labels)
-            if env_vars.hide_time_to_close is False:
-                if issue.state == "closed":  # type: ignore
-                    if pull_request:
-                        issue_with_metrics.time_to_close = measure_time_to_merge(
-                            pull_request, ready_for_review_at
-                        )
-                    else:
-                        issue_with_metrics.time_to_close = measure_time_to_close(
-                            issue, None
-                        )
-                    num_issues_closed += 1
-                elif issue.state == "open":  # type: ignore
-                    num_issues_open += 1
+            if env_vars.hide_time_to_close is False and issue.state == "closed":  # type: ignore
+                if pull_request:
+                    issue_with_metrics.time_to_close = measure_time_to_merge(
+                        pull_request, ready_for_review_at
+                    )
+                else:
+                    issue_with_metrics.time_to_close = measure_time_to_close(
+                        issue, None
+                    )
+            if issue.state == "closed":  # type: ignore
+                num_issues_closed += 1
+            elif issue.state == "open":  # type: ignore
+                num_issues_open += 1
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed
