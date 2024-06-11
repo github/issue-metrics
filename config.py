@@ -28,6 +28,7 @@ class EnvVars:
         gh_token (str | None): GitHub personal access token (PAT) for API authentication
         ghe (str): The GitHub Enterprise URL to use for authentication
         hide_author (bool): If true, the author's information is hidden in the output
+        hide_items_closed_count (bool): If true, the number of items closed metric is hidden in the output
         hide_label_metrics (bool): If true, the label metrics are hidden in the output
         hide_time_to_answer (bool): If true, the time to answer discussions is hidden in the output
         hide_time_to_close (bool): If true, the time to close metric is hidden in the output
@@ -49,6 +50,7 @@ class EnvVars:
         gh_token: str | None,
         ghe: str | None,
         hide_author: bool,
+        hide_items_closed_count: bool,
         hide_label_metrics: bool,
         hide_time_to_answer: bool,
         hide_time_to_close: bool,
@@ -69,6 +71,7 @@ class EnvVars:
         self.ignore_users = ignore_user
         self.labels_to_measure = labels_to_measure
         self.hide_author = hide_author
+        self.hide_items_closed_count = hide_items_closed_count
         self.hide_label_metrics = hide_label_metrics
         self.hide_time_to_answer = hide_time_to_answer
         self.hide_time_to_close = hide_time_to_close
@@ -88,6 +91,7 @@ class EnvVars:
             f"{self.gh_token},"
             f"{self.ghe},"
             f"{self.hide_author},"
+            f"{self.hide_items_closed_count}),"
             f"{self.hide_label_metrics},"
             f"{self.hide_time_to_answer},"
             f"{self.hide_time_to_close},"
@@ -98,7 +102,7 @@ class EnvVars:
             f"{self.min_mentor_comments},"
             f"{self.max_comments_eval},"
             f"{self.heavily_involved_cutoff},"
-            f"{self.search_query})"
+            f"{self.search_query}"
         )
 
 
@@ -182,6 +186,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
 
     # Hidden columns
     hide_author = get_bool_env_var("HIDE_AUTHOR", False)
+    hide_items_closed_count = get_bool_env_var("HIDE_ITEMS_CLOSED_COUNT", False)
     hide_label_metrics = get_bool_env_var("HIDE_LABEL_METRICS", False)
     hide_time_to_answer = get_bool_env_var("HIDE_TIME_TO_ANSWER", False)
     hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE", False)
@@ -198,6 +203,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         gh_token,
         ghe,
         hide_author,
+        hide_items_closed_count,
         hide_label_metrics,
         hide_time_to_answer,
         hide_time_to_close,

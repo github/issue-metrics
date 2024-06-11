@@ -84,6 +84,7 @@ def write_to_markdown(
     labels=None,
     search_query=None,
     hide_label_metrics=False,
+    hide_items_closed_count=False,
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -102,6 +103,7 @@ def write_to_markdown(
         labels (List[str]): A list of the labels that are used in the issues.
         search_query (str): The search query used to find the issues.
         hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output
+        hide_items_closed_count (bool): Represents whether the user has chosen to hide the number of items closed
 
     Returns:
         None.
@@ -135,6 +137,7 @@ def write_to_markdown(
             columns,
             file,
             hide_label_metrics,
+            hide_items_closed_count,
         )
 
         # Write second table with individual issue/pr/discussion metrics
@@ -193,6 +196,7 @@ def write_overall_metrics_tables(
     columns,
     file,
     hide_label_metrics,
+    hide_items_closed_count=False,
 ):
     """Write the overall metrics tables to the markdown file."""
     if (
@@ -250,6 +254,7 @@ def write_overall_metrics_tables(
     file.write("| Metric | Count |\n")
     file.write("| --- | ---: |\n")
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
-    file.write(f"| Number of items closed | {num_issues_closed} |\n")
+    if not hide_items_closed_count:
+        file.write(f"| Number of items closed | {num_issues_closed} |\n")
     file.write(f"| Number of most active mentors | {num_mentor_count} |\n")
     file.write(f"| Total number of items created | {len(issues_with_metrics)} |\n\n")
