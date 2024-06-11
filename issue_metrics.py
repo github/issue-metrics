@@ -196,7 +196,9 @@ def get_per_issue_metrics(
             if issue["closedAt"]:
                 num_issues_closed += 1
                 if not env_vars.hide_time_to_close:
-                    issue_with_metrics.time_to_close = measure_time_to_close(None, issue)
+                    issue_with_metrics.time_to_close = measure_time_to_close(
+                        None, issue
+                    )
             else:
                 num_issues_open += 1
         else:
