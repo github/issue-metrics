@@ -313,6 +313,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             labels=["label1"],
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
+            hide_items_closed_count=True,
         )
 
         # Check that the function writes the correct markdown file
@@ -323,7 +324,6 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Metric | Count |\n"
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
-            "| Number of items closed | 2 |\n"
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author |\n"

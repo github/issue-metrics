@@ -143,6 +143,7 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 |-------------------------------|----------|---------|-------------|
 | `GH_ENTERPRISE_URL`           | False    | `""`    | URL of GitHub Enterprise instance to use for auth instead of github.com                                                                 |
 | `HIDE_AUTHOR`                 | False    | False   | If set to `true`, the author will not be displayed in the generated Markdown file. |
+| `HIDE_ITEMS_CLOSED_COUNT`     | False    | False   | If set to `true`, the number of items closed metric will not be displayed in the generated Markdown file. |
 | `HIDE_LABEL_METRICS`          | False | False      | If set to `true`, the time in label metrics will not be displayed in the generated Markdown file. |
 | `HIDE_TIME_TO_ANSWER`         | False | False      | If set to `true`, the time to answer a discussion will not be displayed in the generated Markdown file. |
 | `HIDE_TIME_TO_CLOSE`          | False | False      | If set to `true`, the time to close will not be displayed in the generated Markdown file. |

@@ -305,6 +305,7 @@ def main():
     search_query = env_vars.search_query
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
+    hide_items_closed_count = env_vars.hide_items_closed_count
 
     gh_app_id = env_vars.gh_app_id
     gh_app_installation_id = env_vars.gh_app_installation_id
@@ -412,6 +413,7 @@ def main():
         num_mentor_count,
         labels,
         search_query,
+        hide_items_closed_count,
     )
 
     max_char_count = 65535

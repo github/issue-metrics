@@ -72,6 +72,7 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_TOKEN",
             "GHE",
             "HIDE_AUTHOR",
+            "HIDE_ITEMS_CLOSED_COUNT",
             "HIDE_LABEL_METRICS",
             "HIDE_TIME_TO_ANSWER",
             "HIDE_TIME_TO_CLOSE",
@@ -93,6 +94,7 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_TOKEN": "",
             "GH_ENTERPRISE_URL": "",
             "HIDE_AUTHOR": "",
+            "HIDE_ITEMS_CLOSED_COUNT": "false",
             "HIDE_LABEL_METRICS": "",
             "HIDE_TIME_TO_ANSWER": "",
             "HIDE_TIME_TO_CLOSE": "",
@@ -116,6 +118,7 @@ class TestGetEnvVars(unittest.TestCase):
             False,
             False,
             False,
+            False,
             [],
             [],
             False,
@@ -136,6 +139,7 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_ENTERPRISE_URL": "",
             "GH_TOKEN": TOKEN,
             "HIDE_AUTHOR": "",
+            "HIDE_ITEMS_CLOSED_COUNT": "false",
             "HIDE_LABEL_METRICS": "",
             "HIDE_TIME_TO_ANSWER": "",
             "HIDE_TIME_TO_CLOSE": "",
@@ -159,6 +163,7 @@ class TestGetEnvVars(unittest.TestCase):
             False,
             False,
             False,
+            False,
             [],
             [],
             False,
@@ -176,9 +181,45 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_APP_ID": "",
             "GH_APP_INSTALLATION_ID": "",
             "GH_APP_PRIVATE_KEY": "",
+            "GH_TOKEN": "",
+            "SEARCH_QUERY": SEARCH_QUERY,
+            "HIDE_ITEMS_CLOSED_COUNT": "false",
+        },
+        clear=True,
+    )
+    def test_get_env_vars_missing_token(self):
+        """Test that an error is raised if the TOKEN environment variables is not set"""
+        with self.assertRaises(ValueError):
+            get_env_vars(True)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_APP_ID": "",
+            "GH_APP_INSTALLATION_ID": "",
+            "GH_APP_PRIVATE_KEY": "",
+            "GH_TOKEN": TOKEN,
+            "SEARCH_QUERY": "",
+            "HIDE_ITEMS_CLOSED_COUNT": "false",
+        },
+        clear=True,
+    )
+    def test_get_env_vars_missing_query(self):
+        """Test that an error is raised if the SEARCH_QUERY environment variable is not set."""
+
+        with self.assertRaises(ValueError):
+            get_env_vars(True)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_APP_ID": "",
+            "GH_APP_INSTALLATION_ID": "",
+            "GH_APP_PRIVATE_KEY": "",
             "GH_TOKEN": TOKEN,
             "GH_ENTERPRISE_URL": "",
             "HIDE_AUTHOR": "true",
+            "HIDE_ITEMS_CLOSED_COUNT": "true",
             "HIDE_LABEL_METRICS": "true",
             "HIDE_TIME_TO_ANSWER": "true",
             "HIDE_TIME_TO_CLOSE": "true",
@@ -201,6 +242,7 @@ class TestGetEnvVars(unittest.TestCase):
             True,
             True,
             True,
+            True,
             [],
             ["waiting-for-review", "waiting-for-manager"],
             False,
@@ -218,32 +260,35 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_APP_ID": "",
             "GH_APP_INSTALLATION_ID": "",
             "GH_APP_PRIVATE_KEY": "",
-            "GH_TOKEN": "",
+            "GH_TOKEN": "TOKEN",
             "SEARCH_QUERY": SEARCH_QUERY,
         },
         clear=True,
     )
-    def test_get_env_vars_missing_token(self):
-        """Test that an error is raised if the TOKEN environment variables is not set"""
-        with self.assertRaises(ValueError):
-            get_env_vars(True)
-
-    @patch.dict(
-        os.environ,
-        {
-            "GH_APP_ID": "",
-            "GH_APP_INSTALLATION_ID": "",
-            "GH_APP_PRIVATE_KEY": "",
-            "GH_TOKEN": TOKEN,
-            "SEARCH_QUERY": "",
-        },
-        clear=True,
-    )
-    def test_get_env_vars_missing_query(self):
-        """Test that an error is raised if the SEARCH_QUERY environment variable is not set."""
-
-        with self.assertRaises(ValueError):
-            get_env_vars(True)
+    def test_get_env_vars_optionals_are_defaulted(self):
+        """Test that optional values are set to their default values if not provided"""
+        expected_result = EnvVars(
+            None,
+            None,
+            b"",
+            "TOKEN",
+            "",
+            False,
+            False,
+            False,
+            False,
+            False,
+            False,
+            [],
+            [],
+            False,
+            "10",
+            "20",
+            "3",
+            SEARCH_QUERY,
+        )
+        result = get_env_vars(True)
+        self.assertEqual(str(result), str(expected_result))
 
 
 if __name__ == "__main__":
