@@ -143,6 +143,7 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 |-------------------------------|----------|---------|-------------|
 | `GH_ENTERPRISE_URL`           | False    | `""`    | URL of GitHub Enterprise instance to use for auth instead of github.com                                                                 |
 | `HIDE_AUTHOR`                 | False    | False   | If set to `true`, the author will not be displayed in the generated Markdown file. |
+| `HIDE_ITEMS_CLOSED_COUNT`     | False    | False   | If set to `true`, the number of items closed metric will not be displayed in the generated Markdown file. |
 | `HIDE_LABEL_METRICS`          | False | False      | If set to `true`, the time in label metrics will not be displayed in the generated Markdown file. |
 | `HIDE_TIME_TO_ANSWER`         | False | False      | If set to `true`, the time to answer a discussion will not be displayed in the generated Markdown file. |
 | `HIDE_TIME_TO_CLOSE`          | False | False      | If set to `true`, the time to close will not be displayed in the generated Markdown file. |
@@ -154,7 +155,6 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 | `HEAVILY_INVOLVED_CUTOFF` | False | 3 | Cutoff after which a mentor's comments in one issue are no longer counted against their total score |
 | `LABELS_TO_MEASURE`           | False    | `""`    | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time. |
 | `SEARCH_QUERY`                | True     | `""`    | The query by which you can filter issues/PRs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query. |
-| `HIDE_ITEMS_CLOSED_COUNT`     | False    | False   | If set to `true`, the number of items closed metric will not be displayed in the generated Markdown file. |
 
 ## Further Documentation
 
