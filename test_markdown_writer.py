@@ -297,7 +297,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "label1": timedelta(days=1),
         }
         num_issues_opened = 2
-        num_issues_closed = 1
+        num_issues_closed = 2
         num_mentor_count = 5
 
         # Call the function
