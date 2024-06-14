@@ -42,4 +42,4 @@ jobs:
         title: Monthly contributor report
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./contributors.md
-        assignees: zkoppert
+        assignees: Priyanka081
