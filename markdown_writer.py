@@ -174,9 +174,6 @@ def write_to_markdown(
                     if f"Time spent in {label}" in columns:
                         file.write(f" {issue.label_metrics[label]} |")
             file.write("\n")
-        file.write(
-            "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
-        )
         if search_query:
             file.write(f"Search query used to find these items: `{search_query}`\n")
 
