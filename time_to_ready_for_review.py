@@ -37,8 +37,14 @@ def get_time_to_ready_for_review(
         return None
 
     events = issue.issue.events(number=50)
-    for event in events:
-        if event.event == "ready_for_review":
-            return event.created_at
+    try:
+        for event in events:
+            if event.event == "ready_for_review":
+                return event.created_at
+    except TypeError as e:
+        print(
+            f"An error occurred processing review events. Perhaps issue contains a ghost user. {e}"
+        )
+        return None
 
     return None
