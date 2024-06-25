@@ -73,17 +73,22 @@ def measure_time_to_first_response(
         # so we may also get the first review comment time
         if pull_request:
             review_comments = pull_request.reviews(number=50)  # type: ignore
-            for review_comment in review_comments:
-                if ignore_comment(
-                    issue.issue.user,
-                    review_comment.user,
-                    ignore_users,
-                    review_comment.submitted_at,
-                    ready_for_review_at,
-                ):
-                    continue
-                first_review_comment_time = review_comment.submitted_at
-                break
+            try:
+                for review_comment in review_comments:
+                    if ignore_comment(
+                        issue.issue.user,
+                        review_comment.user,
+                        ignore_users,
+                        review_comment.submitted_at,
+                        ready_for_review_at,
+                    ):
+                        continue
+                    first_review_comment_time = review_comment.submitted_at
+                    break
+            except TypeError as e:
+                print(
+                    f"An error occurred processing review comments. Perhaps the review contains a ghost user. {e}"
+                )
 
         # Figure out the earliest response timestamp
         if first_comment_time and first_review_comment_time:
