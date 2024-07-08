@@ -1,6 +1,6 @@
 # Assigning teams instead of individuals
 
-The assignee part of this workflow action comes from [a different GitHub action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
+The assignee part of this workflow action comes from [a different GitHub Action](https://github.com/peter-evans/create-issue-from-file) and currently GitHub issues don't support assigning groups.
 
 By way of work around, you could use the [GitHub API to retrieve the members of the team](https://docs.github.com/en/rest/teams/members?apiVersion=2022-11-28#list-team-members) and then put them in a comma separated string that you provide as the assignee.
 
