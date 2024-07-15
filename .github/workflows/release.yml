@@ -63,7 +63,7 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Push Docker Image
         if: ${{ success() }}
-        uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c
+        uses: docker/build-push-action@a254f8ca60a858f3136a2f1f23a60969f2c402dd
         with:
           context: .
           file: ./Dockerfile
