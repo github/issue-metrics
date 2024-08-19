@@ -10,6 +10,7 @@ To work around this limitation, the issue-metrics action detects the large file 
 Since we don't want the action to fail, it has been designed to have the same name as usual for the first split file (issue_metrics.md) and then append a number to the name for the subsequent split files.
 
 You can choose one of the following strategies to deal with the split files:
+
 - Create multiple issues, each with using the next split file in the sequence.
 - Upload the full file as an artifact and link to it in the issue body.
 - Create an issue and put the content of the split files as issue comments.

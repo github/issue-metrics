@@ -3,7 +3,7 @@ name: Lint Code Base
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-test.txt
       - name: Lint Code Base
-        uses: super-linter/super-linter@b4515bd4ad9d0aa4681960e053916ab991bdbe96
+        uses: super-linter/super-linter@02a1172d274f021e4c70f66e23f1085eadd1064b
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

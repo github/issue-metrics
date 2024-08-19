@@ -1,10 +1,10 @@
 ---
-name: 'issue-metrics'
-author: 'github'
-description: 'A GitHub Action to report out issue metrics'
+name: "issue-metrics"
+author: "github"
+description: "A GitHub Action to report out issue metrics"
 runs:
-  using: 'docker'
-  image: 'docker://ghcr.io/github/issue_metrics:v3'
+  using: "docker"
+  image: "docker://ghcr.io/github/issue_metrics:v3"
 branding:
-  icon: 'check-square'
-  color: 'white'
+  icon: "check-square"
+  color: "white"
