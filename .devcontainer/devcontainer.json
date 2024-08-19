@@ -1,13 +1,13 @@
 {
-	"name": "Existing Dockerfile",
-	"build": {
-		"context": "..",
-		"dockerfile": "../Dockerfile"
-	},
+  "name": "Existing Dockerfile",
+  "build": {
+    "context": "..",
+    "dockerfile": "../Dockerfile"
+  },
 
-	"features": {
-		"ghcr.io/devcontainers/features/common-utils:2": {}
-	},
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
 
-	"remoteUser": "devcontainer"
+  "remoteUser": "devcontainer"
 }

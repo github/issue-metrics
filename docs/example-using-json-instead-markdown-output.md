@@ -7,7 +7,7 @@ name: Monthly issue metrics
 on:
   workflow_dispatch:
   schedule:
-    - cron: '3 2 1 * *'
+    - cron: "3 2 1 * *"
 
 permissions:
   contents: read
@@ -21,14 +21,13 @@ jobs:
       pull-requests: read
 
     steps:
-    - name: Run issue-metrics tool
-      id: issue-metrics
-      uses: github/issue-metrics@v3
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
+      - name: Run issue-metrics tool
+        id: issue-metrics
+        uses: github/issue-metrics@v3
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-05-01..2023-05-31 -reason:"not planned"'
 
-    - name: Print output of issue metrics tool
-      run: echo "${{ steps.issue-metrics.outputs.metrics }}"
-
+      - name: Print output of issue metrics tool
+        run: echo "${{ steps.issue-metrics.outputs.metrics }}"
 ```

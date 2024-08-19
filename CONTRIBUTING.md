@@ -1,5 +1,6 @@
 <!-- markdownlint-disable MD013 -->
 <!-- omit in toc -->
+
 # Contributing to issue-metrics
 
 First off, thanks for taking the time to contribute! :heart:
@@ -7,6 +8,7 @@ First off, thanks for taking the time to contribute! :heart:
 All types of contributions are encouraged and valued. See the [Table of Contents](#table-of-contents) for different ways to help and details about how this project handles them. Please make sure to read the relevant section before making your contribution. It will make it a lot easier for us project owners and smooth out the experience for all involved. The team looks forward to your contributions. :tada:
 
 <!-- omit in toc -->
+
 ## Table of Contents
 
 - [I Have a Question](#i-have-a-question)
@@ -30,11 +32,13 @@ We will then take care of the issue as soon as possible.
 ## I Want To Contribute
 
 > ### Legal Notice <!-- omit in toc -->
+>
 > When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 ## Reporting Bugs
 
 <!-- omit in toc -->
+
 ### Before Submitting a Bug Report
 
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
@@ -50,6 +54,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 - Can you reliably reproduce the issue? And can you also reproduce it with older versions?
 
 <!-- omit in toc -->
+
 ### How Do I Submit a Good Bug Report?
 
 Please submit a bug report using our [GitHub Issues template](https://github.com/github/issue-metrics/issues/new?template=bug_report.yml).
@@ -59,6 +64,7 @@ Please submit a bug report using our [GitHub Issues template](https://github.com
 This section guides you through submitting an enhancement suggestion for issue-metrics, **including completely new features and minor improvements to existing functionality**. Following these guidelines will help maintainers and the community to understand your suggestion and find related suggestions.
 
 <!-- omit in toc -->
+
 ### Before Submitting an Enhancement
 
 - Make sure that you are using the latest version.
@@ -67,6 +73,7 @@ This section guides you through submitting an enhancement suggestion for issue-m
 - Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature or to develop the feature yourself and contribute it to the project.
 
 <!-- omit in toc -->
+
 ### How Do I Submit a Good Enhancement Suggestion?
 
 Please submit an enhancement suggestion using our [GitHub Issues template](https://github.com/github/issue-metrics/issues/new?template=feature_request.yml).
@@ -79,4 +86,4 @@ We are using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.
 
 Releases are automated if a pull request is labelled with our [SemVer related labels](.github/release-drafter.yml) or with the `vuln` or `release` labels.
 
-You can also manually initiate a release you can do so through the GitHub Actions UI.  If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button.  This will allow you to select the branch to release from and the version to release.
+You can also manually initiate a release you can do so through the GitHub Actions UI. If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button. This will allow you to select the branch to release from and the version to release.

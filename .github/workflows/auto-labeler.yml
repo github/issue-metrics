@@ -4,7 +4,7 @@ name: Auto Labeler
 on:
   # pull_request_target event is required for autolabeler to support all PRs including forks
   pull_request_target:
-    types: [ opened, reopened, edited, synchronize ]
+    types: [opened, reopened, edited, synchronize]
 
 permissions:
   contents: read
