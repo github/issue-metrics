@@ -3,7 +3,7 @@ flake8==7.1.1
 mypy==1.11.2
 mypy-extensions==1.0.0
 pylint==3.2.7
-pytest==8.3.2
+pytest==8.3.3
 pytest-cov==5.0.0
-types-pytz==2024.1.0.20240417
+types-pytz==2024.2.0.20240913
 types-requests==2.32.0.20240907
