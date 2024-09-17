@@ -154,6 +154,7 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 | `MAX_COMMENTS_EVAL`           | False    | 20      | Maximum number of comments per thread to evaluate for mentor stats                                                                                                                              |
 | `HEAVILY_INVOLVED_CUTOFF`     | False    | 3       | Cutoff after which a mentor's comments in one issue are no longer counted against their total score                                                                                             |
 | `LABELS_TO_MEASURE`           | False    | `""`    | A comma separated list of labels to measure how much time the label is applied. If not provided, no labels durations will be measured. Not compatible with discussions at this time.            |
+| `NON_MENTIONING_LINKS`        | False    | False   | If set to `true`, will use non-mentioning GitHub links to avoid linking to the generated issue from the source repository. Links of the form `https://www.github.com` will be used.             |
 | `SEARCH_QUERY`                | True     | `""`    | The query by which you can filter issues/PRs which must contain a `repo:`, `org:`, `owner:`, or a `user:` entry. For discussions, include `type:discussions` in the query.                      |
 
 ## Further Documentation

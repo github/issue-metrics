@@ -85,6 +85,7 @@ def write_to_markdown(
     search_query=None,
     hide_label_metrics=False,
     hide_items_closed_count=False,
+    non_mentioning_links=False,
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -160,7 +161,13 @@ def write_to_markdown(
             # Replace any whitespace
             issue.title = issue.title.strip()
 
-            file.write(f"| " f"{issue.title} | " f"{issue.html_url} |")
+            if non_mentioning_links:
+                file.write(
+                    f"| {issue.title} | "
+                    f"{issue.html_url.replace('https://github.com', 'https://www.github.com')} |"
+                )
+            else:
+                file.write(f"| {issue.title} | " f"{issue.html_url} |")
             if "Author" in columns:
                 file.write(f" [{issue.author}](https://github.com/{issue.author}) |")
             if "Time to first response" in columns:

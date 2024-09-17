@@ -126,6 +126,7 @@ class TestGetEnvVars(unittest.TestCase):
             "20",
             "3",
             SEARCH_QUERY,
+            False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -171,6 +172,7 @@ class TestGetEnvVars(unittest.TestCase):
             "20",
             "3",
             SEARCH_QUERY,
+            False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -250,6 +252,7 @@ class TestGetEnvVars(unittest.TestCase):
             20,
             3,
             SEARCH_QUERY,
+            False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -286,6 +289,7 @@ class TestGetEnvVars(unittest.TestCase):
             "20",
             "3",
             SEARCH_QUERY,
+            False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
