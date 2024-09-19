@@ -403,7 +403,6 @@ def main():
         num_issues_closed,
         num_mentor_count,
         search_query,
-        report_title,
         output_file,
     )
 
