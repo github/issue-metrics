@@ -40,6 +40,9 @@ class EnvVars:
         max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
         heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
         search_query (str): Search query used to filter issues/prs/discussions on GitHub
+        non_mentioning_links (bool): If set to TRUE, links do not cause a notification in the desitnation repository
+        report_title (str): The title of the report
+        output_file (str): The name of the file to write the report to
     """
 
     def __init__(
@@ -63,6 +66,8 @@ class EnvVars:
         heavily_involved_cutoff: str,
         search_query: str,
         non_mentioning_links: bool,
+        report_title: str,
+        output_file: str,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -83,6 +88,8 @@ class EnvVars:
         self.heavily_involved_cutoff = heavily_involved_cutoff
         self.search_query = search_query
         self.non_mentioning_links = non_mentioning_links
+        self.report_title = report_title
+        self.output_file = output_file
 
     def __repr__(self):
         return (
@@ -106,6 +113,8 @@ class EnvVars:
             f"{self.heavily_involved_cutoff},"
             f"{self.search_query}"
             f"{self.non_mentioning_links}"
+            f"{self.report_title}"
+            f"{self.output_file}"
         )
 
 
@@ -187,6 +196,9 @@ def get_env_vars(test: bool = False) -> EnvVars:
     if ignore_users:
         ignore_users_list = ignore_users.split(",")
 
+    report_title = os.getenv("REPORT_TITLE", "Issue Metrics")
+    output_file = os.getenv("OUTPUT_FILE", "")
+
     # Hidden columns
     hide_author = get_bool_env_var("HIDE_AUTHOR", False)
     hide_items_closed_count = get_bool_env_var("HIDE_ITEMS_CLOSED_COUNT", False)
@@ -220,4 +232,6 @@ def get_env_vars(test: bool = False) -> EnvVars:
         heavily_involved_cutoff,
         search_query,
         non_mentioning_links,
+        report_title,
+        output_file,
     )

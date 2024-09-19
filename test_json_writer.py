@@ -115,6 +115,7 @@ class TestWriteToJson(unittest.TestCase):
                 num_issues_closed=num_issues_closed,
                 num_mentor_count=num_mentor_count,
                 search_query="is:issue repo:owner/repo",
+                output_file="issue_metrics.json",
             ),
             json.dumps(expected_output),
         )
@@ -206,6 +207,7 @@ class TestWriteToJson(unittest.TestCase):
                 num_issues_closed=num_issues_closed,
                 num_mentor_count=num_mentor_count,
                 search_query="is:issue repo:owner/repo",
+                output_file="issue_metrics.json",
             ),
             json.dumps(expected_output),
         )

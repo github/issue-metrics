@@ -79,6 +79,9 @@ class TestGetEnvVars(unittest.TestCase):
             "HIDE_TIME_TO_FIRST_RESPONSE",
             "IGNORE_USERS",
             "LABELS_TO_MEASURE",
+            "NON_MENTIONING_LINKS",
+            "OUTPUT_FILE",
+            "REPORT_TITLE",
             "SEARCH_QUERY",
         ]
         for key in env_keys:
@@ -101,6 +104,9 @@ class TestGetEnvVars(unittest.TestCase):
             "HIDE_TIME_TO_FIRST_RESPONSE": "",
             "IGNORE_USERS": "",
             "LABELS_TO_MEASURE": "",
+            "NON_MENTIONING_LINKS": "false",
+            "OUTPUT_FILE": "",
+            "REPORT_TITLE": "",
             "SEARCH_QUERY": SEARCH_QUERY,
         },
         clear=True,
@@ -127,6 +133,8 @@ class TestGetEnvVars(unittest.TestCase):
             "3",
             SEARCH_QUERY,
             False,
+            "",
+            "",
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -147,6 +155,9 @@ class TestGetEnvVars(unittest.TestCase):
             "HIDE_TIME_TO_FIRST_RESPONSE": "",
             "IGNORE_USERS": "",
             "LABELS_TO_MEASURE": "",
+            "NON_MENTIONING_LINKS": "false",
+            "OUTPUT_FILE": "",
+            "REPORT_TITLE": "",
             "SEARCH_QUERY": SEARCH_QUERY,
         },
         clear=True,
@@ -173,6 +184,8 @@ class TestGetEnvVars(unittest.TestCase):
             "3",
             SEARCH_QUERY,
             False,
+            "",
+            "",
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -228,6 +241,9 @@ class TestGetEnvVars(unittest.TestCase):
             "HIDE_TIME_TO_FIRST_RESPONSE": "true",
             "IGNORE_USERS": "",
             "LABELS_TO_MEASURE": "waiting-for-review,waiting-for-manager",
+            "NON_MENTIONING_LINKS": "true",
+            "OUTPUT_FILE": "issue_metrics.md",
+            "REPORT_TITLE": "Issue Metrics",
             "SEARCH_QUERY": SEARCH_QUERY,
         },
     )
@@ -252,7 +268,9 @@ class TestGetEnvVars(unittest.TestCase):
             20,
             3,
             SEARCH_QUERY,
-            False,
+            True,
+            "Issue Metrics",
+            "issue_metrics.md",
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -290,6 +308,8 @@ class TestGetEnvVars(unittest.TestCase):
             "3",
             SEARCH_QUERY,
             False,
+            "Issue Metrics",
+            "",
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
