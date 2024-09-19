@@ -9,6 +9,7 @@ Functions:
         num_issues_opened: int,
         num_issues_closed: int,
         search_query: str,
+        output_file: str,
     ) -> str:
         Write the issues with metrics to a json file.
 
@@ -32,6 +33,7 @@ def write_to_json(
     num_issues_closed: Union[int, None],
     num_mentor_count: Union[int, None],
     search_query: str,
+    output_file: str,
 ) -> str:
     """
     Write the issues with metrics to a JSON file called issue_metrics.json.
@@ -168,7 +170,8 @@ def write_to_json(
             print(f"metrics={metrics_json}", file=file_handle)
 
     # Write the metrics to a JSON file
-    with open("issue_metrics.json", "w", encoding="utf-8") as file:
+    output_file_name = output_file if output_file else "issue_metrics.json"
+    with open(output_file_name, "w", encoding="utf-8") as file:
         json.dump(metrics, file, indent=4)
 
     return metrics_json

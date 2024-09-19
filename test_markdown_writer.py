@@ -92,6 +92,8 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_mentor_count=num_mentor_count,
             labels=["bug"],
             search_query="is:issue is:open label:bug",
+            report_title="Issue Metrics",
+            output_file="issue_metrics.md",
         )
 
         # Check that the function writes the correct markdown file
@@ -191,6 +193,8 @@ class TestWriteToMarkdown(unittest.TestCase):
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,
             labels=["bug"],
+            report_title="Issue Metrics",
+            output_file="issue_metrics.md",
         )
 
         # Check that the function writes the correct markdown file
@@ -227,7 +231,17 @@ class TestWriteToMarkdown(unittest.TestCase):
         """Test that write_to_markdown writes the correct markdown file when no issues are found."""
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
-            write_to_markdown(None, None, None, None, None, None, None, None)
+            write_to_markdown(
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                report_title="Issue Metrics",
+            )
 
         # Check that the file was written correctly
         expected_output = [
@@ -316,6 +330,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             hide_label_metrics=True,
             hide_items_closed_count=True,
             non_mentioning_links=True,
+            report_title="Issue Metrics",
+            output_file="issue_metrics.md",
         )
 
         # Check that the function writes the correct markdown file

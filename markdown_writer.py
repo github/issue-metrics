@@ -86,6 +86,8 @@ def write_to_markdown(
     hide_label_metrics=False,
     hide_items_closed_count=False,
     non_mentioning_links=False,
+    report_title="",
+    output_file="",
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -105,14 +107,18 @@ def write_to_markdown(
         search_query (str): The search query used to find the issues.
         hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output
         hide_items_closed_count (bool): Represents whether the user has chosen to hide the number of items closed
+        non_mentioning_links (bool): Represents whether links do not cause a notification in the desitnation repository
+        report_title (str): The title of the report
+        output_file (str): The name of the file to write the report to
 
     Returns:
         None.
 
     """
     columns = get_non_hidden_columns(labels)
-    with open("issue_metrics.md", "w", encoding="utf-8") as file:
-        file.write("# Issue Metrics\n\n")
+    output_file_name = output_file if output_file else "issue_metrics.md"
+    with open(output_file_name, "w", encoding="utf-8") as file:
+        file.write(f"# {report_title}\n\n")
 
         # If all the metrics are None, then there are no issues
         if not issues_with_metrics or len(issues_with_metrics) == 0:

@@ -307,6 +307,8 @@ def main():
     ignore_users = env_vars.ignore_users
     hide_items_closed_count = env_vars.hide_items_closed_count
     non_mentioning_links = env_vars.non_mentioning_links
+    report_title = env_vars.report_title
+    output_file = env_vars.output_file
 
     gh_app_id = env_vars.gh_app_id
     gh_app_installation_id = env_vars.gh_app_installation_id
@@ -401,6 +403,8 @@ def main():
         num_issues_closed,
         num_mentor_count,
         search_query,
+        report_title,
+        output_file,
     )
 
     write_to_markdown(
@@ -416,6 +420,8 @@ def main():
         search_query,
         hide_items_closed_count,
         non_mentioning_links,
+        report_title,
+        output_file,
     )
 
     max_char_count = 65535
