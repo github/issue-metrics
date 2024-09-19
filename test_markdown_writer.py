@@ -254,10 +254,11 @@ class TestWriteToMarkdown(unittest.TestCase):
         "HIDE_TIME_TO_CLOSE": "True",
         "HIDE_TIME_TO_ANSWER": "True",
         "HIDE_LABEL_METRICS": "True",
+        "NON_MENTIONING_LINKS": "True",
     },
 )
 class TestWriteToMarkdownWithEnv(unittest.TestCase):
-    """Test the write_to_markdown function with the HIDE* environment variables set."""
+    """Test the write_to_markdown function with the HIDE* and NON_MENTIONING_LINKS environment variables set."""
 
     def test_writes_markdown_file_with_non_hidden_columns_only(self):
         """
@@ -314,6 +315,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
             hide_items_closed_count=True,
+            non_mentioning_links=True,
         )
 
         # Check that the function writes the correct markdown file
@@ -328,8 +330,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author |\n"
             "| --- | --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) |\n"
-            "| Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) |\n\n"
+            "| Issue 1 | https://www.github.com/user/repo/issues/1 | [alice](https://github.com/alice) |\n"
+            "| Issue 2 | https://www.github.com/user/repo/issues/2 | [bob](https://github.com/bob) |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )

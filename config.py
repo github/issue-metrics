@@ -62,6 +62,7 @@ class EnvVars:
         max_comments_eval: str,
         heavily_involved_cutoff: str,
         search_query: str,
+        non_mentioning_links: bool,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -81,6 +82,7 @@ class EnvVars:
         self.max_comments_eval = max_comments_eval
         self.heavily_involved_cutoff = heavily_involved_cutoff
         self.search_query = search_query
+        self.non_mentioning_links = non_mentioning_links
 
     def __repr__(self):
         return (
@@ -103,6 +105,7 @@ class EnvVars:
             f"{self.max_comments_eval},"
             f"{self.heavily_involved_cutoff},"
             f"{self.search_query}"
+            f"{self.non_mentioning_links}"
         )
 
 
@@ -195,6 +198,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
     heavily_involved_cutoff = os.getenv("HEAVILY_INVOLVED_CUTOFF", "3")
+    non_mentioning_links = get_bool_env_var("NON_MENTIONING_LINKS", False)
 
     return EnvVars(
         gh_app_id,
@@ -215,4 +219,5 @@ def get_env_vars(test: bool = False) -> EnvVars:
         max_comments_eval,
         heavily_involved_cutoff,
         search_query,
+        non_mentioning_links,
     )
