@@ -5,6 +5,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read-all
+
 jobs:
   update-major-version-tag:
     runs-on: ubuntu-latest
