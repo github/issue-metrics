@@ -202,6 +202,9 @@ def get_per_issue_metrics(
             else:
                 num_issues_open += 1
         else:
+            if ignore_users and issue.user["login"] in ignore_users:  # type: ignore
+                continue
+
             issue_with_metrics = IssueWithMetrics(
                 issue.title,  # type: ignore
                 issue.html_url,  # type: ignore

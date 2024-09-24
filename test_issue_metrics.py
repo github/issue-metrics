@@ -195,7 +195,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue1 = MagicMock(
             title="Issue 1",
             html_url="https://github.com/user/repo/issues/1",
-            author="alice",
+            user={"login": "alice"},
             state="open",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -209,7 +209,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue2 = MagicMock(
             title="Issue 2",
             html_url="https://github.com/user/repo/issues/2",
-            author="bob",
+            user={"login": "bob"},
             state="closed",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -304,7 +304,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue1 = MagicMock(
             title="Issue 1",
             html_url="https://github.com/user/repo/issues/1",
-            author="alice",
+            user={"login": "alice"},
             state="open",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -318,7 +318,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         mock_issue2 = MagicMock(
             title="Issue 2",
             html_url="https://github.com/user/repo/issues/2",
-            author="bob",
+            user={"login": "bob"},
             state="closed",
             comments=1,
             created_at="2023-01-01T00:00:00Z",
@@ -389,6 +389,94 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         self.assertEqual(
             result_issues_with_metrics[1].time_to_close,
             expected_issues_with_metrics[1].time_to_close,
+        )
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "IGNORE_USERS": "alice",
+        },
+    )
+    def test_get_per_issue_metrics_with_ignore_users(self):
+        """
+        Test that the function correctly filters out issues with authors in the IGNORE_USERS variable
+        """
+
+        # Create mock data
+        mock_issue1 = MagicMock(
+            title="Issue 1",
+            html_url="https://github.com/user/repo/issues/1",
+            user={"login": "alice"},
+            state="open",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+        )
+
+        mock_comment1 = MagicMock()
+        mock_comment1.created_at = datetime.fromisoformat("2023-01-02T00:00:00Z")
+        mock_issue1.issue.comments.return_value = [mock_comment1]
+        mock_issue1.issue.pull_request_urls = None
+
+        mock_issue2 = MagicMock(
+            title="Issue 2",
+            html_url="https://github.com/user/repo/issues/2",
+            user={"login": "bob"},
+            state="closed",
+            comments=1,
+            created_at="2023-01-01T00:00:00Z",
+            closed_at="2023-01-04T00:00:00Z",
+        )
+
+        mock_comment2 = MagicMock()
+        mock_comment2.created_at = datetime.fromisoformat("2023-01-03T00:00:00Z")
+        mock_issue2.issue.comments.return_value = [mock_comment2]
+        mock_issue2.issue.pull_request_urls = None
+
+        issues = [
+            mock_issue1,
+            mock_issue2,
+        ]
+
+        # Call the function and check the result
+        with unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_first_response",
+            measure_time_to_first_response,
+        ), unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_close", measure_time_to_close
+        ):
+            (
+                result_issues_with_metrics,
+                result_num_issues_open,
+                result_num_issues_closed,
+            ) = get_per_issue_metrics(
+                issues,
+                env_vars=get_env_vars(test=True),
+                ignore_users=["alice"],
+            )
+        expected_issues_with_metrics = [
+            IssueWithMetrics(
+                "Issue 2",
+                "https://github.com/user/repo/issues/2",
+                "bob",
+                timedelta(days=2),
+                timedelta(days=3),
+                None,
+                None,
+            ),
+        ]
+        expected_num_issues_open = 0
+        expected_num_issues_closed = 1
+        self.assertEqual(result_num_issues_open, expected_num_issues_open)
+        self.assertEqual(result_num_issues_closed, expected_num_issues_closed)
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_first_response,
+            expected_issues_with_metrics[0].time_to_first_response,
+        )
+        self.assertEqual(
+            result_issues_with_metrics[0].time_to_close,
+            expected_issues_with_metrics[0].time_to_close,
         )
 
 
