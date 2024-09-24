@@ -31,6 +31,11 @@ jobs:
       contents: write
       pull-requests: read
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348
         id: release-drafter
         env:
@@ -52,6 +57,11 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_NAME: github/issue_metrics # different than repo name (underscore instead of dash)
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db
       - name: Log in to the Container registry
@@ -81,6 +91,11 @@ jobs:
     permissions:
       discussions: write
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Create an announcement discussion for release
         uses: abirismyname/create-discussion@6e6ef67e5eeb042343ef8b3d8d0f5d545cbdf024
         env:
