@@ -174,6 +174,20 @@ This action can be configured to authenticate with GitHub App Installation or Pe
 
 We would ❤️ contributions to improve this action. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get involved.
 
+### Development Setup
+Ensure you have python `3.10+` installed
+Clone this repo and cd into `issue-metrics`
+Create python virtual env
+  `python3 -m venv .venv`
+Activate virtual env
+  `source .venv/bin/activate`
+Install dependencies
+  `pip install -r requirements.txt -r requirements-test.txt`
+Run tests
+  `make test`
+Run linter
+  `make lint`
+
 ## License
 
 [MIT](LICENSE)
