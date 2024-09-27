@@ -1,6 +1,6 @@
 # Verify Token Access to Repository
 
-Github PAT token access can be confusing. Here's a quick way to test if the token you're using is authorized to access your repository.
+GitHub PAT token access can be confusing. Here's a quick way to test if the token you're using is authorized to access your repository.
 
 **Remove this snippet after you've verified your token.**
 
@@ -16,7 +16,7 @@ Github PAT token access can be confusing. Here's a quick way to test if the toke
       curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" https://api.github.com/repos/{owner/repo}
 ```
 
-- Go to your repository Actions in Github and run your job.
+- Go to your repository Actions in GitHub and run your job.
 - In the job run details, click into the results of `Check GitHub token permissions`
 - You should see your token details with no errors.
 
@@ -27,7 +27,7 @@ name: Monthly issue metrics
 on:
   workflow_dispatch:
   schedule:
-    - cron: '3 2 1 * *'
+    - cron: "3 2 1 * *"
 
 permissions:
   contents: read
@@ -61,5 +61,5 @@ jobs:
         uses: github/issue-metrics@v3
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          SEARCH_QUERY: 'repo:{owner/repo} is:issue created:${{ env.last_month }}'
+          SEARCH_QUERY: "repo:{owner/repo} is:issue created:${{ env.last_month }}"
 ```
