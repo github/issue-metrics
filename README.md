@@ -177,7 +177,7 @@ We would ❤️ contributions to improve this action. Please see [CONTRIBUTING.m
 ### Development Setup
 
 - Ensure you have python `3.10+` installed
-- Clone this repo and cd into `issue-metrics`
+- Clone this repository and cd into `issue-metrics`
 - Create python virtual env
   `python3 -m venv .venv`
 - Activate virtual env
