@@ -6,7 +6,7 @@ Github PAT token access can be confusing. Here's a quick way to test if the toke
 
 - Make sure you follow the token setup instructions [here](https://github.com/github/issue-metrics/tree/main?tab=readme-ov-file#use-as-a-github-action) first.
 
-- Replace `{owner/repo}` with your own repo information.
+- Replace `{owner/repo}` with your own repository information.
 
 - Add this snippet to your workflow.yml.
 
