@@ -1,4 +1,4 @@
-## Verify Token Access to Repository
+# Verify Token Access to Repository
 
 Github PAT token access can be confusing. Here's a quick way to test if the token you're using is authorized to access your repository.
 
@@ -10,19 +10,19 @@ Github PAT token access can be confusing. Here's a quick way to test if the toke
 
 - Add this snippet to your workflow.yml.
 
-```
+```yml
 - name: Check GitHub token permissions
     run: |
       curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" https://api.github.com/repos/{owner/repo}
 ```
 
 - Go to your repository Actions in Github and run your job.
-- In the job run details, click into the results of `Check Github token permissions`
+- In the job run details, click into the results of `Check GitHub token permissions`
 - You should see your token details with no errors.
 
 Example of the snippet in the full workflow:
 
-```
+```yml
 name: Monthly issue metrics
 on:
   workflow_dispatch:
