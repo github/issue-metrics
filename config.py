@@ -22,13 +22,11 @@ class EnvVars:
     Environment variables
 
     Attributes:
-        enable_mentor_count (bool): If set to TRUE, compute number of mentors
         gh_app_id (int | None): The GitHub App ID to use for authentication
         gh_app_installation_id (int | None): The GitHub App Installation ID to use for authentication
         gh_app_private_key_bytes (bytes): The GitHub App Private Key as bytes to use for authentication
         gh_token (str | None): GitHub personal access token (PAT) for API authentication
         ghe (str): The GitHub Enterprise URL to use for authentication
-        heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
         hide_author (bool): If true, the author's information is hidden in the output
         hide_items_closed_count (bool): If true, the number of items closed metric is hidden in the output
         hide_label_metrics (bool): If true, the label metrics are hidden in the output
@@ -37,25 +35,23 @@ class EnvVars:
         hide_time_to_first_response (bool): If true, the time to first response metric is hidden in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
         labels_to_measure (List[str]): List of labels to measure how much time the lable is applied
-        max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
+        enable_mentor_count (bool): If set to TRUE, compute number of mentors
         min_mentor_comments (str): If set, defines the minimum number of comments for mentors
-        non_mentioning_links (bool): If set to TRUE, links do not cause a notification in the desitnation repository
-        output_file (str): The name of the file to write the report to
-        report_title (str): The title of the report
+        max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
+        heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
         search_query (str): Search query used to filter issues/prs/discussions on GitHub
-        sort_by_author (bool): If true, the report will be sorted by author
-        sort_by_time_to_close (bool): If true, the report will be sorted by time to close
+        non_mentioning_links (bool): If set to TRUE, links do not cause a notification in the desitnation repository
+        report_title (str): The title of the report
+        output_file (str): The name of the file to write the report to
     """
 
     def __init__(
         self,
-        enable_mentor_count: bool,
         gh_app_id: int | None,
         gh_app_installation_id: int | None,
         gh_app_private_key_bytes: bytes,
         gh_token: str | None,
         ghe: str | None,
-        heavily_involved_cutoff: str,
         hide_author: bool,
         hide_items_closed_count: bool,
         hide_label_metrics: bool,
@@ -64,14 +60,14 @@ class EnvVars:
         hide_time_to_first_response: bool,
         ignore_user: List[str],
         labels_to_measure: List[str],
-        max_comments_eval: str,
+        enable_mentor_count: bool,
         min_mentor_comments: str,
-        non_mentioning_links: bool,
-        output_file: str,
-        report_title: str,
+        max_comments_eval: str,
+        heavily_involved_cutoff: str,
         search_query: str,
-        sort_by_author: bool,
-        sort_by_time_to_close: bool,
+        non_mentioning_links: bool,
+        report_title: str,
+        output_file: str,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -239,3 +235,4 @@ def get_env_vars(test: bool = False) -> EnvVars:
         report_title,
         output_file,
     )
+    
