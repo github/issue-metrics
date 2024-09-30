@@ -234,5 +234,4 @@ def get_env_vars(test: bool = False) -> EnvVars:
         non_mentioning_links,
         report_title,
         output_file,
-    )
-    
+    )    
