@@ -43,6 +43,7 @@ class EnvVars:
         non_mentioning_links (bool): If set to TRUE, links do not cause a notification in the desitnation repository
         report_title (str): The title of the report
         output_file (str): The name of the file to write the report to
+        rate_limit_bypass (bool): If set to TRUE, bypass the rate limit for the GitHub API
     """
 
     def __init__(
@@ -68,6 +69,7 @@ class EnvVars:
         non_mentioning_links: bool,
         report_title: str,
         output_file: str,
+        rate_limit_bypass: bool = False,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -90,6 +92,7 @@ class EnvVars:
         self.non_mentioning_links = non_mentioning_links
         self.report_title = report_title
         self.output_file = output_file
+        self.rate_limit_bypass = rate_limit_bypass
 
     def __repr__(self):
         return (
@@ -115,6 +118,7 @@ class EnvVars:
             f"{self.non_mentioning_links}"
             f"{self.report_title}"
             f"{self.output_file}"
+            f"{self.rate_limit_bypass}"
         )
 
 
@@ -198,6 +202,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
 
     report_title = os.getenv("REPORT_TITLE", "Issue Metrics")
     output_file = os.getenv("OUTPUT_FILE", "")
+    rate_limit_bypass = get_bool_env_var("RATE_LIMIT_BYPASS", False)
 
     # Hidden columns
     hide_author = get_bool_env_var("HIDE_AUTHOR", False)
@@ -234,4 +239,5 @@ def get_env_vars(test: bool = False) -> EnvVars:
         non_mentioning_links,
         report_title,
         output_file,
+        rate_limit_bypass,
     )

@@ -83,6 +83,7 @@ class TestGetEnvVars(unittest.TestCase):
             "OUTPUT_FILE",
             "REPORT_TITLE",
             "SEARCH_QUERY",
+            "RATE_LIMIT_BYPASS",
         ]
         for key in env_keys:
             if key in os.environ:
@@ -108,6 +109,7 @@ class TestGetEnvVars(unittest.TestCase):
             "OUTPUT_FILE": "",
             "REPORT_TITLE": "",
             "SEARCH_QUERY": SEARCH_QUERY,
+            "RATE_LIMIT_BYPASS": "false",
         },
         clear=True,
     )
@@ -135,6 +137,7 @@ class TestGetEnvVars(unittest.TestCase):
             False,
             "",
             "",
+            False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
