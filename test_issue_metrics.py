@@ -88,6 +88,32 @@ class TestSearchIssues(unittest.TestCase):
         issues = search_issues("is:open", mock_connection, owners)
         self.assertEqual(issues, mock_issues)
 
+    def test_search_issues_with_just_owner_or_org_with_bypass(self):
+        """Test that search_issues with just an owner/org returns the correct issues."""
+
+        # Set up the mock GitHub connection object
+        mock_issues = [
+            MagicMock(title="Issue 1"),
+            MagicMock(title="Issue 2"),
+            MagicMock(title="Issue 3"),
+        ]
+
+        # simulating github3.structs.SearchIterator return value
+        mock_search_result = MagicMock()
+        mock_search_result.__iter__.return_value = iter(mock_issues)
+        mock_search_result.ratelimit_remaining = 30
+
+        mock_connection = MagicMock()
+        mock_connection.search_issues.return_value = mock_search_result
+
+        # Call search_issues and check that it returns the correct issues
+        org = {"owner": "org1"}
+        owners = [org]
+        issues = search_issues(
+            "is:open", mock_connection, owners, rate_limit_bypass=True
+        )
+        self.assertEqual(issues, mock_issues)
+
 
 class TestGetOwnerAndRepository(unittest.TestCase):
     """Unit tests for the get_owners_and_repositories function.

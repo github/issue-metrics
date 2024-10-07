@@ -50,6 +50,7 @@ def search_issues(
     search_query: str,
     github_connection: github3.GitHub,
     owners_and_repositories: List[dict],
+    rate_limit_bypass: bool = False,
 ) -> List[github3.search.IssueSearchResult]:  # type: ignore
     """
     Searches for issues/prs/discussions in a GitHub repository that match
@@ -66,7 +67,13 @@ def search_issues(
     """
 
     # Rate Limit Handling: API only allows 30 requests per minute
-    def wait_for_api_refresh(iterator: github3.structs.SearchIterator):
+    def wait_for_api_refresh(
+        iterator: github3.structs.SearchIterator, rate_limit_bypass: bool = False
+    ):
+        # If the rate limit bypass is enabled, don't wait for the API to refresh
+        if rate_limit_bypass:
+            return
+
         max_retries = 5
         retry_count = 0
         sleep_time = 70
@@ -90,7 +97,7 @@ def search_issues(
     issues_iterator = github_connection.search_issues(
         search_query, per_page=issues_per_page
     )
-    wait_for_api_refresh(issues_iterator)
+    wait_for_api_refresh(issues_iterator, rate_limit_bypass)
 
     issues = []
     repos_and_owners_string = ""
@@ -107,7 +114,7 @@ def search_issues(
 
             # requests are sent once per page of issues
             if idx % issues_per_page == 0:
-                wait_for_api_refresh(issues_iterator)
+                wait_for_api_refresh(issues_iterator, rate_limit_bypass)
 
     except github3.exceptions.ForbiddenError:
         print(
@@ -288,7 +295,7 @@ def get_owners_and_repositories(
     return results_list
 
 
-def main():
+def main():  # pragma: no cover
     """Run the issue-metrics script.
 
     This function authenticates to GitHub, searches for issues/prs/discussions
@@ -312,6 +319,7 @@ def main():
     non_mentioning_links = env_vars.non_mentioning_links
     report_title = env_vars.report_title
     output_file = env_vars.output_file
+    rate_limit_bypass = env_vars.rate_limit_bypass
 
     gh_app_id = env_vars.gh_app_id
     gh_app_installation_id = env_vars.gh_app_installation_id
@@ -363,7 +371,9 @@ def main():
             write_to_markdown(None, None, None, None, None, None, None, None)
             return
     else:
-        issues = search_issues(search_query, github_connection, owners_and_repositories)
+        issues = search_issues(
+            search_query, github_connection, owners_and_repositories, rate_limit_bypass
+        )
         if len(issues) <= 0:
             print("No issues found")
             write_to_markdown(None, None, None, None, None, None, None, None)
