@@ -15,13 +15,13 @@ Functions:
         num_issues_opened: Union[int, None],
         num_issues_closed: Union[int, None],
         num_mentor_count: Union[int, None],
-        labels=None,
-        search_query=None,
-        hide_label_metrics=False,
-        hide_items_closed_count=False,
-        non_mentioning_links=False,
-        report_title="",
-        output_file="",
+        labels: List[str],
+        search_query: str,
+        hide_label_metrics: bool,
+        hide_items_closed_count: bool,
+        non_mentioning_links: bool,
+        report_title: str,
+        output_file: str,
     ) -> None:
         Write the issues with metrics to a markdown file.
     get_non_hidden_columns(
