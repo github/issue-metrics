@@ -8,7 +8,6 @@ Classes:
     TestSearchIssues: A class to test the search_issues function.
     TestGetPerIssueMetrics: A class to test the get_per_issue_metrics function.
     TestGetEnvVars: A class to test the get_env_vars function.
-    TestMain: A class to test the main function.
 
 """
 

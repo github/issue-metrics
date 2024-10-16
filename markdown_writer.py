@@ -7,14 +7,21 @@ also provides functions for sorting the issues by time to first response.
 
 Functions:
     write_to_markdown(
-        issues_with_metrics: List[IssueWithMetrics],
-        average_time_to_first_response: timedelta,
-        average_time_to_close: timedelta,
-        average_time_to_answer: timedelta,
-        num_issues_opened: int,
-        num_issues_closed: int,
-        num_mentor_count: int,
-        file: file object = None
+        issues_with_metrics: Union[List[IssueWithMetrics], None],
+        average_time_to_first_response: Union[dict[str, timedelta], None],
+        average_time_to_close: Union[dict[str, timedelta], None],
+        average_time_to_answer: Union[dict[str, timedelta], None],
+        average_time_in_labels: Union[dict, None],
+        num_issues_opened: Union[int, None],
+        num_issues_closed: Union[int, None],
+        num_mentor_count: Union[int, None],
+        labels: List[str],
+        search_query: str,
+        hide_label_metrics: bool,
+        hide_items_closed_count: bool,
+        non_mentioning_links: bool,
+        report_title: str,
+        output_file: str,
     ) -> None:
         Write the issues with metrics to a markdown file.
     get_non_hidden_columns(

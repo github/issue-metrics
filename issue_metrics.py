@@ -368,7 +368,23 @@ def main():  # pragma: no cover
         issues = get_discussions(token, search_query)
         if len(issues) <= 0:
             print("No discussions found")
-            write_to_markdown(None, None, None, None, None, None, None, None)
+            write_to_markdown(
+                issues_with_metrics=None,
+                average_time_to_first_response=None,
+                average_time_to_close=None,
+                average_time_to_answer=None,
+                average_time_in_labels=None,
+                num_issues_opened=None,
+                num_issues_closed=None,
+                num_mentor_count=None,
+                labels=None,
+                search_query=search_query,
+                hide_label_metrics=False,
+                hide_items_closed_count=False,
+                non_mentioning_links=False,
+                report_title=report_title,
+                output_file=output_file,
+            )
             return
     else:
         issues = search_issues(
@@ -376,7 +392,23 @@ def main():  # pragma: no cover
         )
         if len(issues) <= 0:
             print("No issues found")
-            write_to_markdown(None, None, None, None, None, None, None, None)
+            write_to_markdown(
+                issues_with_metrics=None,
+                average_time_to_first_response=None,
+                average_time_to_close=None,
+                average_time_to_answer=None,
+                average_time_in_labels=None,
+                num_issues_opened=None,
+                num_issues_closed=None,
+                num_mentor_count=None,
+                labels=None,
+                search_query=search_query,
+                hide_label_metrics=False,
+                hide_items_closed_count=False,
+                non_mentioning_links=False,
+                report_title=report_title,
+                output_file=output_file,
+            )
             return
 
     # Get all the metrics
