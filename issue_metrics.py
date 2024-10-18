@@ -8,9 +8,6 @@ their metrics to a markdown file.
 Functions:
     get_env_vars() -> EnvVars: Get the environment variables for use
         in the script.
-    search_issues(search_query: str, github_connection: github3.GitHub, owners_and_repositories: List[dict])
-        -> github3.structs.SearchIterator:
-        Searches for issues in a GitHub repository that match the given search query.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
         discussions: bool = False), labels: Union[List[str], None] = None,
         ignore_users: List[str] = [] -> tuple[List, int, int]:
@@ -21,8 +18,6 @@ Functions:
 """
 
 import shutil
-import sys
-from time import sleep
 from typing import List, Union
 
 import github3
@@ -36,6 +31,7 @@ from labels import get_label_metrics, get_stats_time_in_labels
 from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_file
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
+from search import get_owners_and_repositories, search_issues
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_first_response import (
@@ -44,101 +40,6 @@ from time_to_first_response import (
 )
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
-
-
-def search_issues(
-    search_query: str,
-    github_connection: github3.GitHub,
-    owners_and_repositories: List[dict],
-    rate_limit_bypass: bool = False,
-) -> List[github3.search.IssueSearchResult]:  # type: ignore
-    """
-    Searches for issues/prs/discussions in a GitHub repository that match
-    the given search query and handles errors related to GitHub API responses.
-
-    Args:
-        search_query (str): The search query to use for finding issues/prs/discussions.
-        github_connection (github3.GitHub): A connection to the GitHub API.
-        owners_and_repositories (List[dict]): A list of dictionaries containing
-            the owner and repository names.
-
-    Returns:
-        List[github3.search.IssueSearchResult]: A list of issues that match the search query.
-    """
-
-    # Rate Limit Handling: API only allows 30 requests per minute
-    def wait_for_api_refresh(
-        iterator: github3.structs.SearchIterator, rate_limit_bypass: bool = False
-    ):
-        # If the rate limit bypass is enabled, don't wait for the API to refresh
-        if rate_limit_bypass:
-            return
-
-        max_retries = 5
-        retry_count = 0
-        sleep_time = 70
-
-        while iterator.ratelimit_remaining < 5:
-            if retry_count >= max_retries:
-                raise RuntimeError("Exceeded maximum retries for API rate limit")
-
-            print(
-                f"GitHub API Rate Limit Low, waiting {sleep_time} seconds to refresh."
-            )
-            sleep(sleep_time)
-
-            # Exponentially increase the sleep time for the next retry
-            sleep_time *= 2
-            retry_count += 1
-
-    issues_per_page = 100
-
-    print("Searching for issues...")
-    issues_iterator = github_connection.search_issues(
-        search_query, per_page=issues_per_page
-    )
-    wait_for_api_refresh(issues_iterator, rate_limit_bypass)
-
-    issues = []
-    repos_and_owners_string = ""
-    for item in owners_and_repositories:
-        repos_and_owners_string += (
-            f"{item.get('owner', '')}/{item.get('repository', '')} "
-        )
-
-    # Print the issue titles
-    try:
-        for idx, issue in enumerate(issues_iterator, 1):
-            print(issue.title)  # type: ignore
-            issues.append(issue)
-
-            # requests are sent once per page of issues
-            if idx % issues_per_page == 0:
-                wait_for_api_refresh(issues_iterator, rate_limit_bypass)
-
-    except github3.exceptions.ForbiddenError:
-        print(
-            f"You do not have permission to view a repository from: '{repos_and_owners_string}'; Check your API Token."
-        )
-        sys.exit(1)
-    except github3.exceptions.NotFoundError:
-        print(
-            f"The repository could not be found; Check the repository owner and names: '{repos_and_owners_string}"
-        )
-        sys.exit(1)
-    except github3.exceptions.ConnectionError:
-        print(
-            "There was a connection error; Check your internet connection or API Token."
-        )
-        sys.exit(1)
-    except github3.exceptions.AuthenticationFailed:
-        print("Authentication failed; Check your API Token.")
-        sys.exit(1)
-    except github3.exceptions.UnprocessableEntity:
-        print("The search query is invalid; Check the search query.")
-        sys.exit(1)
-
-    return issues
 
 
 def get_per_issue_metrics(
@@ -262,37 +163,6 @@ def get_per_issue_metrics(
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed
-
-
-def get_owners_and_repositories(
-    search_query: str,
-) -> List[dict]:
-    """Get the owners and repositories from the search query.
-
-    Args:
-        search_query (str): The search query used to search for issues.
-
-    Returns:
-        List[dict]: A list of dictionaries of owners and repositories.
-
-    """
-    search_query_split = search_query.split(" ")
-    results_list = []
-    for item in search_query_split:
-        result = {}
-        if "repo:" in item and "/" in item:
-            result["owner"] = item.split(":")[1].split("/")[0]
-            result["repository"] = item.split(":")[1].split("/")[1]
-        if "org:" in item or "owner:" in item or "user:" in item:
-            result["owner"] = item.split(":")[1]
-        if "user:" in item:
-            result["owner"] = item.split(":")[1]
-        if "owner:" in item:
-            result["owner"] = item.split(":")[1]
-        if result:
-            results_list.append(result)
-
-    return results_list
 
 
 def main():  # pragma: no cover
