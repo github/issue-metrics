@@ -186,6 +186,7 @@ def main():  # pragma: no cover
     token = env_vars.gh_token
     ignore_users = env_vars.ignore_users
     hide_items_closed_count = env_vars.hide_items_closed_count
+    hide_label_metrics = env_vars.hide_label_metrics
     non_mentioning_links = env_vars.non_mentioning_links
     report_title = env_vars.report_title
     output_file = env_vars.output_file
@@ -322,20 +323,21 @@ def main():  # pragma: no cover
     )
 
     write_to_markdown(
-        issues_with_metrics,
-        stats_time_to_first_response,
-        stats_time_to_close,
-        stats_time_to_answer,
-        stats_time_in_labels,
-        num_issues_open,
-        num_issues_closed,
-        num_mentor_count,
-        labels,
-        search_query,
-        hide_items_closed_count,
-        non_mentioning_links,
-        report_title,
-        output_file,
+        issues_with_metrics=issues_with_metrics,
+        average_time_to_first_response=stats_time_to_first_response,
+        average_time_to_close=stats_time_to_close,
+        average_time_to_answer=stats_time_to_answer,
+        average_time_in_labels=stats_time_in_labels,
+        num_issues_opened=num_issues_open,
+        num_issues_closed=num_issues_closed,
+        num_mentor_count=num_mentor_count,
+        labels=labels,
+        search_query=search_query,
+        hide_label_metrics=hide_label_metrics,
+        hide_items_closed_count=hide_items_closed_count,
+        non_mentioning_links=non_mentioning_links,
+        report_title=report_title,
+        output_file=output_file,
     )
 
     max_char_count = 65535
