@@ -6,8 +6,6 @@ the average time to first response and time to close and writes the issues with
 their metrics to a markdown file.
 
 Functions:
-    get_env_vars() -> EnvVars: Get the environment variables for use
-        in the script.
     get_per_issue_metrics(issues: Union[List[dict], List[github3.issues.Issue]],
         discussions: bool = False), labels: Union[List[str], None] = None,
         ignore_users: List[str] = [] -> tuple[List, int, int]:
