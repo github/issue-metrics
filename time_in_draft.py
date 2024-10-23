@@ -25,24 +25,10 @@ def measure_time_in_draft(
     returns:
         Union[datetime, None]: The time the pull request was in draft state.
     """
-    events = issue.issue.events(number=50)
-    try:
-        pr_opened_at = None
-        for event in events:
-            if event.event == "created_at":
-                pr_opened_at = event.created_at
-        if pr_opened_at and ready_for_review_at:
-            return ready_for_review_at - pr_opened_at
-        if pr_opened_at and not ready_for_review_at:
-            return datetime.now(pytz.utc) - pr_opened_at
-
-    except TypeError as e:
-        print(
-            f"An error occurred processing review events for {issue.issue.html_url}. \
-Perhaps issue contains a ghost user. {e}"
-        )
-        return None
-
+    if ready_for_review_at:
+        return ready_for_review_at - issue.issue.created_at
+    if issue.issue.state == "open":
+        return datetime.now(pytz.utc) - issue.issue.created_at
     return None
 
 
