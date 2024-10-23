@@ -1,6 +1,7 @@
 """A module for managing environment variables used in GitHub metrics calculation.
 
-This module defines a class for encapsulating environment variables and a function to retrieve these variables.
+This module defines a class for encapsulating environment variables
+and a function to retrieve these variables.
 
 Classes:
     EnvVars: Represents the collection of environment variables used in the script.
@@ -23,27 +24,36 @@ class EnvVars:
 
     Attributes:
         gh_app_id (int | None): The GitHub App ID to use for authentication
-        gh_app_installation_id (int | None): The GitHub App Installation ID to use for authentication
-        gh_app_private_key_bytes (bytes): The GitHub App Private Key as bytes to use for authentication
+        gh_app_installation_id (int | None): The GitHub App Installation ID to use for
+            authentication
+        gh_app_private_key_bytes (bytes): The GitHub App Private Key as bytes to use for
+            authentication
         gh_token (str | None): GitHub personal access token (PAT) for API authentication
         ghe (str): The GitHub Enterprise URL to use for authentication
         hide_author (bool): If true, the author's information is hidden in the output
-        hide_items_closed_count (bool): If true, the number of items closed metric is hidden in the output
+        hide_items_closed_count (bool): If true, the number of items closed metric is hidden
+            in the output
         hide_label_metrics (bool): If true, the label metrics are hidden in the output
         hide_time_to_answer (bool): If true, the time to answer discussions is hidden in the output
         hide_time_to_close (bool): If true, the time to close metric is hidden in the output
-        hide_time_to_first_response (bool): If true, the time to first response metric is hidden in the output
+        hide_time_to_first_response (bool): If true, the time to first response metric is hidden
+            in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
         labels_to_measure (List[str]): List of labels to measure how much time the lable is applied
         enable_mentor_count (bool): If set to TRUE, compute number of mentors
         min_mentor_comments (str): If set, defines the minimum number of comments for mentors
-        max_comments_eval (str): If set, defines the maximum number of comments to look at for mentor evaluation
-        heavily_involved_cutoff (str): If set, defines the cutoff after which heavily involved commentors in
+        max_comments_eval (str): If set, defines the maximum number of comments to look
+            at for mentor evaluation
+        heavily_involved_cutoff (str): If set, defines the cutoff after which heavily
+            involved commentors in
         search_query (str): Search query used to filter issues/prs/discussions on GitHub
-        non_mentioning_links (bool): If set to TRUE, links do not cause a notification in the desitnation repository
+        non_mentioning_links (bool): If set to TRUE, links do not cause a notification
+            in the desitnation repository
         report_title (str): The title of the report
         output_file (str): The name of the file to write the report to
         rate_limit_bypass (bool): If set to TRUE, bypass the rate limit for the GitHub API
+        draft_pr_tracking (bool): If set to TRUE, track PR time in draft state
+            in addition to other metrics
     """
 
     def __init__(
@@ -70,6 +80,7 @@ class EnvVars:
         report_title: str,
         output_file: str,
         rate_limit_bypass: bool = False,
+        draft_pr_tracking: bool = False,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -93,6 +104,7 @@ class EnvVars:
         self.report_title = report_title
         self.output_file = output_file
         self.rate_limit_bypass = rate_limit_bypass
+        self.draft_pr_tracking = draft_pr_tracking
 
     def __repr__(self):
         return (
@@ -119,6 +131,7 @@ class EnvVars:
             f"{self.report_title}"
             f"{self.output_file}"
             f"{self.rate_limit_bypass}"
+            f"{self.draft_pr_tracking}"
         )
 
 
@@ -203,6 +216,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     report_title = os.getenv("REPORT_TITLE", "Issue Metrics")
     output_file = os.getenv("OUTPUT_FILE", "")
     rate_limit_bypass = get_bool_env_var("RATE_LIMIT_BYPASS", False)
+    draft_pr_tracking = get_bool_env_var("DRAFT_PR_TRACKING", False)
 
     # Hidden columns
     hide_author = get_bool_env_var("HIDE_AUTHOR", False)
@@ -240,4 +254,5 @@ def get_env_vars(test: bool = False) -> EnvVars:
         report_title,
         output_file,
         rate_limit_bypass,
+        draft_pr_tracking,
     )
