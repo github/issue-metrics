@@ -317,6 +317,8 @@ class TestGetEnvVars(unittest.TestCase):
             non_mentioning_links=False,
             report_title="Issue Metrics",
             output_file="",
+            rate_limit_bypass=False,
+            draft_pr_tracking=False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
