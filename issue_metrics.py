@@ -30,7 +30,7 @@ from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_f
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
 from search import get_owners_and_repositories, search_issues
-from time_in_draft import measure_time_in_draft
+from time_in_draft import get_stats_time_in_draft, measure_time_in_draft
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_first_response import (
@@ -299,6 +299,7 @@ def main():  # pragma: no cover
         stats_time_to_close = get_stats_time_to_close(issues_with_metrics)
 
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
+    stats_time_in_draft = get_stats_time_in_draft(issues_with_metrics)
 
     num_mentor_count = 0
     if enable_mentor_count:
@@ -310,16 +311,17 @@ def main():  # pragma: no cover
 
     # Write the results to json and a markdown file
     write_to_json(
-        issues_with_metrics,
-        stats_time_to_first_response,
-        stats_time_to_close,
-        stats_time_to_answer,
-        stats_time_in_labels,
-        num_issues_open,
-        num_issues_closed,
-        num_mentor_count,
-        search_query,
-        output_file,
+        issues_with_metrics=issues_with_metrics,
+        stats_time_to_first_response=stats_time_to_first_response,
+        stats_time_to_close=stats_time_to_close,
+        stats_time_to_answer=stats_time_to_answer,
+        stats_time_in_draft=stats_time_in_draft,
+        stats_time_in_labels=stats_time_in_labels,
+        num_issues_opened=num_issues_open,
+        num_issues_closed=num_issues_closed,
+        num_mentor_count=num_mentor_count,
+        search_query=search_query,
+        output_file=output_file,
     )
 
     write_to_markdown(
