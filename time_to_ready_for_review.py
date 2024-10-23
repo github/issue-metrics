@@ -21,7 +21,8 @@ import github3
 
 
 def get_time_to_ready_for_review(
-    issue: github3.issues.Issue, pull_request: github3.pulls.PullRequest
+    issue: github3.issues.Issue,
+    pull_request: github3.pulls.PullRequest,
 ) -> Union[datetime, None]:
     """If a pull request was formerly a draft, get the time it was marked as ready
     for review

@@ -30,6 +30,7 @@ from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_f
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
 from search import get_owners_and_repositories, search_issues
+from time_in_draft import measure_time_in_draft
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
 from time_to_first_response import (
@@ -112,13 +113,9 @@ def get_per_issue_metrics(
                 continue
 
             issue_with_metrics = IssueWithMetrics(
-                issue.title,  # type: ignore
-                issue.html_url,  # type: ignore
-                issue.user["login"],  # type: ignore
-                None,
-                None,
-                None,
-                None,
+                title=issue.title,  # type: ignore
+                html_url=issue.html_url,  # type: ignore
+                author=issue.user["login"],  # type: ignore
             )
 
             # Check if issue is actually a pull request
@@ -126,6 +123,11 @@ def get_per_issue_metrics(
             if issue.issue.pull_request_urls:  # type: ignore
                 pull_request = issue.issue.pull_request()  # type: ignore
                 ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
+                if env_vars.draft_pr_tracking:
+                    issue_with_metrics.time_in_draft = measure_time_in_draft(
+                        issue=issue,
+                        ready_for_review_at=ready_for_review_at,
+                    )
 
             if env_vars.hide_time_to_first_response is False:
                 issue_with_metrics.time_to_first_response = (
@@ -345,9 +347,9 @@ def main():  # pragma: no cover
         shutil.move("issue_metrics_0.md", "issue_metrics.md")
         print(
             "Issue metrics markdown file is too large for GitHub issue body and has been \
-            split into multiple files. ie. issue_metrics.md, issue_metrics_1.md, etc. \
-            The full file is saved as issue_metrics_full.md\n\
-            See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+split into multiple files. ie. issue_metrics.md, issue_metrics_1.md, etc. \
+The full file is saved as issue_metrics_full.md\n\
+See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
         )
 
 
