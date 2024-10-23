@@ -37,22 +37,22 @@ class TestWriteToMarkdown(unittest.TestCase):
         # Create mock data
         issues_with_metrics = [
             IssueWithMetrics(
-                "Issue 1",
-                "https://github.com/user/repo/issues/1",
-                "alice",
-                timedelta(days=1),
-                timedelta(days=2),
-                timedelta(days=3),
-                {"bug": timedelta(days=1)},
+                title="Issue 1",
+                html_url="https://github.com/user/repo/issues/1",
+                author="alice",
+                time_to_first_response=timedelta(days=1),
+                time_to_close=timedelta(days=2),
+                time_to_answer=timedelta(days=3),
+                labels_metrics={"bug": timedelta(days=1)},
             ),
             IssueWithMetrics(
-                "Issue 2\r",
-                "https://github.com/user/repo/issues/2",
-                "bob",
-                timedelta(days=3),
-                timedelta(days=4),
-                timedelta(days=5),
-                {"bug": timedelta(days=2)},
+                title="Issue 2\r",
+                html_url="https://github.com/user/repo/issues/2",
+                author="bob",
+                time_to_first_response=timedelta(days=3),
+                time_to_close=timedelta(days=4),
+                time_to_answer=timedelta(days=5),
+                labels_metrics={"bug": timedelta(days=2)},
             ),
         ]
         time_to_first_response = {
@@ -139,22 +139,22 @@ class TestWriteToMarkdown(unittest.TestCase):
         # Create mock data
         issues_with_metrics = [
             IssueWithMetrics(
-                "Issue 1",
-                "https://github.com/user/repo/issues/1",
-                "alice",
-                timedelta(days=1),
-                timedelta(days=2),
-                timedelta(days=3),
-                {"bug": timedelta(days=1)},
+                title="Issue 1",
+                html_url="https://github.com/user/repo/issues/1",
+                author="alice",
+                time_to_first_response=timedelta(days=1),
+                time_to_close=timedelta(days=2),
+                time_to_answer=timedelta(days=3),
+                labels_metrics={"bug": timedelta(days=1)},
             ),
             IssueWithMetrics(
-                "feat| Issue 2",  # title contains a vertical bar
-                "https://github.com/user/repo/issues/2",
-                "bob",
-                timedelta(days=3),
-                timedelta(days=4),
-                timedelta(days=5),
-                {"bug": timedelta(days=2)},
+                title="feat| Issue 2",  # title contains a vertical bar
+                html_url="https://github.com/user/repo/issues/2",
+                author="bob",
+                time_to_first_response=timedelta(days=3),
+                time_to_close=timedelta(days=4),
+                time_to_answer=timedelta(days=5),
+                labels_metrics={"bug": timedelta(days=2)},
             ),
         ]
         average_time_to_first_response = {

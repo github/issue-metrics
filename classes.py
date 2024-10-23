@@ -18,6 +18,7 @@ class IssueWithMetrics:
         time_to_close (timedelta, optional): The time it took to close the issue.
         time_to_answer (timedelta, optional): The time it took to answer the
             discussions in the issue.
+        time_in_draft (timedelta, optional): The time the PR was in draft state.
         label_metrics (dict, optional): A dictionary containing the label metrics
         mentor_activity (dict, optional): A dictionary containing active mentors
 
@@ -33,6 +34,7 @@ class IssueWithMetrics:
         time_to_first_response=None,
         time_to_close=None,
         time_to_answer=None,
+        time_in_draft=None,
         labels_metrics=None,
         mentor_activity=None,
     ):
@@ -42,5 +44,6 @@ class IssueWithMetrics:
         self.time_to_first_response = time_to_first_response
         self.time_to_close = time_to_close
         self.time_to_answer = time_to_answer
+        self.time_in_draft = time_in_draft
         self.label_metrics = labels_metrics
         self.mentor_activity = mentor_activity
