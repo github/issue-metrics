@@ -17,7 +17,8 @@ def measure_time_in_draft(
 
     args:
         issue (github3.issues.Issue): A GitHub issue which has been pre-qualified as a pull request.
-        ready_for_review_at (datetime | None): The time the pull request was marked as ready for review.
+        ready_for_review_at (datetime | None): The time the pull request was marked as
+            ready for review.
 
     returns:
         Union[datetime, None]: The time the pull request was in draft state.

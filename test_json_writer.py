@@ -24,6 +24,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=6),
                 time_to_answer=None,
+                time_in_draft=timedelta(days=1),
                 labels_metrics={
                     "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
                 },
@@ -88,6 +89,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "3 days, 0:00:00",
                     "time_to_close": "6 days, 0:00:00",
                     "time_to_answer": "None",
+                    "time_in_draft": "1 day, 0:00:00",
                     "label_metrics": {"bug": "1 day, 16:24:12"},
                 },
                 {
@@ -97,6 +99,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "2 days, 0:00:00",
                     "time_to_close": "4 days, 0:00:00",
                     "time_to_answer": "1 day, 0:00:00",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
             ],
@@ -180,6 +183,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "None",
                     "time_to_close": "None",
                     "time_to_answer": "None",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
                 {
@@ -189,6 +193,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "None",
                     "time_to_close": "None",
                     "time_to_answer": "None",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
             ],

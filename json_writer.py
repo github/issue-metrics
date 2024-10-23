@@ -55,6 +55,7 @@ def write_to_json(
                 "time_to_first_response": "3 days, 0:00:00",
                 "time_to_close": "6 days, 0:00:00",
                 "time_to_answer": "None",
+                "time_in_draft": "1 day, 0:00:00",
                 "label_metrics": {
                     "bug": "1 day, 16:24:12"
                 }
@@ -152,6 +153,7 @@ def write_to_json(
                 "time_to_first_response": str(issue.time_to_first_response),
                 "time_to_close": str(issue.time_to_close),
                 "time_to_answer": str(issue.time_to_answer),
+                "time_in_draft": str(issue.time_in_draft),
                 "label_metrics": formatted_label_metrics,
             }
         )
