@@ -18,7 +18,11 @@ from markdown_writer import write_to_markdown
 
 @patch.dict(
     os.environ,
-    {"SEARCH_QUERY": "is:open repo:user/repo", "GH_TOKEN": "test_token"},
+    {
+        "SEARCH_QUERY": "is:open repo:user/repo",
+        "GH_TOKEN": "test_token",
+        "DRAFT_PR_TRACKING": "True",
+    },
 )
 class TestWriteToMarkdown(unittest.TestCase):
     """Test the write_to_markdown function."""
@@ -43,7 +47,8 @@ class TestWriteToMarkdown(unittest.TestCase):
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(days=3),
-                labels_metrics={"bug": timedelta(days=1)},
+                time_in_draft=timedelta(days=1),
+                labels_metrics={"bug": timedelta(days=4)},
             ),
             IssueWithMetrics(
                 title="Issue 2\r",
@@ -52,6 +57,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=5),
+                time_in_draft=timedelta(days=1),
                 labels_metrics={"bug": timedelta(days=2)},
             ),
         ]
@@ -70,6 +76,11 @@ class TestWriteToMarkdown(unittest.TestCase):
             "med": timedelta(days=4),
             "90p": timedelta(days=4),
         }
+        time_in_draft = {
+            "avg": timedelta(days=1),
+            "med": timedelta(days=1),
+            "90p": timedelta(days=1),
+        }
         time_in_labels = {
             "avg": {"bug": "1 day, 12:00:00"},
             "med": {"bug": "1 day, 12:00:00"},
@@ -86,6 +97,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_to_first_response=time_to_first_response,
             average_time_to_close=time_to_close,
             average_time_to_answer=time_to_answer,
+            average_time_in_draft=time_in_draft,
             average_time_in_labels=time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
@@ -106,6 +118,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Time to first response | 2 days, 0:00:00 | 2 days, 0:00:00 | 2 days, 0:00:00 |\n"
             "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
             "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
+            "| Time in draft | 1 day, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 |\n"
             "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
             "\n"
             "| Metric | Count |\n"
@@ -115,12 +128,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
-            " Time to answer | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            " Time to answer | Time in draft | Time spent in bug |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
-            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 4 days, 0:00:00 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
-            "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
+            "4 days, 0:00:00 | 5 days, 0:00:00 | 1 day, 0:00:00 | 2 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `is:issue is:open label:bug`\n"
         )
@@ -145,6 +158,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(days=3),
+                time_in_draft=timedelta(days=1),
                 labels_metrics={"bug": timedelta(days=1)},
             ),
             IssueWithMetrics(
@@ -172,6 +186,11 @@ class TestWriteToMarkdown(unittest.TestCase):
             "med": timedelta(days=4),
             "90p": timedelta(days=4),
         }
+        average_time_in_draft = {
+            "avg": timedelta(days=1),
+            "med": timedelta(days=1),
+            "90p": timedelta(days=1),
+        }
         average_time_in_labels = {
             "avg": {"bug": "1 day, 12:00:00"},
             "med": {"bug": "1 day, 12:00:00"},
@@ -188,6 +207,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_to_first_response=average_time_to_first_response,
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
+            average_time_in_draft=average_time_in_draft,
             average_time_in_labels=average_time_in_labels,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
@@ -207,6 +227,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Time to first response | 2 days, 0:00:00 | 2 days, 0:00:00 | 2 days, 0:00:00 |\n"
             "| Time to close | 3 days, 0:00:00 | 3 days, 0:00:00 | 3 days, 0:00:00 |\n"
             "| Time to answer | 4 days, 0:00:00 | 4 days, 0:00:00 | 4 days, 0:00:00 |\n"
+            "| Time in draft | 1 day, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 |\n"
             "| Time spent in bug | 1 day, 12:00:00 | 1 day, 12:00:00 | 1 day, 12:00:00 |\n"
             "\n"
             "| Metric | Count |\n"
@@ -216,12 +237,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
-            " Time to answer | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            " Time to answer | Time in draft | Time spent in bug |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
-            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 |\n"
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 |\n"
             "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
-            "4 days, 0:00:00 | 5 days, 0:00:00 | 2 days, 0:00:00 |\n\n"
+            "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
@@ -232,6 +253,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
             write_to_markdown(
+                None,
                 None,
                 None,
                 None,
@@ -289,6 +311,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
                 time_to_answer=timedelta(hours=2),
+                time_in_draft=timedelta(days=1),
                 labels_metrics={
                     "label1": timedelta(days=1),
                 },
@@ -308,6 +331,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         average_time_to_first_response = timedelta(minutes=15)
         average_time_to_close = timedelta(days=1.5)
         average_time_to_answer = timedelta(hours=3)
+        average_time_in_draft = timedelta(days=1)
         average_time_in_labels = {
             "label1": timedelta(days=1),
         }
@@ -322,6 +346,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
             average_time_in_labels=average_time_in_labels,
+            average_time_in_draft=average_time_in_draft,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,

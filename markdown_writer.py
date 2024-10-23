@@ -71,6 +71,10 @@ def get_non_hidden_columns(labels) -> List[str]:
     if not hide_time_to_answer:
         columns.append("Time to answer")
 
+    enable_time_in_draft = env_vars.draft_pr_tracking
+    if enable_time_in_draft:
+        columns.append("Time in draft")
+
     hide_label_metrics = env_vars.hide_label_metrics
     if not hide_label_metrics and labels:
         for label in labels:
@@ -84,6 +88,7 @@ def write_to_markdown(
     average_time_to_first_response: Union[dict[str, timedelta], None],
     average_time_to_close: Union[dict[str, timedelta], None],
     average_time_to_answer: Union[dict[str, timedelta], None],
+    average_time_in_draft: Union[dict[str, timedelta], None],
     average_time_in_labels: Union[dict, None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
@@ -104,6 +109,7 @@ def write_to_markdown(
             response for the issues.
         average_time_to_close (datetime.timedelta): The average time to close for the issues.
         average_time_to_answer (datetime.timedelta): The average time to answer the discussions.
+        average_time_in_draft (datetime.timedelta): The average time spent in draft for the issues.
         average_time_in_labels (dict): A dictionary containing the average time spent in each label.
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
@@ -112,9 +118,12 @@ def write_to_markdown(
         num_mentor_count (int): The number of very active commentors.
         labels (List[str]): A list of the labels that are used in the issues.
         search_query (str): The search query used to find the issues.
-        hide_label_metrics (bool): Represents whether the user has chosen to hide label metrics in the output
-        hide_items_closed_count (bool): Represents whether the user has chosen to hide the number of items closed
-        non_mentioning_links (bool): Represents whether links do not cause a notification in the desitnation repository
+        hide_label_metrics (bool): Represents whether the user has chosen to hide label
+            metrics in the output
+        hide_items_closed_count (bool): Represents whether the user has chosen to hide
+            the number of items closed
+        non_mentioning_links (bool): Represents whether links do not cause a notification
+            in the destination repository
         report_title (str): The title of the report
         output_file (str): The name of the file to write the report to
 
@@ -131,7 +140,8 @@ def write_to_markdown(
         if not issues_with_metrics or len(issues_with_metrics) == 0:
             file.write("no issues found for the given search criteria\n\n")
             file.write(
-                "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+                "\n_This report was generated with the \
+[Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             )
             if search_query:
                 file.write(f"Search query used to find these items: `{search_query}`\n")
@@ -143,6 +153,7 @@ def write_to_markdown(
             average_time_to_first_response,
             average_time_to_close,
             average_time_to_answer,
+            average_time_in_draft,
             average_time_in_labels,
             num_issues_opened,
             num_issues_closed,
@@ -189,13 +200,16 @@ def write_to_markdown(
                 file.write(f" {issue.time_to_close} |")
             if "Time to answer" in columns:
                 file.write(f" {issue.time_to_answer} |")
+            if "Time in draft" in columns:
+                file.write(f" {issue.time_in_draft} |")
             if labels and issue.label_metrics:
                 for label in labels:
                     if f"Time spent in {label}" in columns:
                         file.write(f" {issue.label_metrics[label]} |")
             file.write("\n")
         file.write(
-            "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "\n_This report was generated with the \
+[Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         if search_query:
             file.write(f"Search query used to find these items: `{search_query}`\n")
@@ -208,6 +222,7 @@ def write_overall_metrics_tables(
     stats_time_to_first_response,
     stats_time_to_close,
     stats_time_to_answer,
+    average_time_in_draft,
     stats_time_in_labels,
     num_issues_opened,
     num_issues_closed,
@@ -219,12 +234,15 @@ def write_overall_metrics_tables(
     hide_items_closed_count=False,
 ):
     """Write the overall metrics tables to the markdown file."""
-    if (
-        "Time to first response" in columns
-        or "Time to close" in columns
-        or "Time to answer" in columns
-        or (hide_label_metrics is False and len(labels) > 0)
-    ):
+    if any(
+        column in columns
+        for column in [
+            "Time to first response",
+            "Time to close",
+            "Time to answer",
+            "Time in draft",
+        ]
+    ) or (hide_label_metrics is False and len(labels) > 0):
         file.write("| Metric | Average | Median | 90th percentile |\n")
         file.write("| --- | --- | --- | ---: |\n")
         if "Time to first response" in columns:
@@ -257,6 +275,16 @@ def write_overall_metrics_tables(
                 )
             else:
                 file.write("| Time to answer | None | None | None |\n")
+        if "Time in draft" in columns:
+            if average_time_in_draft is not None:
+                file.write(
+                    f"| Time in draft "
+                    f"| {average_time_in_draft['avg']} "
+                    f"| {average_time_in_draft['med']} "
+                    f"| {average_time_in_draft['90p']} |\n"
+                )
+            else:
+                file.write("| Time in draft | None | None | None |\n")
         if labels and stats_time_in_labels:
             for label in labels:
                 if (
