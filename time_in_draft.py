@@ -50,7 +50,7 @@ def get_stats_time_in_draft(
             if issue.time_in_draft:
                 draft_times.append(issue.time_in_draft.total_seconds())
 
-    # Calculate stats describing time to answer
+    # Calculate stats describing time in draft
     num_issues_with_time_in_draft = len(issues_with_time_to_draft)
     if num_issues_with_time_in_draft > 0:
         average_time_in_draft = numpy.round(numpy.average(draft_times))
