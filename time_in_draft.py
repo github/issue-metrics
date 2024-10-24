@@ -38,7 +38,7 @@ def get_stats_time_in_draft(
     """
     Calculate stats describing the time in draft for a list of issues.
     """
-    # Filter out issues with no time to answer
+    # Filter out issues with no time in draft
     issues_with_time_to_draft = [
         issue for issue in issues_with_metrics if issue.time_in_draft is not None
     ]
