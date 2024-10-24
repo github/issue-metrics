@@ -2,12 +2,15 @@
 
 Functions:
     write_to_json(
-        issues_with_metrics: List[IssueWithMetrics],
-        average_time_to_first_response: timedelta,
-        average_time_to_close: timedelta,
-        average_time_to_answer: timedelta,
-        num_issues_opened: int,
-        num_issues_closed: int,
+        issues_with_metrics: Union[List[IssueWithMetrics], None],
+        stats_time_to_first_response: Union[dict[str, timedelta], None],
+        stats_time_to_close: Union[dict[str, timedelta], None],
+        stats_time_to_answer: Union[dict[str, timedelta], None],
+        stats_time_in_draft: Union[dict[str, timedelta], None],
+        stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
+        num_issues_opened: Union[int, None],
+        num_issues_closed: Union[int, None],
+        num_mentor_count: Union[int, None],
         search_query: str,
         output_file: str,
     ) -> str:
@@ -28,6 +31,7 @@ def write_to_json(
     stats_time_to_first_response: Union[dict[str, timedelta], None],
     stats_time_to_close: Union[dict[str, timedelta], None],
     stats_time_to_answer: Union[dict[str, timedelta], None],
+    stats_time_in_draft: Union[dict[str, timedelta], None],
     stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
@@ -40,37 +44,48 @@ def write_to_json(
 
     json structure is like following
     {
-        "average_time_to_first_response": "2 days, 12:00:00",
-        "average_time_to_close": "5 days, 0:00:00",
-        "average_time_to_answer": "1 day, 0:00:00",
+        "average_time_to_first_response": "None",
+        "average_time_to_close": "None",
+        "average_time_to_answer": "None",
+        "average_time_in_draft": "None",
+        "average_time_in_labels": {},
+        "median_time_to_first_response": "None",
+        "median_time_to_close": "None",
+        "median_time_to_answer": "None",
+        "median_time_in_draft": "None",
+        "median_time_in_labels": {},
+        "90_percentile_time_to_first_response": "None",
+        "90_percentile_time_to_close": "None",
+        "90_percentile_time_to_answer": "None",
+        "90_percentile_time_in_draft": "None",
+        "90_percentile_time_in_labels": {},
         "num_items_opened": 2,
-        "num_items_closed": 1,
+        "num_items_closed": 0,
         "num_mentor_count": 5,
         "total_item_count": 2,
         "issues": [
             {
                 "title": "Issue 1",
                 "html_url": "https://github.com/owner/repo/issues/1",
-                "author": "author",
-                "time_to_first_response": "3 days, 0:00:00",
-                "time_to_close": "6 days, 0:00:00",
+                "author": "alice",
+                "time_to_first_response": "None",
+                "time_to_close": "None",
                 "time_to_answer": "None",
-                "label_metrics": {
-                    "bug": "1 day, 16:24:12"
-                }
+                "time_in_draft": "None",
+                "label_metrics": {}
             },
             {
                 "title": "Issue 2",
                 "html_url": "https://github.com/owner/repo/issues/2",
-                "author": "author",
-                "time_to_first_response": "2 days, 0:00:00",
-                "time_to_close": "4 days, 0:00:00",
-                "time_to_answer": "1 day, 0:00:00",
-                "label_metrics": {
-                }
-            },
+                "author": "bob",
+                "time_to_first_response": "None",
+                "time_to_close": "None",
+                "time_to_answer": "None",
+                "time_in_draft": "None",
+                "label_metrics": {}
+            }
         ],
-        "search_query": "is:issue is:open repo:owner/repo"
+        "search_query": "is:issue repo:owner/repo"
     }
 
     """
@@ -106,6 +121,16 @@ def write_to_json(
         med_time_to_answer = stats_time_to_answer["med"]
         p90_time_to_answer = stats_time_to_answer["90p"]
 
+    # time in draft
+    average_time_in_draft = None
+    med_time_in_draft = None
+    p90_time_in_draft = None
+    if stats_time_in_draft is not None:
+        average_time_in_draft = stats_time_in_draft["avg"]
+        med_time_in_draft = stats_time_in_draft["med"]
+        p90_time_in_draft = stats_time_in_draft["90p"]
+
+    # time in labels
     average_time_in_labels = {}
     med_time_in_labels = {}
     p90_time_in_labels = {}
@@ -122,14 +147,17 @@ def write_to_json(
         "average_time_to_first_response": str(average_time_to_first_response),
         "average_time_to_close": str(average_time_to_close),
         "average_time_to_answer": str(average_time_to_answer),
+        "average_time_in_draft": str(average_time_in_draft),
         "average_time_in_labels": average_time_in_labels,
         "median_time_to_first_response": str(med_time_to_first_response),
         "median_time_to_close": str(med_time_to_close),
         "median_time_to_answer": str(med_time_to_answer),
+        "median_time_in_draft": str(med_time_in_draft),
         "median_time_in_labels": med_time_in_labels,
         "90_percentile_time_to_first_response": str(p90_time_to_first_response),
         "90_percentile_time_to_close": str(p90_time_to_close),
         "90_percentile_time_to_answer": str(p90_time_to_answer),
+        "90_percentile_time_in_draft": str(p90_time_in_draft),
         "90_percentile_time_in_labels": p90_time_in_labels,
         "num_items_opened": num_issues_opened,
         "num_items_closed": num_issues_closed,
@@ -152,6 +180,7 @@ def write_to_json(
                 "time_to_first_response": str(issue.time_to_first_response),
                 "time_to_close": str(issue.time_to_close),
                 "time_to_answer": str(issue.time_to_answer),
+                "time_in_draft": str(issue.time_in_draft),
                 "label_metrics": formatted_label_metrics,
             }
         )

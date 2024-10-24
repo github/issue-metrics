@@ -101,7 +101,13 @@ class TestGetAverageTimeInLabels(unittest.TestCase):
         self.issues_with_metrics = MagicMock()
         self.issues_with_metrics = [
             IssueWithMetrics(
-                "issue1", "url1", "alice", None, None, None, {"bug": timedelta(days=2)}
+                title="issue1",
+                html_url="url1",
+                author="alice",
+                time_to_first_response=None,
+                time_to_close=None,
+                time_to_answer=None,
+                labels_metrics={"bug": timedelta(days=2)},
             ),
         ]
 

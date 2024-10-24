@@ -24,6 +24,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=6),
                 time_to_answer=None,
+                time_in_draft=timedelta(days=1),
                 labels_metrics={
                     "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
                 },
@@ -54,6 +55,11 @@ class TestWriteToJson(unittest.TestCase):
             "med": timedelta(days=2),
             "90p": timedelta(days=3),
         }
+        stats_time_in_draft = {
+            "avg": timedelta(days=1),
+            "med": timedelta(days=1),
+            "90p": timedelta(days=1),
+        }
         stats_time_in_labels = {
             "avg": {"bug": timedelta(days=1, hours=16, minutes=24, seconds=12)},
             "med": {"bug": timedelta(days=1, hours=16, minutes=24, seconds=12)},
@@ -67,14 +73,17 @@ class TestWriteToJson(unittest.TestCase):
             "average_time_to_first_response": "2 days, 12:00:00",
             "average_time_to_close": "5 days, 0:00:00",
             "average_time_to_answer": "1 day, 0:00:00",
+            "average_time_in_draft": "1 day, 0:00:00",
             "average_time_in_labels": {"bug": "1 day, 16:24:12"},
             "median_time_to_first_response": "2 days, 12:00:00",
             "median_time_to_close": "4 days, 0:00:00",
             "median_time_to_answer": "2 days, 0:00:00",
+            "median_time_in_draft": "1 day, 0:00:00",
             "median_time_in_labels": {"bug": "1 day, 16:24:12"},
             "90_percentile_time_to_first_response": "1 day, 12:00:00",
             "90_percentile_time_to_close": "3 days, 0:00:00",
             "90_percentile_time_to_answer": "3 days, 0:00:00",
+            "90_percentile_time_in_draft": "1 day, 0:00:00",
             "90_percentile_time_in_labels": {"bug": "1 day, 16:24:12"},
             "num_items_opened": 2,
             "num_items_closed": 1,
@@ -88,6 +97,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "3 days, 0:00:00",
                     "time_to_close": "6 days, 0:00:00",
                     "time_to_answer": "None",
+                    "time_in_draft": "1 day, 0:00:00",
                     "label_metrics": {"bug": "1 day, 16:24:12"},
                 },
                 {
@@ -97,6 +107,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "2 days, 0:00:00",
                     "time_to_close": "4 days, 0:00:00",
                     "time_to_answer": "1 day, 0:00:00",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
             ],
@@ -110,6 +121,7 @@ class TestWriteToJson(unittest.TestCase):
                 stats_time_to_first_response=stats_time_to_first_response,
                 stats_time_to_close=stats_time_to_close,
                 stats_time_to_answer=stats_time_to_answer,
+                stats_time_in_draft=stats_time_in_draft,
                 stats_time_in_labels=stats_time_in_labels,
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
@@ -151,6 +163,7 @@ class TestWriteToJson(unittest.TestCase):
             "med": {},
             "90p": {},
         }
+        stats_time_in_draft = None
         num_issues_opened = 2
         num_issues_closed = 0
         num_mentor_count = 5
@@ -159,14 +172,17 @@ class TestWriteToJson(unittest.TestCase):
             "average_time_to_first_response": "None",
             "average_time_to_close": "None",
             "average_time_to_answer": "None",
+            "average_time_in_draft": "None",
             "average_time_in_labels": {},
             "median_time_to_first_response": "None",
             "median_time_to_close": "None",
             "median_time_to_answer": "None",
+            "median_time_in_draft": "None",
             "median_time_in_labels": {},
             "90_percentile_time_to_first_response": "None",
             "90_percentile_time_to_close": "None",
             "90_percentile_time_to_answer": "None",
+            "90_percentile_time_in_draft": "None",
             "90_percentile_time_in_labels": {},
             "num_items_opened": 2,
             "num_items_closed": 0,
@@ -180,6 +196,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "None",
                     "time_to_close": "None",
                     "time_to_answer": "None",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
                 {
@@ -189,6 +206,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_first_response": "None",
                     "time_to_close": "None",
                     "time_to_answer": "None",
+                    "time_in_draft": "None",
                     "label_metrics": {},
                 },
             ],
@@ -202,6 +220,7 @@ class TestWriteToJson(unittest.TestCase):
                 stats_time_to_first_response=stats_time_to_first_response,
                 stats_time_to_close=stats_time_to_close,
                 stats_time_to_answer=stats_time_to_answer,
+                stats_time_in_draft=stats_time_in_draft,
                 stats_time_in_labels=stats_time_in_labels,
                 num_issues_opened=num_issues_opened,
                 num_issues_closed=num_issues_closed,
