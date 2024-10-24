@@ -67,6 +67,6 @@ def get_stats_time_in_draft(
         "90p": timedelta(seconds=ninety_percentile_time_in_draft),
     }
 
-    # Print the average time to answer converting seconds to a readable time format
-    print(f"Average time to answer: {timedelta(seconds=average_time_in_draft)}")
+    # Print the average time in draft converting seconds to a readable time format
+    print(f"Average time in draft: {timedelta(seconds=average_time_in_draft)}")
     return stats
