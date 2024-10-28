@@ -39,7 +39,7 @@ class EnvVars:
         hide_time_to_first_response (bool): If true, the time to first response metric is hidden
             in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
-        labels_to_measure (List[str]): List of labels to measure how much time the lable is applied
+        labels_to_measure (List[str]): List of labels to measure how much time the label is applied
         enable_mentor_count (bool): If set to TRUE, compute number of mentors
         min_mentor_comments (str): If set, defines the minimum number of comments for mentors
         max_comments_eval (str): If set, defines the maximum number of comments to look
@@ -48,7 +48,7 @@ class EnvVars:
             involved commentors in
         search_query (str): Search query used to filter issues/prs/discussions on GitHub
         non_mentioning_links (bool): If set to TRUE, links do not cause a notification
-            in the desitnation repository
+            in the destination repository
         report_title (str): The title of the report
         output_file (str): The name of the file to write the report to
         rate_limit_bypass (bool): If set to TRUE, bypass the rate limit for the GitHub API
@@ -61,6 +61,7 @@ class EnvVars:
         gh_app_id: int | None,
         gh_app_installation_id: int | None,
         gh_app_private_key_bytes: bytes,
+        gh_app_enterprise_only: bool,
         gh_token: str | None,
         ghe: str | None,
         hide_author: bool,
@@ -85,6 +86,7 @@ class EnvVars:
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
         self.gh_app_private_key_bytes = gh_app_private_key_bytes
+        self.gh_app_enterprise_only = gh_app_enterprise_only
         self.gh_token = gh_token
         self.ghe = ghe
         self.ignore_users = ignore_user
@@ -112,6 +114,7 @@ class EnvVars:
             f"{self.gh_app_id},"
             f"{self.gh_app_installation_id},"
             f"{self.gh_app_private_key_bytes},"
+            f"{self.gh_app_enterprise_only},"
             f"{self.gh_token},"
             f"{self.ghe},"
             f"{self.hide_author},"
@@ -186,6 +189,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     gh_app_id = get_int_env_var("GH_APP_ID")
     gh_app_private_key_bytes = os.environ.get("GH_APP_PRIVATE_KEY", "").encode("utf8")
     gh_app_installation_id = get_int_env_var("GH_APP_INSTALLATION_ID")
+    gh_app_enterprise_only = get_bool_env_var("GITHUB_APP_ENTERPRISE_ONLY")
 
     if gh_app_id and (not gh_app_private_key_bytes or not gh_app_installation_id):
         raise ValueError(
@@ -235,6 +239,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         gh_app_id,
         gh_app_installation_id,
         gh_app_private_key_bytes,
+        gh_app_enterprise_only,
         gh_token,
         ghe,
         hide_author,

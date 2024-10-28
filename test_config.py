@@ -119,6 +119,7 @@ class TestGetEnvVars(unittest.TestCase):
             gh_app_id=12345,
             gh_app_installation_id=678910,
             gh_app_private_key_bytes=b"hello",
+            gh_app_enterprise_only=False,
             gh_token="",
             ghe="",
             hide_author=False,
@@ -171,6 +172,7 @@ class TestGetEnvVars(unittest.TestCase):
             gh_app_id=None,
             gh_app_installation_id=None,
             gh_app_private_key_bytes=b"",
+            gh_app_enterprise_only=False,
             gh_token=TOKEN,
             ghe="",
             hide_author=False,
@@ -258,6 +260,7 @@ class TestGetEnvVars(unittest.TestCase):
             gh_app_id=None,
             gh_app_installation_id=None,
             gh_app_private_key_bytes=b"",
+            gh_app_enterprise_only=False,
             gh_token=TOKEN,
             ghe="",
             hide_author=True,
@@ -299,6 +302,7 @@ class TestGetEnvVars(unittest.TestCase):
             gh_app_id=None,
             gh_app_installation_id=None,
             gh_app_private_key_bytes=b"",
+            gh_app_enterprise_only=False,
             gh_token="TOKEN",
             ghe="",
             hide_author=False,
@@ -322,6 +326,28 @@ class TestGetEnvVars(unittest.TestCase):
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
+
+    @patch.dict(
+        os.environ,
+        {
+            "ORGANIZATION": "my_organization",
+            "GH_APP_ID": "12345",
+            "GH_APP_INSTALLATION_ID": "",
+            "GH_APP_PRIVATE_KEY": "",
+            "GH_TOKEN": "",
+            "SEARCH_QUERY": SEARCH_QUERY,
+        },
+        clear=True,
+    )
+    def test_get_env_vars_auth_with_github_app_installation_missing_inputs(self):
+        """Test that an error is raised there are missing inputs for the gh app"""
+        with self.assertRaises(ValueError) as context_manager:
+            get_env_vars(True)
+        the_exception = context_manager.exception
+        self.assertEqual(
+            str(the_exception),
+            "GH_APP_ID set and GH_APP_INSTALLATION_ID or GH_APP_PRIVATE_KEY variable not set",
+        )
 
 
 if __name__ == "__main__":
