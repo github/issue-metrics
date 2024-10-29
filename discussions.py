@@ -10,7 +10,7 @@ Functions:
 import requests
 
 
-def get_discussions(token: str, search_query: str):
+def get_discussions(token: str, search_query: str, ghe: str):
     """Get a list of discussions in a GitHub repository that match the search query.
 
     Args:
@@ -51,9 +51,10 @@ def get_discussions(token: str, search_query: str):
     variables = {"query": search_query}
 
     # Send the GraphQL request
+    api_endpoint = f"{ghe}/api/v3" if ghe else "https://api.github.com"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.post(
-        "https://api.github.com/graphql",
+        f"{api_endpoint}/graphql",
         json={"query": query, "variables": variables},
         headers=headers,
         timeout=60,

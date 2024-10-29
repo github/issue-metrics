@@ -106,6 +106,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             search_query="is:issue is:open label:bug",
             report_title="Issue Metrics",
             output_file="issue_metrics.md",
+            ghe="",
         )
 
         # Check that the function writes the correct markdown file

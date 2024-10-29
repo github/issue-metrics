@@ -57,9 +57,12 @@ class TestGetDiscussions(unittest.TestCase):
         }
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = mock_response
+        mock_ghe = ""
 
         # Call the function with mock arguments
-        discussions = get_discussions("token", "repo:user/repo type:discussions query")
+        discussions = get_discussions(
+            "token", "repo:user/repo type:discussions query", mock_ghe
+        )
 
         # Check that the function returns the expected discussions
         self.assertEqual(len(discussions), 2)
@@ -75,7 +78,8 @@ class TestGetDiscussions(unittest.TestCase):
         """
         # Mock a failed GraphQL response
         mock_post.return_value.status_code = 500
+        mock_ghe = ""
 
         # Call the function with mock arguments and check that it raises an error
         with self.assertRaises(ValueError):
-            get_discussions("token", "repo:user/repo type:discussions query")
+            get_discussions("token", "repo:user/repo type:discussions query", mock_ghe)

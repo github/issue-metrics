@@ -192,23 +192,27 @@ def main():  # pragma: no cover
     output_file = env_vars.output_file
     rate_limit_bypass = env_vars.rate_limit_bypass
 
+    ghe = env_vars.ghe
     gh_app_id = env_vars.gh_app_id
     gh_app_installation_id = env_vars.gh_app_installation_id
     gh_app_private_key_bytes = env_vars.gh_app_private_key_bytes
-
-    if not token and gh_app_id and gh_app_installation_id and gh_app_private_key_bytes:
-        token = get_github_app_installation_token(
-            gh_app_id, gh_app_private_key_bytes, gh_app_installation_id
-        )
+    gh_app_enterprise_only = env_vars.gh_app_enterprise_only
 
     # Auth to GitHub.com
     github_connection = auth_to_github(
+        token,
         gh_app_id,
         gh_app_installation_id,
         gh_app_private_key_bytes,
-        token,
-        env_vars.ghe,
+        ghe,
+        gh_app_enterprise_only,
     )
+
+    if not token and gh_app_id and gh_app_installation_id and gh_app_private_key_bytes:
+        token = get_github_app_installation_token(
+            ghe, gh_app_id, gh_app_private_key_bytes, gh_app_installation_id
+        )
+
     enable_mentor_count = env_vars.enable_mentor_count
     min_mentor_count = int(env_vars.min_mentor_comments)
     max_comments_eval = int(env_vars.max_comments_eval)
@@ -236,7 +240,7 @@ def main():  # pragma: no cover
             raise ValueError(
                 "The search query for discussions cannot include labels to measure"
             )
-        issues = get_discussions(token, search_query)
+        issues = get_discussions(token, search_query, ghe)
         if len(issues) <= 0:
             print("No discussions found")
             write_to_markdown(

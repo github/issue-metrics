@@ -100,6 +100,7 @@ def write_to_markdown(
     non_mentioning_links=False,
     report_title="",
     output_file="",
+    ghe="",
 ) -> None:
     """Write the issues with metrics to a markdown file.
 
@@ -114,7 +115,7 @@ def write_to_markdown(
         file (file object, optional): The file object to write to. If not provided,
             a file named "issue_metrics.md" will be created.
         num_issues_opened (int): The Number of items that remain opened.
-        num_issues_closed (int): The number of issues that were closedi.
+        num_issues_closed (int): The number of issues that were closed.
         num_mentor_count (int): The number of very active commentors.
         labels (List[str]): A list of the labels that are used in the issues.
         search_query (str): The search query used to find the issues.
@@ -126,6 +127,7 @@ def write_to_markdown(
             in the destination repository
         report_title (str): The title of the report
         output_file (str): The name of the file to write the report to
+        ghe (str): the GitHub Enterprise endpoint
 
     Returns:
         None.
@@ -185,15 +187,19 @@ def write_to_markdown(
             # Replace any whitespace
             issue.title = issue.title.strip()
 
+            endpoint = ghe.removeprefix("https://") if ghe else "github.com"
             if non_mentioning_links:
                 file.write(
                     f"| {issue.title} | "
-                    f"{issue.html_url.replace('https://github.com', 'https://www.github.com')} |"
+                    f"{issue.html_url}".replace(
+                        f"https://{endpoint}", f"https://www.{endpoint}"
+                    )
+                    + " |"
                 )
             else:
-                file.write(f"| {issue.title} | " f"{issue.html_url} |")
+                file.write(f"| {issue.title} | {issue.html_url} |")
             if "Author" in columns:
-                file.write(f" [{issue.author}](https://github.com/{issue.author}) |")
+                file.write(f" [{issue.author}](https://{endpoint}/{issue.author}) |")
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
             if "Time to close" in columns:
