@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import github3
+import requests
 from auth import auth_to_github, get_github_app_installation_token
 
 
@@ -87,3 +88,39 @@ class TestAuthToGithub(unittest.TestCase):
         )
 
         self.assertEqual(result, dummy_token)
+
+    @patch("github3.apps.create_jwt_headers", MagicMock(return_value="gh_token"))
+    @patch("auth.requests.post")
+    def test_get_github_app_installation_token_request_failure(self, mock_post):
+        """
+        Test the get_github_app_installation_token function returns None when the request fails.
+        """
+        # Mock the post request to raise a RequestException
+        mock_post.side_effect = requests.exceptions.RequestException("Request failed")
+
+        # Call the function with test data
+        result = get_github_app_installation_token(
+            ghe="https://api.github.com",
+            gh_app_id=12345,
+            gh_app_private_key_bytes=b"private_key",
+            gh_app_installation_id=678910,
+        )
+
+        # Assert that the result is None
+        self.assertIsNone(result)
+
+    @patch("github3.login")
+    def test_auth_to_github_missing_credentials(self, mock_login):
+        """
+        Test the auth_to_github function raises correct ValueError
+        when credentials are present but incorrect.
+        """
+        mock_login.return_value = None
+        with self.assertRaises(ValueError) as context_manager:
+            auth_to_github("not_a_valid_token", "", "", b"", "", False)
+
+        the_exception = context_manager.exception
+        self.assertEqual(
+            str(the_exception),
+            "Unable to authenticate to GitHub",
+        )
