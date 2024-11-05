@@ -110,7 +110,7 @@ class TestAuthToGithub(unittest.TestCase):
         self.assertIsNone(result)
 
     @patch("github3.login")
-    def test_auth_to_github_missing_credentials(self, mock_login):
+    def test_auth_to_github_invalid_credentials(self, mock_login):
         """
         Test the auth_to_github function raises correct ValueError
         when credentials are present but incorrect.
