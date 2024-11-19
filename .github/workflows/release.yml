@@ -42,7 +42,7 @@ jobs:
         id: get_tag_name
         run: |
           short_tag=$(echo ${{ steps.release-drafter.outputs.tag_name }} | cut -d. -f1)
-          echo "SHORT_TAG=$short_tag" >> $GITHUB_OUTPUT
+          echo "SHORT_TAG=$short_tag" >> "$GITHUB_OUTPUT"
   create_action_images:
     needs: create_release
     runs-on: ubuntu-latest
