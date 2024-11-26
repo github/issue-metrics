@@ -13,23 +13,32 @@ from classes import IssueWithMetrics
 
 def measure_time_in_draft(
     issue: github3.issues.Issue,
-    ready_for_review_at: Union[datetime, None],
-) -> Union[datetime, None]:
-    """If a pull request has had time in the draft state, return the amount of time it was in draft.
+) -> Union[timedelta, None]:
+    """If a pull request has had time in the draft state, return the cumulative amount of time it was in draft.
 
     args:
         issue (github3.issues.Issue): A GitHub issue which has been pre-qualified as a pull request.
-        ready_for_review_at (datetime | None): The time the pull request was marked as
-            ready for review.
 
     returns:
-        Union[datetime, None]: The time the pull request was in draft state.
+        Union[timedelta, None]: Total time the pull request has spent in draft state.
     """
-    if ready_for_review_at:
-        return ready_for_review_at - issue.issue.created_at
-    if issue.issue.state == "open":
-        return datetime.now(pytz.utc) - issue.issue.created_at
-    return None
+    events = issue.events()
+    draft_start = None
+    total_draft_time = timedelta(0)
+
+    for event in events:
+        if event.event == "converted_to_draft":
+            draft_start = event.created_at
+        elif event.event == "ready_for_review" and draft_start:
+            # Calculate draft time for this interval
+            total_draft_time += event.created_at - draft_start
+            draft_start = None
+
+    # If the PR is currently in draft state, calculate the time in draft up to now
+    if draft_start and issue.issue.state == "open":
+        total_draft_time += datetime.now(pytz.utc) - draft_start
+
+    return total_draft_time if total_draft_time > timedelta(0) else None
 
 
 def get_stats_time_in_draft(

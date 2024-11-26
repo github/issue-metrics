@@ -18,15 +18,17 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         Setup common test data and mocks.
         """
         self.issue = MagicMock()
-        self.issue.issue.created_at = datetime(2021, 1, 1, tzinfo=pytz.utc)
         self.issue.issue.state = "open"
 
     def test_time_in_draft_with_ready_for_review(self):
         """
-        Test measure_time_in_draft when ready_for_review_at is provided.
+        Test measure_time_in_draft with one draft and review interval.
         """
-        ready_for_review_at = datetime(2021, 1, 3, tzinfo=pytz.utc)
-        result = measure_time_in_draft(self.issue, ready_for_review_at)
+        self.issue.events.return_value = [
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 1, tzinfo=pytz.utc)),
+            MagicMock(event="ready_for_review", created_at=datetime(2021, 1, 3, tzinfo=pytz.utc)),
+        ]
+        result = measure_time_in_draft(self.issue)
         expected = timedelta(days=2)
         self.assertEqual(result, expected, "The time in draft should be 2 days.")
 
@@ -34,22 +36,62 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         Test measure_time_in_draft when ready_for_review_at is not provided and issue is still open.
         """
+        self.issue.events.return_value = [
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 1, tzinfo=pytz.utc)),
+        ]
         now = datetime(2021, 1, 4, tzinfo=pytz.utc)
         with unittest.mock.patch("time_in_draft.datetime") as mock_datetime:
             mock_datetime.now.return_value = now
-            result = measure_time_in_draft(self.issue, None)
+            result = measure_time_in_draft(self.issue)
             expected = timedelta(days=3)
             self.assertEqual(result, expected, "The time in draft should be 3 days.")
 
+
+    def test_time_in_draft_multiple_intervals(self):
+        """
+        Test measure_time_in_draft with multiple draft intervals.
+        """
+        self.issue.events.return_value = [
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 1, tzinfo=pytz.utc)),
+            MagicMock(event="ready_for_review", created_at=datetime(2021, 1, 3, tzinfo=pytz.utc)),
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 5, tzinfo=pytz.utc)),
+            MagicMock(event="ready_for_review", created_at=datetime(2021, 1, 7, tzinfo=pytz.utc)),
+        ]
+        result = measure_time_in_draft(self.issue)
+        expected = timedelta(days=4)
+        self.assertEqual(result, expected, "The total time in draft should be 4 days.")
+
+    def test_time_in_draft_ongoing_draft(self):
+        """
+        Test measure_time_in_draft with an ongoing draft interval.
+        """
+        self.issue.events.return_value = [
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 1, tzinfo=pytz.utc)),
+        ]
+        with unittest.mock.patch("time_in_draft.datetime") as mock_datetime:
+            mock_datetime.now.return_value = datetime(2021, 1, 4, tzinfo=pytz.utc)
+            result = measure_time_in_draft(self.issue)
+            expected = timedelta(days=3)
+            self.assertEqual(result, expected, "The ongoing draft time should be 3 days.")
+
+    def test_time_in_draft_no_draft_events(self):
+        """
+        Test measure_time_in_draft with no draft-related events.
+        """
+        self.issue.events.return_value = []
+        result = measure_time_in_draft(self.issue)
+        self.assertIsNone(result, "The result should be None when there are no draft events.")
+
     def test_time_in_draft_without_ready_for_review_and_closed(self):
         """
-        Test measure_time_in_draft when ready_for_review_at is not provided and issue is closed.
+        Test measure_time_in_draft for a closed issue with an ongoing draft and ready_for_review_at is not provided.
         """
+        self.issue.events.return_value = [
+            MagicMock(event="converted_to_draft", created_at=datetime(2021, 1, 1, tzinfo=pytz.utc)),
+        ]
         self.issue.issue.state = "closed"
-        result = measure_time_in_draft(self.issue, None)
-        self.assertIsNone(
-            result, "The result should be None when draft was never used."
-        )
+        result = measure_time_in_draft(self.issue)
+        self.assertIsNone(result, "The result should be None for a closed issue with an ongoing draft.")
 
 
 class TestGetStatsTimeInDraft(unittest.TestCase):

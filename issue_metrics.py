@@ -125,8 +125,7 @@ def get_per_issue_metrics(
                 ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
                 if env_vars.draft_pr_tracking:
                     issue_with_metrics.time_in_draft = measure_time_in_draft(
-                        issue=issue,
-                        ready_for_review_at=ready_for_review_at,
+                        issue=issue
                     )
 
             if env_vars.hide_time_to_first_response is False:
