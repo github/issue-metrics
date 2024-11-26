@@ -46,7 +46,6 @@ class TestMeasureTimeInDraft(unittest.TestCase):
             expected = timedelta(days=3)
             self.assertEqual(result, expected, "The time in draft should be 3 days.")
 
-
     def test_time_in_draft_multiple_intervals(self):
         """
         Test measure_time_in_draft with multiple draft intervals.
