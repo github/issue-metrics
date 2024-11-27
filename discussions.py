@@ -52,7 +52,6 @@ def get_discussions(token: str, search_query: str, ghe: str):
     # Remove the type:discussions filter from the search query
     search_query = search_query.replace("type:discussions ", "")
 
-
     # Send the GraphQL request
     api_endpoint = f"{ghe}/api" if ghe else "https://api.github.com"
     headers = {"Authorization": f"Bearer {token}"}
