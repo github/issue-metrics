@@ -51,7 +51,7 @@ def get_discussions(token: str, search_query: str, ghe: str):
     variables = {"query": search_query}
 
     # Send the GraphQL request
-    api_endpoint = f"{ghe}/api/v3" if ghe else "https://api.github.com"
+    api_endpoint = f"{ghe}/api" if ghe else "https://api.github.com"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.post(
         f"{api_endpoint}/graphql",
