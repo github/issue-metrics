@@ -50,13 +50,13 @@ jobs:
           teamMembers="$(gh api /orgs/ORG/teams/TEAM_SLUG/members | jq -r '.[].login' | paste -sd, -)"
           echo 'TEAM_MEMBERS='$teamMembers >> $GITHUB_ENV
         env:
-          GH_TOKEN: ${{ secrets.CUSTOM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_TOKEN }}
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report
-        token: ${{ secrets.GH_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: ${{ env.TEAM_MEMBERS }}
 ```
