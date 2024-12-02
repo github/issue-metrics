@@ -40,8 +40,8 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v3
       env:
-        GH_APP_ID: ${{ secrets.GITHUB_APP_ID }}
-        GH_APP_INSTALLATION_ID: ${{ secrets.GITHUB_APP_INSTALLATION_ID }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
         GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
 
