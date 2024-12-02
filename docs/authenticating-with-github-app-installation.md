@@ -40,8 +40,8 @@ jobs:
     - name: Run issue-metrics tool
       uses: github/issue-metrics@v3
       env:
-        GH_APP_ID: ${{ secrets.GITHUB_APP_ID }}
-        GH_APP_INSTALLATION_ID: ${{ secrets.GITHUB_APP_INSTALLATION_ID }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
         GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
         SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
 
@@ -50,13 +50,13 @@ jobs:
           teamMembers="$(gh api /orgs/ORG/teams/TEAM_SLUG/members | jq -r '.[].login' | paste -sd, -)"
           echo 'TEAM_MEMBERS='$teamMembers >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{ secrets.CUSTOM_TOKEN }}
+          GH_TOKEN: ${{ secrets.CUSTOM_TOKEN }}
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v4
       with:
         title: Monthly issue metrics report
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GH_TOKEN }}
         content-filepath: ./issue_metrics.md
         assignees: ${{ env.TEAM_MEMBERS }}
 ```
