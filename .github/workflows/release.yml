@@ -15,7 +15,7 @@ jobs:
     uses: jmeridth/reusable-workflows/.github/workflows/release.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
     with:
       publish: true
-      release-config-name: release-drafter.yaml
+      release-config-name: release-drafter.yml
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
   release_image:
