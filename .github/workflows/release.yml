@@ -27,7 +27,7 @@ jobs:
       pull-requests: read
     uses: jmeridth/reusable-workflows/.github/workflows/release-image.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
     with:
-      image-name: jmeridth/reusable-workflows
+      image-name: ${{ github.repository_owner }}/issue_metrics
       full-tag: ${{ needs.release.outputs.full-tag }}
       short-tag: ${{ needs.release.outputs.short-tag }}
     secrets:
