@@ -5,7 +5,7 @@ template: |
   # Changelog
   $CHANGES
 
-  See details of [all code changes](https://github.com/github/issue-metrics/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION) since previous release
+  See details of [all code changes](https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION) since previous release
 
 categories:
   - title: "🚀 Features"
@@ -32,14 +32,17 @@ version-resolver:
   major:
     labels:
       - "breaking"
+      - "major"
   minor:
     labels:
       - "enhancement"
       - "fix"
+      - "minor"
   patch:
     labels:
       - "documentation"
       - "maintenance"
+      - "patch"
   default: patch
 autolabeler:
   - label: "automation"
