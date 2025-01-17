@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
-    uses: jmeridth/reusable-workflows/.github/workflows/release.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
+    uses: github/ospo-reusable-workflows/.github/workflows/release.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
     with:
       publish: true
       release-config-name: release-drafter.yml
@@ -25,7 +25,7 @@ jobs:
       discussions: write
       packages: write
       pull-requests: read
-    uses: jmeridth/reusable-workflows/.github/workflows/release-image.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
+    uses: github/ospo-reusable-workflows/.github/workflows/release-image.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
     with:
       image-name: ${{ github.repository_owner }}/issue_metrics
       full-tag: ${{ needs.release.outputs.full-tag }}
@@ -40,7 +40,7 @@ jobs:
     permissions:
       contents: read
       discussions: write
-    uses: jmeridth/reusable-workflows/.github/workflows/release-discussion.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
+    uses: github/ospo-reusable-workflows/.github/workflows/release-discussion.yaml@53a9c808122ffaae9af948f72139fb4bd44ab74c
     with:
       full-tag: ${{ needs.release.outputs.full-tag }}
       body: ${{ needs.release.outputs.body }}
