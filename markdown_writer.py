@@ -79,6 +79,9 @@ def get_non_hidden_columns(labels) -> List[str]:
     if not hide_label_metrics and labels:
         for label in labels:
             columns.append(f"Time spent in {label}")
+    hide_created_at = env_vars.hide_created_at
+    if not hide_created_at:
+        columns.append(f'Created At')
 
     return columns
 
@@ -212,6 +215,8 @@ def write_to_markdown(
                 for label in labels:
                     if f"Time spent in {label}" in columns:
                         file.write(f" {issue.label_metrics[label]} |")
+            if "Created At" in columns:
+                file.write(f" {issue.created_at} |")
             file.write("\n")
         file.write(
             "\n_This report was generated with the \
@@ -303,6 +308,7 @@ def write_overall_metrics_tables(
                         f"| {stats_time_in_labels['med'][label]} "
                         f"| {stats_time_in_labels['90p'][label]} |\n"
                     )
+
         file.write("\n")
     # Write count stats to a separate table
     file.write("| Metric | Count |\n")

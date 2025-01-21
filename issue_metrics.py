@@ -108,6 +108,8 @@ def get_per_issue_metrics(
                     )
             else:
                 num_issues_open += 1
+            if env_vars.hide_created_at is False:
+                issue_with_metrics.created_at = issue.created_at
         else:
             if ignore_users and issue.user["login"] in ignore_users:  # type: ignore
                 continue
@@ -159,6 +161,9 @@ def get_per_issue_metrics(
                         )
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
+            if env_vars.hide_created_at is False:
+                issue_with_metrics.created_at = issue.created_at
+
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed

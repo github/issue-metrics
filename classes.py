@@ -37,6 +37,7 @@ class IssueWithMetrics:
         time_in_draft=None,
         labels_metrics=None,
         mentor_activity=None,
+        created_at=None,
     ):
         self.title = title
         self.html_url = html_url
@@ -47,3 +48,4 @@ class IssueWithMetrics:
         self.time_in_draft = time_in_draft
         self.label_metrics = labels_metrics
         self.mentor_activity = mentor_activity
+        self.created_at = created_at
