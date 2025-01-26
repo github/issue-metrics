@@ -70,6 +70,7 @@ class EnvVars:
         hide_time_to_answer: bool,
         hide_time_to_close: bool,
         hide_time_to_first_response: bool,
+        hide_created_at: bool,
         ignore_user: List[str],
         labels_to_measure: List[str],
         enable_mentor_count: bool,
@@ -97,6 +98,7 @@ class EnvVars:
         self.hide_time_to_answer = hide_time_to_answer
         self.hide_time_to_close = hide_time_to_close
         self.hide_time_to_first_response = hide_time_to_first_response
+        self.hide_created_at = hide_created_at
         self.enable_mentor_count = enable_mentor_count
         self.min_mentor_comments = min_mentor_comments
         self.max_comments_eval = max_comments_eval
@@ -123,6 +125,7 @@ class EnvVars:
             f"{self.hide_time_to_answer},"
             f"{self.hide_time_to_close},"
             f"{self.hide_time_to_first_response},"
+            f"{self.hide_created_at},"
             f"{self.ignore_users},"
             f"{self.labels_to_measure},"
             f"{self.enable_mentor_count},"
@@ -229,6 +232,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     hide_time_to_answer = get_bool_env_var("HIDE_TIME_TO_ANSWER", False)
     hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE", False)
     hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE", False)
+    hide_created_at = get_bool_env_var("HIDE_CREATED_AT", True)
     enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT", False)
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
@@ -248,6 +252,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         hide_time_to_answer,
         hide_time_to_close,
         hide_time_to_first_response,
+        hide_created_at,
         ignore_users_list,
         labels_to_measure_list,
         enable_mentor_count,

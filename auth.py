@@ -59,7 +59,7 @@ def get_github_app_installation_token(
 ) -> str | None:
     """
     Get a GitHub App Installation token.
-    API: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation
+    API: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation # noqa: E501
 
     Args:
         ghe (str): the GitHub Enterprise endpoint
