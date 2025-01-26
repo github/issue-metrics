@@ -21,7 +21,7 @@ class IssueWithMetrics:
         time_in_draft (timedelta, optional): The time the PR was in draft state.
         label_metrics (dict, optional): A dictionary containing the label metrics
         mentor_activity (dict, optional): A dictionary containing active mentors
-
+        created_at (datetime, optional): The time the issue was created.
     """
 
     # pylint: disable=too-many-instance-attributes

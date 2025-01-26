@@ -81,7 +81,7 @@ def get_non_hidden_columns(labels) -> List[str]:
             columns.append(f"Time spent in {label}")
     hide_created_at = env_vars.hide_created_at
     if not hide_created_at:
-        columns.append(f'Created At')
+        columns.append("Created At")
 
     return columns
 
