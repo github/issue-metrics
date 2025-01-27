@@ -160,7 +160,7 @@ def get_per_issue_metrics(
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
         if not env_vars.hide_created_at:
-            issue_with_metrics.created_at = issue["createdAt"]
+            issue_with_metrics.created_at = issue["created_at"]
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed
