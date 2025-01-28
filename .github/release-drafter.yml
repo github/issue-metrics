@@ -36,11 +36,12 @@ version-resolver:
   minor:
     labels:
       - "enhancement"
-      - "fix"
+      - "feature"
       - "minor"
   patch:
     labels:
       - "documentation"
+      - "fix"
       - "maintenance"
       - "patch"
   default: patch

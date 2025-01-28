@@ -12,6 +12,6 @@ jobs:
       contents: read
       pull-requests: read
       statuses: write
-    uses: github/ospo-reusable-workflows/.github/workflows/pr-title.yaml@1406afbf7a795f706f04644059cecbb3b2f0c1a0
+    uses: github/ospo-reusable-workflows/.github/workflows/pr-title.yaml@6a0a6d0de2227f9d5d11af90a87b2e2fd6b5463d
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
