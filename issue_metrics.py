@@ -350,15 +350,16 @@ def main():  # pragma: no cover
         output_file=output_file,
     )
 
+    file_name_without_extension = output_file.split(".")[0]
     max_char_count = 65535
-    if markdown_too_large_for_issue_body("issue_metrics.md", max_char_count):
-        split_markdown_file("issue_metrics.md", max_char_count)
-        shutil.move("issue_metrics.md", "issue_metrics_full.md")
-        shutil.move("issue_metrics_0.md", "issue_metrics.md")
+    if markdown_too_large_for_issue_body(output_file, max_char_count):
+        split_markdown_file(output_file, max_char_count)
+        shutil.move(output_file, f"{file_name_without_extension}_full.md")
+        shutil.move(f"{file_name_without_extension}_0.md", output_file)
         print(
-            "Issue metrics markdown file is too large for GitHub issue body and has been \
-split into multiple files. ie. issue_metrics.md, issue_metrics_1.md, etc. \
-The full file is saved as issue_metrics_full.md\n\
+            f"Issue metrics markdown file is too large for GitHub issue body and has been \
+split into multiple files. ie. {output_file}, {file_name_without_extension}_1.md, etc. \
+The full file is saved as {file_name_without_extension}_full.md\n\
 See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
         )
 
