@@ -16,6 +16,7 @@ Functions:
 """
 
 import shutil
+from pathlib import Path
 from typing import List, Union
 
 import github3
@@ -350,7 +351,7 @@ def main():  # pragma: no cover
         output_file=output_file,
     )
 
-    file_name_without_extension = output_file.split(".")[0]
+    file_name_without_extension = Path(output_file).stem
     max_char_count = 65535
     if markdown_too_large_for_issue_body(output_file, max_char_count):
         split_markdown_file(output_file, max_char_count)
