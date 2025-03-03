@@ -1,4 +1,4 @@
-""" Unit tests for labels.py """
+"""Unit tests for labels.py"""
 
 import unittest
 from datetime import datetime, timedelta
