@@ -1,4 +1,4 @@
-""" Functions for calculating time spent in labels. """
+"""Functions for calculating time spent in labels."""
 
 from datetime import datetime, timedelta
 from typing import List
