@@ -1,4 +1,4 @@
-""" Helper functions for working with markdown files. """
+"""Helper functions for working with markdown files."""
 
 
 def markdown_too_large_for_issue_body(file_path: str, max_char_count: int) -> bool:

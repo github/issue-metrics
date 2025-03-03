@@ -1,4 +1,4 @@
-""" Unit tests for the markdown_helpers module. """
+"""Unit tests for the markdown_helpers module."""
 
 import os
 import unittest

@@ -1,4 +1,4 @@
-""" A module to search for issues in a GitHub repository."""
+"""A module to search for issues in a GitHub repository."""
 
 import sys
 from time import sleep
