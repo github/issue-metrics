@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: github/ospo-reusable-workflows/.github/workflows/auto-labeler.yaml@6a0a6d0de2227f9d5d11af90a87b2e2fd6b5463d
+    uses: github/ospo-reusable-workflows/.github/workflows/auto-labeler.yaml@ecdd405ebb379e0713e348440e6e26e85fc06773
     with:
       config-name: release-drafter.yml
     secrets:
