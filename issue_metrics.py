@@ -168,6 +168,9 @@ def get_per_issue_metrics(
 
 
 def evaluate_markdown_file_size(output_file: str) -> None:
+    """
+    Evaluate the size of the markdown file and split it, if it is too large.
+    """
     file_name_without_extension = Path(output_file).stem
     max_char_count = 65535
     if markdown_too_large_for_issue_body(output_file, max_char_count):
