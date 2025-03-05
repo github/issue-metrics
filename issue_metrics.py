@@ -166,6 +166,19 @@ def get_per_issue_metrics(
 
     return issues_with_metrics, num_issues_open, num_issues_closed
 
+def evaluate_markdown_file_size(output_file: str) -> None:
+    file_name_without_extension = Path(output_file).stem
+    max_char_count = 65535
+    if markdown_too_large_for_issue_body(output_file, max_char_count):
+        split_markdown_file(output_file, max_char_count)
+        shutil.move(output_file, f"{file_name_without_extension}_full.md")
+        shutil.move(f"{file_name_without_extension}_0.md", output_file)
+        print(
+            f"Issue metrics markdown file is too large for GitHub issue body and has been \
+split into multiple files. ie. {output_file}, {file_name_without_extension}_1.md, etc. \
+The full file is saved as {file_name_without_extension}_full.md\n\
+See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+        )
 
 def main():  # pragma: no cover
     """Run the issue-metrics script.
@@ -351,18 +364,7 @@ def main():  # pragma: no cover
         output_file=output_file,
     )
 
-    file_name_without_extension = Path(output_file).stem
-    max_char_count = 65535
-    if markdown_too_large_for_issue_body(output_file, max_char_count):
-        split_markdown_file(output_file, max_char_count)
-        shutil.move(output_file, f"{file_name_without_extension}_full.md")
-        shutil.move(f"{file_name_without_extension}_0.md", output_file)
-        print(
-            f"Issue metrics markdown file is too large for GitHub issue body and has been \
-split into multiple files. ie. {output_file}, {file_name_without_extension}_1.md, etc. \
-The full file is saved as {file_name_without_extension}_full.md\n\
-See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
-        )
+    evaluate_markdown_file_size(output_file)
 
 
 if __name__ == "__main__":

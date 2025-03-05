@@ -8,16 +8,17 @@ Classes:
     TestSearchIssues: A class to test the search_issues function.
     TestGetPerIssueMetrics: A class to test the get_per_issue_metrics function.
     TestGetEnvVars: A class to test the get_env_vars function.
-
+    TestEvaluateMarkdownFileSize: A class to test the evaluate_markdown_file_size function.
 """
 
 import os
 import unittest
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from issue_metrics import (
     IssueWithMetrics,
+    evaluate_markdown_file_size,
     get_env_vars,
     get_per_issue_metrics,
     measure_time_to_close,
@@ -176,6 +177,7 @@ class TestGetPerIssueMetrics(unittest.TestCase):
             "HIDE_TIME_TO_ANSWER": "false",
             "HIDE_TIME_TO_CLOSE": "false",
             "HIDE_TIME_TO_FIRST_RESPONSE": "false",
+            "OUTPUT_FILE": "test_issue_metrics.md"
         },
     )
     def test_get_per_issue_metrics_without_hide_envs(self):
@@ -476,6 +478,60 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.assertEqual(metrics[0][1].time_to_answer, None)
         self.assertEqual(metrics[0][1].time_to_close, None)
         self.assertEqual(metrics[0][1].time_to_first_response, None)
+
+
+class TestEvaluateMarkdownFileSize(unittest.TestCase):
+    """Test suite for the evaluate_markdown_file_size function."""
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "OUTPUT_FILE": "test_issue_metrics.md"
+        }
+    )
+    @patch("issue_metrics.markdown_too_large_for_issue_body")
+    def test_markdown_too_large_for_issue_body_called_with_output_file(self, mock_evaluate):
+        """
+        Test that the function uses the output_file.
+        """
+        mock_evaluate.return_value = False
+        evaluate_markdown_file_size("test_issue_metrics.md")
+
+        mock_evaluate.assert_called_with("test_issue_metrics.md", 65535)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "OUTPUT_FILE": "test_issue_metrics.md"
+        }
+    )
+    @patch("issue_metrics.print")
+    @patch("shutil.move")
+    @patch("issue_metrics.split_markdown_file")
+    @patch("issue_metrics.markdown_too_large_for_issue_body")
+    def test_split_markdown_file_when_file_size_too_large(self, mock_evaluate, mock_split, mock_move, mock_print):
+        """
+        Test that the function is called with the output_file
+        environment variable.
+        """
+        mock_evaluate.return_value = True
+        evaluate_markdown_file_size("test_issue_metrics.md")
+
+        mock_split.assert_called_with("test_issue_metrics.md", 65535)
+        mock_move.assert_has_calls([
+            call("test_issue_metrics.md", "test_issue_metrics_full.md"),
+            call("test_issue_metrics_0.md", "test_issue_metrics.md")
+        ])
+        mock_print.assert_called_with(
+            "Issue metrics markdown file is too large for GitHub issue body and has been \
+split into multiple files. ie. test_issue_metrics.md, test_issue_metrics_1.md, etc. \
+The full file is saved as test_issue_metrics_full.md\n\
+See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+            )
 
 
 if __name__ == "__main__":
