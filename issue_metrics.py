@@ -166,6 +166,7 @@ def get_per_issue_metrics(
 
     return issues_with_metrics, num_issues_open, num_issues_closed
 
+
 def evaluate_markdown_file_size(output_file: str) -> None:
     file_name_without_extension = Path(output_file).stem
     max_char_count = 65535
@@ -179,6 +180,7 @@ split into multiple files. ie. {output_file}, {file_name_without_extension}_1.md
 The full file is saved as {file_name_without_extension}_full.md\n\
 See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
         )
+
 
 def main():  # pragma: no cover
     """Run the issue-metrics script.
