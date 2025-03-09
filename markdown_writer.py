@@ -225,7 +225,7 @@ def write_to_markdown(
         if search_query:
             file.write(f"Search query used to find these items: `{search_query}`\n")
 
-    print("Wrote issue metrics to issue_metrics.md")
+    print(f"Wrote issue metrics to {output_file_name}")
 
 
 def write_overall_metrics_tables(
