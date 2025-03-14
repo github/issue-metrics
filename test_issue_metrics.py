@@ -483,6 +483,18 @@ class TestEvaluateMarkdownFileSize(unittest.TestCase):
     """Test suite for the evaluate_markdown_file_size function."""
 
     @patch("issue_metrics.markdown_too_large_for_issue_body")
+    def test_markdown_too_large_for_issue_body_called_with_empty_output_file(
+        self, mock_evaluate
+    ):
+        """
+        Test that the function uses the output_file.
+        """
+        mock_evaluate.return_value = False
+        evaluate_markdown_file_size("")
+
+        mock_evaluate.assert_called_with("issue_metrics.md", 65535)
+
+    @patch("issue_metrics.markdown_too_large_for_issue_body")
     def test_markdown_too_large_for_issue_body_called_with_output_file(
         self, mock_evaluate
     ):
