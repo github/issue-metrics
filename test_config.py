@@ -72,6 +72,7 @@ class TestGetEnvVars(unittest.TestCase):
             "GH_TOKEN",
             "GHE",
             "HIDE_AUTHOR",
+            "HIDE_CREATED_AT",
             "HIDE_ITEMS_CLOSED_COUNT",
             "HIDE_LABEL_METRICS",
             "HIDE_TIME_TO_ANSWER",
