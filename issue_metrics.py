@@ -161,7 +161,10 @@ def get_per_issue_metrics(
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
         if not env_vars.hide_created_at:
-            issue_with_metrics.created_at = issue["created_at"]
+            if isinstance(issue, github3.search.IssueSearchResult):  # type: ignore
+                issue_with_metrics.created_at = issue.issue.created_at  # type: ignore
+            elif isinstance(issue, dict):  # type: ignore
+                issue_with_metrics.created_at = issue["createdAt"]  # type: ignore
         issues_with_metrics.append(issue_with_metrics)
 
     return issues_with_metrics, num_issues_open, num_issues_closed

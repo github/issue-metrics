@@ -374,9 +374,7 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.issue1 = {
             "title": "Issue 1",
             "url": "github.com/user/repo/issues/1",
-            "user": {
-                "login": "alice",
-            },
+            "user": {"login": "alice"},
             "createdAt": "2023-01-01T00:00:00Z",
             "comments": {
                 "nodes": [
@@ -392,9 +390,7 @@ class TestDiscussionMetrics(unittest.TestCase):
         self.issue2 = {
             "title": "Issue 2",
             "url": "github.com/user/repo/issues/2",
-            "user": {
-                "login": "bob",
-            },
+            "user": {"login": "bob"},
             "createdAt": "2023-01-01T00:00:00Z",
             "comments": {"nodes": [{"createdAt": "2023-01-03T00:00:00Z"}]},
             "answerChosenAt": "2023-01-05T00:00:00Z",
@@ -441,6 +437,7 @@ class TestDiscussionMetrics(unittest.TestCase):
             "GH_TOKEN": "test_token",
             "SEARCH_QUERY": "is:issue is:open repo:user/repo",
             "HIDE_AUTHOR": "true",
+            "HIDE_CREATED_AT": "false",
             "HIDE_LABEL_METRICS": "true",
             "HIDE_TIME_TO_ANSWER": "true",
             "HIDE_TIME_TO_CLOSE": "true",

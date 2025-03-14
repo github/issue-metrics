@@ -22,6 +22,7 @@ from markdown_writer import write_to_markdown
         "SEARCH_QUERY": "is:open repo:user/repo",
         "GH_TOKEN": "test_token",
         "DRAFT_PR_TRACKING": "True",
+        "HIDE_CREATED_AT": "False",
     },
 )
 class TestWriteToMarkdown(unittest.TestCase):
@@ -44,6 +45,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
                 author="alice",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(days=3),
@@ -54,6 +56,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 2\r",
                 html_url="https://github.com/user/repo/issues/2",
                 author="bob",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=5),
@@ -129,12 +132,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
-            " Time to answer | Time in draft | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            " Time to answer | Time in draft | Time spent in bug | Created At |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
-            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 4 days, 0:00:00 |\n"
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 4 days, 0:00:00 | -5 days, 0:00:00 |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
-            "4 days, 0:00:00 | 5 days, 0:00:00 | 1 day, 0:00:00 | 2 days, 0:00:00 |\n\n"
+            "4 days, 0:00:00 | 5 days, 0:00:00 | 1 day, 0:00:00 | 2 days, 0:00:00 | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `is:issue is:open label:bug`\n"
         )
@@ -156,6 +159,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
                 author="alice",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(days=3),
@@ -166,6 +170,7 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="feat| Issue 2",  # title contains a vertical bar
                 html_url="https://github.com/user/repo/issues/2",
                 author="bob",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=5),
@@ -238,12 +243,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
-            " Time to answer | Time in draft | Time spent in bug |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            " Time to answer | Time in draft | Time spent in bug | Created At |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
-            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 |\n"
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 | -5 days, 0:00:00 |\n"
             "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
-            "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 |\n\n"
+            "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
@@ -287,6 +292,7 @@ class TestWriteToMarkdown(unittest.TestCase):
     {
         "SEARCH_QUERY": "is:open repo:user/repo",
         "GH_TOKEN": "test_token",
+        "HIDE_CREATED_AT": "False",
         "HIDE_TIME_TO_FIRST_RESPONSE": "True",
         "HIDE_TIME_TO_CLOSE": "True",
         "HIDE_TIME_TO_ANSWER": "True",
@@ -309,6 +315,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
                 author="alice",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
                 time_to_answer=timedelta(hours=2),
@@ -321,6 +328,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 title="Issue 2",
                 html_url="https://github.com/user/repo/issues/2",
                 author="bob",
+                created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=20),
                 time_to_close=timedelta(days=2),
                 time_to_answer=timedelta(hours=4),
@@ -363,6 +371,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         # Check that the function writes the correct markdown file
         with open("issue_metrics.md", "r", encoding="utf-8") as file:
             content = file.read()
+
         expected_content = (
             "# Issue Metrics\n\n"
             "| Metric | Count |\n"
@@ -370,10 +379,10 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Author |\n"
-            "| --- | --- | --- |\n"
-            "| Issue 1 | https://www.github.com/user/repo/issues/1 | [alice](https://github.com/alice) |\n"
-            "| Issue 2 | https://www.github.com/user/repo/issues/2 | [bob](https://github.com/bob) |\n\n"
+            "| Title | URL | Author | Created At |\n"
+            "| --- | --- | --- | --- |\n"
+            "| Issue 1 | https://www.github.com/user/repo/issues/1 | [alice](https://github.com/alice) | -5 days, 0:00:00 |\n"
+            "| Issue 2 | https://www.github.com/user/repo/issues/2 | [bob](https://github.com/bob) | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
