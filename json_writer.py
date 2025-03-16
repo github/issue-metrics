@@ -182,6 +182,7 @@ def write_to_json(
                 "time_to_answer": str(issue.time_to_answer),
                 "time_in_draft": str(issue.time_in_draft),
                 "label_metrics": formatted_label_metrics,
+                "created_at": str(issue.created_at),
             }
         )
 
