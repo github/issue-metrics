@@ -28,6 +28,7 @@ class TestWriteToJson(unittest.TestCase):
                 labels_metrics={
                     "bug": timedelta(days=1, hours=16, minutes=24, seconds=12)
                 },
+                created_at=timedelta(days=-5),
             ),
             IssueWithMetrics(
                 title="Issue 2",
@@ -37,6 +38,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_close=timedelta(days=4),
                 time_to_answer=timedelta(days=1),
                 labels_metrics={},
+                created_at=timedelta(days=-5),
             ),
         ]
 
@@ -99,6 +101,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_answer": "None",
                     "time_in_draft": "1 day, 0:00:00",
                     "label_metrics": {"bug": "1 day, 16:24:12"},
+                    "created_at": "-5 days, 0:00:00",
                 },
                 {
                     "title": "Issue 2",
@@ -109,6 +112,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_answer": "1 day, 0:00:00",
                     "time_in_draft": "None",
                     "label_metrics": {},
+                    "created_at": "-5 days, 0:00:00",
                 },
             ],
             "search_query": "is:issue repo:owner/repo",
@@ -143,6 +147,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_close=None,
                 time_to_answer=None,
                 labels_metrics={},
+                created_at=None,
             ),
             IssueWithMetrics(
                 title="Issue 2",
@@ -152,6 +157,7 @@ class TestWriteToJson(unittest.TestCase):
                 time_to_close=None,
                 time_to_answer=None,
                 labels_metrics={},
+                created_at=None,
             ),
         ]
 
@@ -198,6 +204,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_answer": "None",
                     "time_in_draft": "None",
                     "label_metrics": {},
+                    "created_at": "None",
                 },
                 {
                     "title": "Issue 2",
@@ -208,6 +215,7 @@ class TestWriteToJson(unittest.TestCase):
                     "time_to_answer": "None",
                     "time_in_draft": "None",
                     "label_metrics": {},
+                    "created_at": "None",
                 },
             ],
             "search_query": "is:issue repo:owner/repo",
