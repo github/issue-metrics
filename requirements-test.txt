@@ -6,4 +6,4 @@ pylint==3.3.6
 pytest==8.3.5
 pytest-cov==6.0.0
 types-pytz==2025.2.0.20250326
-types-requests==2.32.0.20250306
+types-requests==2.32.0.20250328
