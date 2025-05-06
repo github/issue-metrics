@@ -298,11 +298,15 @@ class TestWriteToMarkdown(unittest.TestCase):
         "HIDE_TIME_TO_ANSWER": "True",
         "HIDE_LABEL_METRICS": "True",
         "NON_MENTIONING_LINKS": "True",
-        "GH_ENTERPRISE_URL": "https://github.mycompany.com",
+        "GH_ENTERPRISE_URL": "https://ghe.com",
     },
 )
 class TestWriteToMarkdownWithEnv(unittest.TestCase):
-    """Test the write_to_markdown function with the HIDE*, NON_MENTIONING_LINKS and GH_ENTERPRISE_URL environment variables set."""
+    """Test the write_to_markdown function with the following environment variables set:
+    - HIDE*,
+    - NON_MENTIONING_LINKS
+    - GH_ENTERPRISE_URL
+    """
 
     def test_writes_markdown_file_with_non_hidden_columns_only(self):
         """
@@ -314,7 +318,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         issues_with_metrics = [
             IssueWithMetrics(
                 title="Issue 1",
-                html_url="https://github.mycompany.com/user/repo/issues/1",
+                html_url="https://ghe.com/user/repo/issues/1",
                 author="alice",
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=10),
@@ -327,7 +331,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             ),
             IssueWithMetrics(
                 title="Issue 2",
-                html_url="https://github.mycompany.com/user/repo/issues/2",
+                html_url="https://ghe.com/user/repo/issues/2",
                 author="bob",
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=20),
@@ -348,7 +352,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         num_issues_opened = 2
         num_issues_closed = 2
         num_mentor_count = 5
-        ghe = "https://github.mycompany.com"
+        ghe = "https://ghe.com"
 
         # Call the function
         write_to_markdown(
@@ -384,8 +388,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Created At |\n"
             "| --- | --- | --- | --- |\n"
-            "| Issue 1 | https://www.github.mycompany.com/user/repo/issues/1 | [alice](https://github.mycompany.com/alice) | -5 days, 0:00:00 |\n"
-            "| Issue 2 | https://www.github.mycompany.com/user/repo/issues/2 | [bob](https://github.mycompany.com/bob) | -5 days, 0:00:00 |\n\n"
+            "| Issue 1 | https://www.ghe.com/user/repo/issues/1 | [alice](https://ghe.com/alice) | -5 days, 0:00:00 |\n"
+            "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | [bob](https://ghe.com/bob) | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
