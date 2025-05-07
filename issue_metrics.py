@@ -284,6 +284,7 @@ def main():  # pragma: no cover
                 non_mentioning_links=False,
                 report_title=report_title,
                 output_file=output_file,
+                ghe=ghe,
             )
             return
     else:
@@ -309,6 +310,7 @@ def main():  # pragma: no cover
                 non_mentioning_links=False,
                 report_title=report_title,
                 output_file=output_file,
+                ghe=ghe,
             )
             return
 
@@ -371,6 +373,7 @@ def main():  # pragma: no cover
         non_mentioning_links=non_mentioning_links,
         report_title=report_title,
         output_file=output_file,
+        ghe=ghe,
     )
 
     evaluate_markdown_file_size(output_file)
