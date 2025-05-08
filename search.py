@@ -80,31 +80,48 @@ def search_issues(
             if idx % issues_per_page == 0:
                 wait_for_api_refresh(issues_iterator, rate_limit_bypass)
 
-    except github3.exceptions.ForbiddenError:
+    except github3.exceptions.ForbiddenError as e:
         print(
             f"You do not have permission to view a repository \
 from: '{repos_and_owners_string}'; Check your API Token."
         )
+        print_error_messages(e)
         sys.exit(1)
-    except github3.exceptions.NotFoundError:
+    except github3.exceptions.NotFoundError as e:
         print(
             f"The repository could not be found; \
 Check the repository owner and names: '{repos_and_owners_string}"
         )
+        print_error_messages(e)
         sys.exit(1)
-    except github3.exceptions.ConnectionError:
+    except github3.exceptions.ConnectionError as e:
         print(
             "There was a connection error; Check your internet connection or API Token."
         )
+        print_error_messages(e)
         sys.exit(1)
-    except github3.exceptions.AuthenticationFailed:
+    except github3.exceptions.AuthenticationFailed as e:
         print("Authentication failed; Check your API Token.")
+        print_error_messages(e)
         sys.exit(1)
-    except github3.exceptions.UnprocessableEntity:
+    except github3.exceptions.UnprocessableEntity as e:
         print("The search query is invalid; Check the search query.")
+        print_error_messages(e)
         sys.exit(1)
 
     return issues
+
+
+def print_error_messages(error: github3.exceptions):
+    """Prints the error messages from the GitHub API response.
+
+    Args:
+        Error (github3.exceptions): The error object from the GitHub API response.
+
+    """
+    if hasattr(error, "errors"):
+        for e in error.errors:
+            print(f"Error: {e.get('message')}")
 
 
 def get_owners_and_repositories(
