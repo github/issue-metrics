@@ -129,7 +129,6 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
-            "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time in draft | Time spent in bug | Created At |\n"
@@ -240,7 +239,6 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| --- | ---: |\n"
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
-            "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
             "| Title | URL | Author | Time to first response | Time to close |"
             " Time to answer | Time in draft | Time spent in bug | Created At |\n"
@@ -369,6 +367,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             search_query="repo:user/repo is:issue",
             hide_label_metrics=True,
             hide_items_closed_count=True,
+            enable_mentor_count=True,
             non_mentioning_links=True,
             report_title="Issue Metrics",
             output_file="issue_metrics.md",

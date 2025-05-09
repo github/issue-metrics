@@ -100,6 +100,7 @@ def write_to_markdown(
     search_query=None,
     hide_label_metrics=False,
     hide_items_closed_count=False,
+    enable_mentor_count=False,
     non_mentioning_links=False,
     report_title="",
     output_file="",
@@ -168,6 +169,7 @@ def write_to_markdown(
             file,
             hide_label_metrics,
             hide_items_closed_count,
+            enable_mentor_count,
         )
 
         # Write second table with individual issue/pr/discussion metrics
@@ -243,6 +245,7 @@ def write_overall_metrics_tables(
     file,
     hide_label_metrics,
     hide_items_closed_count=False,
+    enable_mentor_count=False,
 ):
     """Write the overall metrics tables to the markdown file."""
     if any(
@@ -316,5 +319,6 @@ def write_overall_metrics_tables(
     file.write(f"| Number of items that remain open | {num_issues_opened} |\n")
     if not hide_items_closed_count:
         file.write(f"| Number of items closed | {num_issues_closed} |\n")
-    file.write(f"| Number of most active mentors | {num_mentor_count} |\n")
+    if enable_mentor_count:
+        file.write(f"| Number of most active mentors | {num_mentor_count} |\n")
     file.write(f"| Total number of items created | {len(issues_with_metrics)} |\n\n")
