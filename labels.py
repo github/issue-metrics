@@ -56,7 +56,7 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
 
     # Calculate the time to add or subtract to the time spent in label based on the label events
     for event in label_events:
-        # Skip labeling events that have occured past issue close time
+        # Skip labeling events that have occurred past issue close time
         if issue.closed_at is not None and (
             event.created_at >= datetime.fromisoformat(issue.closed_at)
         ):
