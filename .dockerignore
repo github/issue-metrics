@@ -1,0 +1,36 @@
+# Application specific files
+test_*.py
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Common
+*.md
+docker-compose.yml
+Dockerfile*
+.env*
+Makefile
+
+# Logs
+logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Dependency directories
+node_modules/
+.venv/
+
+## Cache directories
+.parcel-cache
+
+# git
+.git
+.gitattributes
+.gitignore
+.github/
