@@ -126,13 +126,13 @@ def get_per_issue_metrics(
             issue_dict = issue.issue.as_dict()  # type: ignore
             assignee = None
             assignees = []
-            
+
             if issue_dict.get("assignee"):
                 assignee = issue_dict["assignee"]["login"]
-                
+
             if issue_dict.get("assignees"):
                 assignees = [a["login"] for a in issue_dict["assignees"]]
-                
+
             issue_with_metrics.assignee = assignee
             issue_with_metrics.assignees = assignees
 

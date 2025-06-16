@@ -209,11 +209,16 @@ def write_to_markdown(
                 file.write(f"| {issue.title} | {issue.html_url} |")
             if "Assignee" in columns:
                 if issue.assignee:
-                    file.write(f" [{issue.assignee}](https://{endpoint}/{issue.assignee}) |") 
+                    file.write(
+                        f" [{issue.assignee}](https://{endpoint}/"
+                        f"{issue.assignee}) |"
+                    )
                 else:
                     file.write(" None |")
             if "Author" in columns:
-                file.write(f" [{issue.author}](https://{endpoint}/{issue.author}) |")
+                file.write(
+                    f" [{issue.author}](https://{endpoint}/{issue.author}) |"
+                )
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
             if "Time to close" in columns:
