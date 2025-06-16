@@ -216,9 +216,7 @@ def write_to_markdown(
                 else:
                     file.write(" None |")
             if "Author" in columns:
-                file.write(
-                    f" [{issue.author}](https://{endpoint}/{issue.author}) |"
-                )
+                file.write(f" [{issue.author}](https://{endpoint}/{issue.author}) |")
             if "Time to first response" in columns:
                 file.write(f" {issue.time_to_first_response} |")
             if "Time to close" in columns:

@@ -4,11 +4,12 @@ import json
 import os
 import tempfile
 import unittest
-from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta
+from unittest.mock import patch
+
 from classes import IssueWithMetrics
-from markdown_writer import write_to_markdown
 from json_writer import write_to_json
+from markdown_writer import write_to_markdown
 
 
 class TestAssigneeIntegration(unittest.TestCase):
@@ -47,14 +48,22 @@ class TestAssigneeIntegration(unittest.TestCase):
             ),
         ]
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
             output_file = f.name
 
         try:
             write_to_markdown(
                 issues_with_metrics=issues_with_metrics,
-                average_time_to_first_response={"avg": timedelta(hours=3), "med": timedelta(hours=3), "90p": timedelta(hours=4)},
-                average_time_to_close={"avg": timedelta(days=1), "med": timedelta(days=1), "90p": timedelta(days=1)},
+                average_time_to_first_response={
+                    "avg": timedelta(hours=3),
+                    "med": timedelta(hours=3),
+                    "90p": timedelta(hours=4),
+                },
+                average_time_to_close={
+                    "avg": timedelta(days=1),
+                    "med": timedelta(days=1),
+                    "90p": timedelta(days=1),
+                },
                 average_time_to_answer=None,
                 average_time_in_draft=None,
                 average_time_in_labels=None,
@@ -73,18 +82,18 @@ class TestAssigneeIntegration(unittest.TestCase):
             )
 
             # Read and verify the markdown content
-            with open(output_file, 'r') as f:
+            with open(output_file, "r", encoding="utf-8") as f:
                 content = f.read()
 
             # Check for assignee column header
             self.assertIn("| Assignee |", content)
-            
+
             # Check for assignee data - alice should be linked
             self.assertIn("[alice](https://github.com/alice)", content)
-            
+
             # Check for None assignee
             self.assertIn("| None |", content)
-            
+
             # Check that both assignee and author columns are present
             self.assertIn("| Author |", content)
 
@@ -116,14 +125,22 @@ class TestAssigneeIntegration(unittest.TestCase):
             ),
         ]
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             output_file = f.name
 
         try:
             json_output = write_to_json(
                 issues_with_metrics=issues_with_metrics,
-                stats_time_to_first_response={"avg": timedelta(hours=3), "med": timedelta(hours=3), "90p": timedelta(hours=4)},
-                stats_time_to_close={"avg": timedelta(days=1), "med": timedelta(days=1), "90p": timedelta(days=1)},
+                stats_time_to_first_response={
+                    "avg": timedelta(hours=3),
+                    "med": timedelta(hours=3),
+                    "90p": timedelta(hours=4),
+                },
+                stats_time_to_close={
+                    "avg": timedelta(days=1),
+                    "med": timedelta(days=1),
+                    "90p": timedelta(days=1),
+                },
                 stats_time_to_answer=None,
                 stats_time_in_draft=None,
                 stats_time_in_labels=None,

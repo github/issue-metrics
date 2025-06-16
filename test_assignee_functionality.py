@@ -3,6 +3,7 @@
 import os
 import unittest
 from unittest.mock import patch
+
 from markdown_writer import get_non_hidden_columns
 
 
@@ -88,8 +89,11 @@ class TestAssigneeFunctionality(unittest.TestCase):
             columns = get_non_hidden_columns(labels=None)
             assignee_index = columns.index("Assignee")
             author_index = columns.index("Author")
-            self.assertLess(assignee_index, author_index, 
-                          "Assignee column should appear before Author column")
+            self.assertLess(
+                assignee_index,
+                author_index,
+                "Assignee column should appear before Author column",
+            )
 
 
 if __name__ == "__main__":
