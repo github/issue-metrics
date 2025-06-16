@@ -45,6 +45,8 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
                 author="alice",
+                assignee="charlie",
+                assignees=["charlie"],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
@@ -56,6 +58,8 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 2\r",
                 html_url="https://github.com/user/repo/issues/2",
                 author="bob",
+                assignee=None,
+                assignees=[],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=4),
@@ -130,12 +134,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Author | Time to first response | Time to close |"
+            "| Title | URL | Assignee | Author | Time to first response | Time to close |"
             " Time to answer | Time in draft | Time spent in bug | Created At |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | [charlie](https://github.com/charlie) | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 4 days, 0:00:00 | -5 days, 0:00:00 |\n"
-            "| Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
+            "| Issue 2 | https://github.com/user/repo/issues/2 | None | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 1 day, 0:00:00 | 2 days, 0:00:00 | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `is:issue is:open label:bug`\n"
@@ -158,6 +162,8 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://github.com/user/repo/issues/1",
                 author="alice",
+                assignee="charlie",
+                assignees=["charlie"],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=1),
                 time_to_close=timedelta(days=2),
@@ -169,6 +175,8 @@ class TestWriteToMarkdown(unittest.TestCase):
                 title="feat| Issue 2",  # title contains a vertical bar
                 html_url="https://github.com/user/repo/issues/2",
                 author="bob",
+                assignee=None,
+                assignees=[],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(days=3),
                 time_to_close=timedelta(days=4),
@@ -240,12 +248,12 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of items closed | 1 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Author | Time to first response | Time to close |"
+            "| Title | URL | Assignee | Author | Time to first response | Time to close |"
             " Time to answer | Time in draft | Time spent in bug | Created At |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-            "| Issue 1 | https://github.com/user/repo/issues/1 | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://github.com/user/repo/issues/1 | [charlie](https://github.com/charlie) | [alice](https://github.com/alice) | 1 day, 0:00:00 | "
             "2 days, 0:00:00 | 3 days, 0:00:00 | 1 day, 0:00:00 | 1 day, 0:00:00 | -5 days, 0:00:00 |\n"
-            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
+            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | None | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
@@ -318,6 +326,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 title="Issue 1",
                 html_url="https://ghe.com/user/repo/issues/1",
                 author="alice",
+                assignee="charlie",
+                assignees=["charlie"],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=10),
                 time_to_close=timedelta(days=1),
@@ -331,6 +341,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
                 title="Issue 2",
                 html_url="https://ghe.com/user/repo/issues/2",
                 author="bob",
+                assignee=None,
+                assignees=[],
                 created_at=timedelta(days=-5),
                 time_to_first_response=timedelta(minutes=20),
                 time_to_close=timedelta(days=2),
@@ -385,10 +397,10 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
-            "| Title | URL | Author | Created At |\n"
-            "| --- | --- | --- | --- |\n"
-            "| Issue 1 | https://www.ghe.com/user/repo/issues/1 | [alice](https://ghe.com/alice) | -5 days, 0:00:00 |\n"
-            "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | [bob](https://ghe.com/bob) | -5 days, 0:00:00 |\n\n"
+            "| Title | URL | Assignee | Author | Created At |\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| Issue 1 | https://www.ghe.com/user/repo/issues/1 | [charlie](https://ghe.com/charlie) | [alice](https://ghe.com/alice) | -5 days, 0:00:00 |\n"
+            "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | None | [bob](https://ghe.com/bob) | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )

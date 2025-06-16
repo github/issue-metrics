@@ -85,6 +85,9 @@ def get_per_issue_metrics(
                 None,
                 None,
             )
+            # Discussions typically don't have assignees in the same way as issues/PRs
+            issue_with_metrics.assignee = None
+            issue_with_metrics.assignees = []
             if env_vars.hide_time_to_first_response is False:
                 issue_with_metrics.time_to_first_response = (
                     measure_time_to_first_response(None, issue, ignore_users)
@@ -118,6 +121,20 @@ def get_per_issue_metrics(
                 html_url=issue.html_url,  # type: ignore
                 author=issue.user["login"],  # type: ignore
             )
+
+            # Extract assignee information from the issue
+            issue_dict = issue.issue.as_dict()  # type: ignore
+            assignee = None
+            assignees = []
+            
+            if issue_dict.get("assignee"):
+                assignee = issue_dict["assignee"]["login"]
+                
+            if issue_dict.get("assignees"):
+                assignees = [a["login"] for a in issue_dict["assignees"]]
+                
+            issue_with_metrics.assignee = assignee
+            issue_with_metrics.assignees = assignees
 
             # Check if issue is actually a pull request
             pull_request, ready_for_review_at = None, None

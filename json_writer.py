@@ -177,6 +177,8 @@ def write_to_json(
                 "title": issue.title,
                 "html_url": issue.html_url,
                 "author": issue.author,
+                "assignee": issue.assignee,
+                "assignees": issue.assignees,
                 "time_to_first_response": str(issue.time_to_first_response),
                 "time_to_close": str(issue.time_to_close),
                 "time_to_answer": str(issue.time_to_answer),
