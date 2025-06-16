@@ -1,9 +1,9 @@
 black==25.1.0
 flake8==7.2.0
-mypy==1.16.0
+mypy==1.16.1
 mypy-extensions==1.1.0
 pylint==3.3.7
 pytest==8.4.0
-pytest-cov==6.1.1
+pytest-cov==6.2.1
 types-pytz==2025.2.0.20250516
-types-requests==2.32.0.20250602
+types-requests==2.32.4.20250611
