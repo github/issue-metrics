@@ -255,7 +255,8 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| Issue 1 | https://github.com/user/repo/issues/1 | [charlie](https://github.com/charlie) | "
             "[alice](https://github.com/alice) | 1 day, 0:00:00 | 2 days, 0:00:00 | 3 days, 0:00:00 | "
             "1 day, 0:00:00 | 1 day, 0:00:00 | -5 days, 0:00:00 |\n"
-            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | None | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
+            "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | None | "
+            "[bob](https://github.com/bob) | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 | -5 days, 0:00:00 |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )

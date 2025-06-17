@@ -4,6 +4,7 @@ import os
 import unittest
 from unittest.mock import patch
 
+from classes import IssueWithMetrics
 from markdown_writer import get_non_hidden_columns
 
 
@@ -97,13 +98,15 @@ class TestAssigneeFunctionality(unittest.TestCase):
 
     def test_multiple_assignees_rendering_logic(self):
         """Test that multiple assignees are rendered correctly in assignee column."""
-        from io import StringIO
-
-        from classes import IssueWithMetrics
 
         # Test the assignee rendering logic directly
         endpoint = "github.com"
         columns = ["Title", "URL", "Assignee", "Author"]
+
+        # Initialize variables
+        multiple_output = ""
+        single_output = ""
+        none_output = ""
 
         # Test case 1: Multiple assignees
         issue_multiple = IssueWithMetrics(
@@ -125,7 +128,10 @@ class TestAssigneeFunctionality(unittest.TestCase):
             else:
                 multiple_output = " None |"
 
-        expected_multiple = " [alice](https://github.com/alice), [bob](https://github.com/bob), [charlie](https://github.com/charlie) |"
+        expected_multiple = (
+            " [alice](https://github.com/alice), [bob](https://github.com/bob), "
+            "[charlie](https://github.com/charlie) |"
+        )
         self.assertEqual(
             multiple_output,
             expected_multiple,
