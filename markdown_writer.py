@@ -55,6 +55,10 @@ def get_non_hidden_columns(labels) -> List[str]:
     env_vars = get_env_vars()
 
     # Find the number of columns and which are to be hidden
+    hide_assignee = env_vars.hide_assignee
+    if not hide_assignee:
+        columns.append("Assignee")
+
     hide_author = env_vars.hide_author
     if not hide_author:
         columns.append("Author")
@@ -203,6 +207,15 @@ def write_to_markdown(
                 )
             else:
                 file.write(f"| {issue.title} | {issue.html_url} |")
+            if "Assignee" in columns:
+                if issue.assignees:
+                    assignee_links = [
+                        f"[{assignee}](https://{endpoint}/{assignee})"
+                        for assignee in issue.assignees
+                    ]
+                    file.write(f" {', '.join(assignee_links)} |")
+                else:
+                    file.write(" None |")
             if "Author" in columns:
                 file.write(f" [{issue.author}](https://{endpoint}/{issue.author}) |")
             if "Time to first response" in columns:
