@@ -208,11 +208,12 @@ def write_to_markdown(
             else:
                 file.write(f"| {issue.title} | {issue.html_url} |")
             if "Assignee" in columns:
-                if issue.assignee:
-                    file.write(
-                        f" [{issue.assignee}](https://{endpoint}/"
-                        f"{issue.assignee}) |"
-                    )
+                if issue.assignees:
+                    assignee_links = [
+                        f"[{assignee}](https://{endpoint}/{assignee})"
+                        for assignee in issue.assignees
+                    ]
+                    file.write(f" {', '.join(assignee_links)} |")
                 else:
                     file.write(" None |")
             if "Author" in columns:
