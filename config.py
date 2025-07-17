@@ -39,6 +39,8 @@ class EnvVars:
         hide_time_to_close (bool): If true, the time to close metric is hidden in the output
         hide_time_to_first_response (bool): If true, the time to first response metric is hidden
             in the output
+        hide_created_at (bool): If true, the created at timestamp is hidden in the output
+        hide_status (bool): If true, the status column is hidden in the output
         ignore_users (List[str]): List of usernames to ignore when calculating metrics
         labels_to_measure (List[str]): List of labels to measure how much time the label is applied
         enable_mentor_count (bool): If set to TRUE, compute number of mentors
@@ -73,6 +75,7 @@ class EnvVars:
         hide_time_to_close: bool,
         hide_time_to_first_response: bool,
         hide_created_at: bool,
+        hide_status: bool,  # New attribute
         ignore_user: List[str],
         labels_to_measure: List[str],
         enable_mentor_count: bool,
@@ -102,6 +105,7 @@ class EnvVars:
         self.hide_time_to_close = hide_time_to_close
         self.hide_time_to_first_response = hide_time_to_first_response
         self.hide_created_at = hide_created_at
+        self.hide_status = hide_status  # Initialize the new attribute
         self.enable_mentor_count = enable_mentor_count
         self.min_mentor_comments = min_mentor_comments
         self.max_comments_eval = max_comments_eval
@@ -238,6 +242,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     hide_time_to_close = get_bool_env_var("HIDE_TIME_TO_CLOSE", False)
     hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE", False)
     hide_created_at = get_bool_env_var("HIDE_CREATED_AT", True)
+    hide_status = get_bool_env_var("HIDE_STATUS", True)  # New attribute
     enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT", False)
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
@@ -259,6 +264,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         hide_time_to_close,
         hide_time_to_first_response,
         hide_created_at,
+        hide_status,
         ignore_users_list,
         labels_to_measure_list,
         enable_mentor_count,

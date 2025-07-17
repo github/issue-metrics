@@ -75,6 +75,34 @@ class TestAssigneeFunctionality(unittest.TestCase):
         self.assertNotIn("Assignee", columns)
         self.assertNotIn("Author", columns)
 
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "HIDE_STATUS": "false",
+        },
+        clear=True,
+    )
+    def test_get_non_hidden_columns_includes_status_by_default(self):
+        """Test that status column is included by default."""
+        columns = get_non_hidden_columns(labels=None)
+        self.assertIn("Status", columns)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:issue is:open repo:user/repo",
+            "HIDE_STATUS": "true",
+        },
+        clear=True,
+    )
+    def test_get_non_hidden_columns_hides_status_when_env_set(self):
+        """Test that status column is hidden when HIDE_STATUS is true."""
+        columns = get_non_hidden_columns(labels=None)
+        self.assertNotIn("Status", columns)
+
     def test_assignee_column_position(self):
         """Test that assignee column appears before author column."""
         with patch.dict(
