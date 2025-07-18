@@ -75,6 +75,10 @@ def get_non_hidden_columns(labels) -> List[str]:
     if not hide_time_to_answer:
         columns.append("Time to answer")
 
+    hide_status = env_vars.hide_status
+    if not hide_status:
+        columns.append("Status")
+
     enable_time_in_draft = env_vars.draft_pr_tracking
     if enable_time_in_draft:
         columns.append("Time in draft")
@@ -232,6 +236,8 @@ def write_to_markdown(
                         file.write(f" {issue.label_metrics[label]} |")
             if "Created At" in columns:
                 file.write(f" {issue.created_at} |")
+            if "Status" in columns:
+                file.write(f" {issue.status} |")
             file.write("\n")
         file.write(
             "\n_This report was generated with the \
@@ -324,6 +330,8 @@ def write_overall_metrics_tables(
                         f"| {stats_time_in_labels['med'][label]} "
                         f"| {stats_time_in_labels['90p'][label]} |\n"
                     )
+        if "Status" in columns:  # Add logic for the 'status' column
+            file.write("| Status | | | |\n")
 
         file.write("\n")
     # Write count stats to a separate table

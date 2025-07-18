@@ -24,6 +24,7 @@ class IssueWithMetrics:
         label_metrics (dict, optional): A dictionary containing the label metrics
         mentor_activity (dict, optional): A dictionary containing active mentors
         created_at (datetime, optional): The time the issue was created.
+        status (str, optional): The status of the issue, e.g., "open", "closed as completed",
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -42,6 +43,7 @@ class IssueWithMetrics:
         created_at=None,
         assignee=None,
         assignees=None,
+        status=None,
     ):
         self.title = title
         self.html_url = html_url
@@ -55,3 +57,4 @@ class IssueWithMetrics:
         self.label_metrics = labels_metrics
         self.mentor_activity = mentor_activity
         self.created_at = created_at
+        self.status = status
