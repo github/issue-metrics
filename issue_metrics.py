@@ -179,7 +179,7 @@ def get_per_issue_metrics(
                     issue_with_metrics.status = f"{issue.issue.state} as {issue.issue.state_reason}"  # type: ignore
             elif issue.state == "open":  # type: ignore
                 num_issues_open += 1
-                if env_vars.hide_status is False:
+                if not env_vars.hide_status:
                     issue_with_metrics.status = f"{issue.issue.state}"  # type: ignore
         if not env_vars.hide_created_at:
             if isinstance(issue, github3.search.IssueSearchResult):  # type: ignore
