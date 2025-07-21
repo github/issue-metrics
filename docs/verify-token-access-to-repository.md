@@ -4,7 +4,7 @@ GitHub PAT token access can be confusing. Here's a quick way to test if the toke
 
 **Remove this snippet after you've verified your token.**
 
-- Make sure you follow the token setup instructions [here](https://github.com/github/issue-metrics/tree/main?tab=readme-ov-file#use-as-a-github-action) first.
+- Make sure you follow the token setup instructions [in the `README.md`](https://github.com/github/issue-metrics/tree/main?tab=readme-ov-file#use-as-a-github-action) first.
 
 - Replace `{owner/repo}` with your own repository information.
 
