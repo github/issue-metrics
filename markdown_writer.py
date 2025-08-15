@@ -75,10 +75,6 @@ def get_non_hidden_columns(labels) -> List[str]:
     if not hide_time_to_answer:
         columns.append("Time to answer")
 
-    hide_status = env_vars.hide_status
-    if not hide_status:
-        columns.append("Status")
-
     enable_time_in_draft = env_vars.draft_pr_tracking
     if enable_time_in_draft:
         columns.append("Time in draft")
@@ -90,6 +86,10 @@ def get_non_hidden_columns(labels) -> List[str]:
     hide_created_at = env_vars.hide_created_at
     if not hide_created_at:
         columns.append("Created At")
+
+    hide_status = env_vars.hide_status
+    if not hide_status:
+        columns.append("Status")
 
     return columns
 
