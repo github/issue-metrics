@@ -130,7 +130,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
 
     def test_time_in_draft_with_attribute_error_scenario(self):
         """
-        Test measure_time_in_draft to ensure it doesn't raise AttributeError when called 
+        Test measure_time_in_draft to ensure it doesn't raise AttributeError when called
         with issue structure similar to what get_per_issue_metrics passes.
         This test reproduces the original bug scenario.
         """
@@ -144,7 +144,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
         ]
-        
+
         # This should NOT raise AttributeError: events
         with unittest.mock.patch("time_in_draft.datetime") as mock_datetime:
             mock_datetime.now.return_value = datetime(2021, 1, 4, tzinfo=pytz.utc)
