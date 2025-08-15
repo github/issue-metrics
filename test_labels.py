@@ -93,6 +93,69 @@ class TestLabels(unittest.TestCase):
         metrics = get_label_metrics(self.issue, labels)
         self.assertEqual(metrics["foo"], None)
 
+    def test_get_label_metrics_closed_issue_label_removed_before_closure(self):
+        """Test get_label_metrics for a closed issue where label was removed before closure"""
+        # Create a mock issue that reproduces the problem scenario:
+        # Issue created: day 0 (2021-01-01)
+        # Label added: day 5 (2021-01-06)
+        # Label removed: day 10 (2021-01-11)
+        # Issue closed: day 15 (2021-01-16)
+        # Expected duration: 5 days (from day 5 to day 10)
+
+        issue = MagicMock()
+        issue.issue = MagicMock(spec=github3.issues.Issue)
+        issue.created_at = "2021-01-01T00:00:00Z"
+        issue.closed_at = "2021-01-16T00:00:00Z"  # 15 days after creation
+        issue.state = "closed"
+        issue.issue.events.return_value = [
+            MagicMock(
+                event="labeled",
+                label={"name": "test-label"},
+                created_at=datetime(2021, 1, 6, tzinfo=pytz.UTC),  # day 5
+            ),
+            MagicMock(
+                event="unlabeled",
+                label={"name": "test-label"},
+                created_at=datetime(2021, 1, 11, tzinfo=pytz.UTC),  # day 10
+            ),
+        ]
+
+        labels = ["test-label"]
+        metrics = get_label_metrics(issue, labels)
+
+        # Should be 5 days (from day 5 to day 10), not 15 days (full issue duration)
+        expected_duration = timedelta(days=5)
+        self.assertEqual(metrics["test-label"], expected_duration)
+
+    def test_get_label_metrics_closed_issue_label_remains_through_closure(self):
+        """Test get_label_metrics for a closed issue where label remains applied through closure"""
+        # Test scenario where label is applied and never removed:
+        # Issue created: day 0 (2021-01-01)
+        # Label added: day 2 (2021-01-03)
+        # Issue closed: day 10 (2021-01-11)
+        # Expected duration: 10 days (from issue creation to closure)
+
+        issue = MagicMock()
+        issue.issue = MagicMock(spec=github3.issues.Issue)
+        issue.created_at = "2021-01-01T00:00:00Z"
+        issue.closed_at = "2021-01-11T00:00:00Z"  # 10 days after creation
+        issue.state = "closed"
+        issue.issue.events.return_value = [
+            MagicMock(
+                event="labeled",
+                label={"name": "stays-applied"},
+                created_at=datetime(2021, 1, 3, tzinfo=pytz.UTC),  # day 2
+            ),
+            # No unlabel event - label remains applied
+        ]
+
+        labels = ["stays-applied"]
+        metrics = get_label_metrics(issue, labels)
+
+        # Should be 8 days (from day 2 when label was applied to day 10 when issue closed)
+        expected_duration = timedelta(days=8)
+        self.assertEqual(metrics["stays-applied"], expected_duration)
+
 
 class TestGetAverageTimeInLabels(unittest.TestCase):
     """Unit tests for get_stats_time_in_labels"""
