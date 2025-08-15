@@ -156,7 +156,9 @@ class TestLabels(unittest.TestCase):
         expected_duration = timedelta(days=8)
         self.assertEqual(metrics["stays-applied"], expected_duration)
 
-    def test_get_label_metrics_label_applied_at_creation_and_removed_before_closure(self):
+    def test_get_label_metrics_label_applied_at_creation_and_removed_before_closure(
+        self,
+    ):
         """Test get_label_metrics for a label applied at issue creation and removed before closure"""
         # Test scenario where label is applied at creation and later removed:
         # Issue created: day 0 (2021-01-01) with label applied
