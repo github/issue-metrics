@@ -3,7 +3,7 @@
 """
 Test to verify that the Status and Created At columns have their content aligned with headers.
 
-This test specifically validates the fix for issue #568 where the Status and Created At 
+This test specifically validates the fix for issue #568 where the Status and Created At
 columns had their data swapped.
 """
 
@@ -13,7 +13,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from classes import IssueWithMetrics
-from markdown_writer import write_to_markdown
+from markdown_writer import get_non_hidden_columns, write_to_markdown
 
 
 @patch.dict(
@@ -30,7 +30,7 @@ class TestColumnOrderFix(unittest.TestCase):
 
     def test_status_and_created_at_columns_alignment(self):
         """Test that Status and Created At columns show correct data values.
-        
+
         This test specifically validates that:
         1. The Status column contains actual status values (not dates)
         2. The Created At column contains actual date values (not status)
@@ -78,30 +78,41 @@ class TestColumnOrderFix(unittest.TestCase):
 
         # The table should have the columns in the correct order
         # and the data should be properly aligned
-        self.assertIn("| Title | URL | Assignee | Author | Time to first response | Time to close | Time to answer | Created At | Status |", content)
-        
+        expected_header = (
+            "| Title | URL | Assignee | Author | Time to first response | "
+            "Time to close | Time to answer | Created At | Status |"
+        )
+        self.assertIn(expected_header, content)
+
         # Verify the data row has correct values in correct positions
         # The Created At column should contain the date value
         # The Status column should contain the status value
-        self.assertIn("| Test Issue | https://github.com/user/repo/issues/1 | [assignee1](https://github.com/assignee1) | [testuser](https://github.com/testuser) | 1 day, 0:00:00 | 2 days, 0:00:00 | 3 days, 0:00:00 | 2023-01-01T00:00:00Z | open |", content)
-        
+        expected_row = (
+            "| Test Issue | https://github.com/user/repo/issues/1 | "
+            "[assignee1](https://github.com/assignee1) | "
+            "[testuser](https://github.com/testuser) | 1 day, 0:00:00 | "
+            "2 days, 0:00:00 | 3 days, 0:00:00 | 2023-01-01T00:00:00Z | open |"
+        )
+        self.assertIn(expected_row, content)
+
         # Clean up
         os.remove("test_column_order.md")
 
     def test_get_non_hidden_columns_order(self):
         """Test that get_non_hidden_columns returns columns in the correct order."""
-        from markdown_writer import get_non_hidden_columns
-        
         columns = get_non_hidden_columns(labels=None)
-        
+
         # Find the indices of the Status and Created At columns
         try:
             created_at_index = columns.index("Created At")
             status_index = columns.index("Status")
-            
+
             # Status should come after Created At
-            self.assertGreater(status_index, created_at_index, 
-                              "Status column should come after Created At column")
+            self.assertGreater(
+                status_index,
+                created_at_index,
+                "Status column should come after Created At column",
+            )
         except ValueError:
             # If one of the columns is hidden, that's fine, but we shouldn't get here
             # given our environment variables
