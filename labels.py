@@ -85,11 +85,14 @@ def get_label_metrics(issue: github3.issues.Issue, labels: List[str]) -> dict:
         if label in labeled:
             # if the issue is closed, add the time from the issue creation to the closed_at time
             if issue.state == "closed":
+                # Only add the final (closed_at - created_at) span if the label was still applied at closure.
+                if label_last_event_type.get(label) != "labeled":
+                    continue
                 label_metrics[label] += datetime.fromisoformat(
                     issue.closed_at
                 ) - datetime.fromisoformat(issue.created_at)
             else:
-                # skip label if last labeling event is 'unlabled' and issue is still open
+                # skip label if last labeling event is 'unlabeled' and issue is still open
                 if label_last_event_type[label] == "unlabeled":
                     continue
 
