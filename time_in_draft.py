@@ -22,7 +22,7 @@ def measure_time_in_draft(
     returns:
         Union[timedelta, None]: Total time the pull request has spent in draft state.
     """
-    events = issue.events()
+    events = issue.issue.events()
     draft_start = None
     total_draft_time = timedelta(0)
 
