@@ -365,6 +365,71 @@ class TestGetPerIssueMetrics(unittest.TestCase):
             expected_issues_with_metrics[0].time_to_close,
         )
 
+    @patch.dict(
+        os.environ,
+        {
+            "GH_TOKEN": "test_token",
+            "SEARCH_QUERY": "is:pr is:open repo:user/repo",
+        },
+    )
+    def test_get_per_issue_metrics_with_ghost_user_pull_request(self):
+        """
+        Test that the function handles TypeError when a pull request
+        contains a ghost user (deleted account) gracefully.
+        """
+        # Create mock data for a pull request that will cause TypeError on pull_request()
+        mock_issue = MagicMock(
+            title="PR with Ghost User",
+            html_url="https://github.com/user/repo/pull/1",
+            user={"login": "existing_user"},
+            state="open",
+            comments=0,
+            created_at="2023-01-01T00:00:00Z",
+            closed_at=None,
+        )
+
+        # Mock the issue to have pull_request_urls (indicating it's a PR)
+        mock_issue.issue.pull_request_urls = [
+            "https://api.github.com/repos/user/repo/pulls/1"
+        ]
+
+        # Make pull_request() raise TypeError (simulating ghost user scenario)
+        mock_issue.issue.pull_request.side_effect = TypeError(
+            "'NoneType' object is not subscriptable"
+        )
+        mock_issue.issue.comments.return_value = []
+        mock_issue.issue.assignee = None
+        mock_issue.issue.assignees = None
+
+        issues = [mock_issue]
+
+        # Mock the measure functions to avoid additional complexities
+        with unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_first_response",
+            return_value=timedelta(days=1),
+        ), unittest.mock.patch(  # type:ignore
+            "issue_metrics.measure_time_to_close", return_value=None
+        ):
+            # Call the function and verify it doesn't crash
+            (
+                result_issues_with_metrics,
+                result_num_issues_open,
+                result_num_issues_closed,
+            ) = get_per_issue_metrics(
+                issues,
+                env_vars=get_env_vars(test=True),
+            )
+
+        # Verify the function completed successfully despite the TypeError
+        self.assertEqual(len(result_issues_with_metrics), 1)
+        self.assertEqual(result_num_issues_open, 1)
+        self.assertEqual(result_num_issues_closed, 0)
+
+        # Verify the issue was processed with pull_request as None
+        issue_metric = result_issues_with_metrics[0]
+        self.assertEqual(issue_metric.title, "PR with Ghost User")
+        self.assertEqual(issue_metric.author, "existing_user")
+
 
 class TestDiscussionMetrics(unittest.TestCase):
     """Test suite for the discussion_metrics function."""
