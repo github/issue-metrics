@@ -139,11 +139,18 @@ def get_per_issue_metrics(
             # Check if issue is actually a pull request
             pull_request, ready_for_review_at = None, None
             if issue.issue.pull_request_urls:  # type: ignore
-                pull_request = issue.issue.pull_request()  # type: ignore
-                ready_for_review_at = get_time_to_ready_for_review(issue, pull_request)
-                if env_vars.draft_pr_tracking:
-                    issue_with_metrics.time_in_draft = measure_time_in_draft(
-                        issue=issue
+                try:
+                    pull_request = issue.issue.pull_request()  # type: ignore
+                    ready_for_review_at = get_time_to_ready_for_review(
+                        issue, pull_request
+                    )
+                    if env_vars.draft_pr_tracking:
+                        issue_with_metrics.time_in_draft = measure_time_in_draft(
+                            issue=issue
+                        )
+                except TypeError as e:
+                    print(
+                        f"An error occurred processing review comments. Perhaps the review contains a ghost user. {e}"
                     )
 
             if env_vars.hide_time_to_first_response is False:
