@@ -404,10 +404,10 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         issues = [mock_issue]
 
         # Mock the measure functions to avoid additional complexities
-        with unittest.mock.patch(  # type:ignore
+        with unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_first_response",
             return_value=timedelta(days=1),
-        ), unittest.mock.patch(  # type:ignore
+        ), unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_close", return_value=None
         ):
             # Call the function and verify it doesn't crash
