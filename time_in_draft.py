@@ -13,11 +13,13 @@ from classes import IssueWithMetrics
 
 def measure_time_in_draft(
     issue: github3.issues.Issue,
+    pull_request: Union[github3.pulls.PullRequest, None] = None,
 ) -> Union[timedelta, None]:
     """If a pull request has had time in the draft state, return the cumulative amount of time it was in draft.
 
     args:
         issue (github3.issues.Issue): A GitHub issue which has been pre-qualified as a pull request.
+        pull_request (github3.pulls.PullRequest, optional): The pull request object.
 
     returns:
         Union[timedelta, None]: Total time the pull request has spent in draft state.
@@ -25,6 +27,54 @@ def measure_time_in_draft(
     events = issue.issue.events()
     draft_start = None
     total_draft_time = timedelta(0)
+
+    # Check if PR was initially created as draft
+    pr_created_at = None
+
+    try:
+        if pull_request is None:
+            pull_request = issue.issue.pull_request()
+
+        pr_created_at = datetime.fromisoformat(
+            issue.issue.created_at.replace("Z", "+00:00")
+        )
+
+        # Look for ready_for_review events to determine if PR was initially draft
+        ready_for_review_events = []
+        converted_to_draft_events = []
+        for event in events:
+            if event.event == "ready_for_review":
+                ready_for_review_events.append(event)
+            elif event.event == "converted_to_draft":
+                converted_to_draft_events.append(event)
+
+        # If there are ready_for_review events, check if PR was initially draft
+        if ready_for_review_events:
+            first_ready_event = min(ready_for_review_events, key=lambda x: x.created_at)
+            prior_draft_events = [
+                e
+                for e in converted_to_draft_events
+                if e.created_at < first_ready_event.created_at
+            ]
+
+            if not prior_draft_events:
+                # PR was initially created as draft, calculate time from creation to first ready_for_review
+                total_draft_time += first_ready_event.created_at - pr_created_at
+
+        # If there are no ready_for_review events but the PR is currently draft, it might be initially draft and still open
+        elif not ready_for_review_events and not converted_to_draft_events:
+            # Check if PR is currently draft and open
+            if (
+                hasattr(pull_request, "draft")
+                and pull_request.draft
+                and issue.issue.state == "open"
+            ):
+                # PR was initially created as draft and is still draft
+                draft_start = pr_created_at
+
+    except (AttributeError, ValueError, TypeError):
+        # If we can't get PR info, fall back to original logic
+        pass
 
     for event in events:
         if event.event == "converted_to_draft":
