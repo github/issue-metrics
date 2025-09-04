@@ -40,12 +40,13 @@ def measure_time_in_draft(
         )
 
         # Look for ready_for_review events to determine if PR was initially draft
-        ready_for_review_events = [
-            event for event in events if event.event == "ready_for_review"
-        ]
-        converted_to_draft_events = [
-            event for event in events if event.event == "converted_to_draft"
-        ]
+        ready_for_review_events = []
+        converted_to_draft_events = []
+        for event in events:
+            if event.event == "ready_for_review":
+                ready_for_review_events.append(event)
+            elif event.event == "converted_to_draft":
+                converted_to_draft_events.append(event)
 
         # If there are ready_for_review events, check if PR was initially draft
         if ready_for_review_events:
