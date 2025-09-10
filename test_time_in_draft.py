@@ -128,6 +128,58 @@ class TestMeasureTimeInDraft(unittest.TestCase):
             "The result should be None for a closed issue with an ongoing draft.",
         )
 
+    def test_time_in_draft_initially_created_as_draft(self):
+        """
+        Test measure_time_in_draft with a PR initially created as draft.
+        """
+        # Set up issue created_at time
+        self.issue.issue.created_at = "2021-01-01T00:00:00Z"
+
+        # Mock events with only ready_for_review (no converted_to_draft)
+        self.issue.issue.events.return_value = [
+            MagicMock(
+                event="ready_for_review",
+                created_at=datetime(2021, 1, 3, tzinfo=pytz.utc),
+            ),
+        ]
+
+        # Mock pull request object
+        mock_pull_request = MagicMock()
+
+        result = measure_time_in_draft(self.issue, mock_pull_request)
+        expected = timedelta(days=2)
+        self.assertEqual(
+            result,
+            expected,
+            "The time in draft should be 2 days for initially draft PR.",
+        )
+
+    def test_time_in_draft_initially_created_as_draft_still_open(self):
+        """
+        Test measure_time_in_draft with a PR initially created as draft and still in draft.
+        """
+        # Set up issue created_at time
+        self.issue.issue.created_at = "2021-01-01T00:00:00Z"
+
+        # Mock events with no ready_for_review events (still draft)
+        self.issue.issue.events.return_value = []
+
+        # Mock pull request object indicating it's currently draft
+        mock_pull_request = MagicMock()
+        mock_pull_request.draft = True
+
+        with unittest.mock.patch("time_in_draft.datetime") as mock_datetime:
+            # Keep the real datetime class but only mock the now() method
+            mock_datetime.fromisoformat = datetime.fromisoformat
+            mock_datetime.now.return_value = datetime(2021, 1, 4, tzinfo=pytz.utc)
+            result = measure_time_in_draft(self.issue, mock_pull_request)
+            expected = timedelta(days=3)
+            self.assertEqual(
+                result,
+                expected,
+                "The time in draft should be 3 days for initially draft PR still in draft.",
+            )
+
     def test_time_in_draft_with_attribute_error_scenario(self):
         """
         Test measure_time_in_draft to ensure it doesn't raise AttributeError when called

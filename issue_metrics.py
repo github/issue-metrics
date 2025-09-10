@@ -146,7 +146,7 @@ def get_per_issue_metrics(
                     )
                     if env_vars.draft_pr_tracking:
                         issue_with_metrics.time_in_draft = measure_time_in_draft(
-                            issue=issue
+                            issue=issue, pull_request=pull_request
                         )
                 except TypeError as e:
                     print(
