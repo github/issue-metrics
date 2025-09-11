@@ -15,5 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Build the Docker image
         run: docker build . --file Dockerfile --platform linux/amd64 --tag issue-metrics:"$(date +%s)"
