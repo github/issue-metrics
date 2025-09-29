@@ -107,6 +107,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_to_answer=time_to_answer,
             average_time_in_draft=time_in_draft,
             average_time_in_labels=time_in_labels,
+            stats_pr_comments=None,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,
@@ -226,6 +227,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             average_time_to_answer=average_time_to_answer,
             average_time_in_draft=average_time_in_draft,
             average_time_in_labels=average_time_in_labels,
+            stats_pr_comments=None,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,
@@ -272,6 +274,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         # Call the function with no issues
         with patch("builtins.open", mock_open()) as mock_open_file:
             write_to_markdown(
+                None,
                 None,
                 None,
                 None,
@@ -378,8 +381,9 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             average_time_to_first_response=average_time_to_first_response,
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
-            average_time_in_labels=average_time_in_labels,
             average_time_in_draft=average_time_in_draft,
+            average_time_in_labels=average_time_in_labels,
+            stats_pr_comments=None,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,
@@ -409,7 +413,8 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| --- | --- | --- | --- | --- | --- |\n"
             "| Issue 1 | https://www.ghe.com/user/repo/issues/1 | [charlie](https://ghe.com/charlie) | "
             "[alice](https://ghe.com/alice) | -5 days, 0:00:00 | None |\n"
-            "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | None | [bob](https://ghe.com/bob) | -5 days, 0:00:00 | None |\n\n"
+            "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | None | "
+            "[bob](https://ghe.com/bob) | -5 days, 0:00:00 | None |\n\n"
             "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
@@ -487,8 +492,9 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             average_time_to_first_response=average_time_to_first_response,
             average_time_to_close=average_time_to_close,
             average_time_to_answer=average_time_to_answer,
-            average_time_in_labels=average_time_in_labels,
             average_time_in_draft=average_time_in_draft,
+            average_time_in_labels=average_time_in_labels,
+            stats_pr_comments=None,
             num_issues_opened=num_issues_opened,
             num_issues_closed=num_issues_closed,
             num_mentor_count=num_mentor_count,

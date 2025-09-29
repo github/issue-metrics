@@ -25,6 +25,7 @@ class IssueWithMetrics:
         mentor_activity (dict, optional): A dictionary containing active mentors
         created_at (datetime, optional): The time the issue was created.
         status (str, optional): The status of the issue, e.g., "open", "closed as completed",
+        pr_comment_count (int, optional): The number of comments on the PR (excluding bots).
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -44,6 +45,7 @@ class IssueWithMetrics:
         assignee=None,
         assignees=None,
         status=None,
+        pr_comment_count=None,
     ):
         self.title = title
         self.html_url = html_url
@@ -58,3 +60,4 @@ class IssueWithMetrics:
         self.mentor_activity = mentor_activity
         self.created_at = created_at
         self.status = status
+        self.pr_comment_count = pr_comment_count

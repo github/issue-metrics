@@ -78,6 +78,7 @@ class TestGetEnvVars(unittest.TestCase):
             "HIDE_TIME_TO_ANSWER",
             "HIDE_TIME_TO_CLOSE",
             "HIDE_TIME_TO_FIRST_RESPONSE",
+            "HIDE_PR_STATISTICS",
             "IGNORE_USERS",
             "LABELS_TO_MEASURE",
             "NON_MENTIONING_LINKS",
@@ -291,6 +292,7 @@ class TestGetEnvVars(unittest.TestCase):
             output_file="issue_metrics.md",
             rate_limit_bypass=True,
             draft_pr_tracking=True,
+            hide_pr_statistics=True,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -336,6 +338,7 @@ class TestGetEnvVars(unittest.TestCase):
             output_file="",
             rate_limit_bypass=False,
             draft_pr_tracking=False,
+            hide_pr_statistics=True,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))

@@ -59,6 +59,7 @@ class TestColumnOrderFix(unittest.TestCase):
             average_time_to_answer=None,
             average_time_in_draft=None,
             average_time_in_labels=None,
+            stats_pr_comments=None,
             num_issues_opened=1,
             num_issues_closed=0,
             num_mentor_count=0,

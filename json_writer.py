@@ -33,6 +33,7 @@ def write_to_json(
     stats_time_to_answer: Union[dict[str, timedelta], None],
     stats_time_in_draft: Union[dict[str, timedelta], None],
     stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
+    stats_pr_comments: Union[dict[str, float], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     num_mentor_count: Union[int, None],
@@ -142,6 +143,15 @@ def write_to_json(
         for label, time in stats_time_in_labels["90p"].items():
             p90_time_in_labels[label] = str(time)
 
+    # PR comments statistics
+    average_pr_comments = None
+    med_pr_comments = None
+    p90_pr_comments = None
+    if stats_pr_comments is not None:
+        average_pr_comments = stats_pr_comments["avg"]
+        med_pr_comments = stats_pr_comments["med"]
+        p90_pr_comments = stats_pr_comments["90p"]
+
     # Create a dictionary with the metrics
     metrics: dict[str, Any] = {
         "average_time_to_first_response": str(average_time_to_first_response),
@@ -159,6 +169,9 @@ def write_to_json(
         "90_percentile_time_to_answer": str(p90_time_to_answer),
         "90_percentile_time_in_draft": str(p90_time_in_draft),
         "90_percentile_time_in_labels": p90_time_in_labels,
+        "average_pr_comments": average_pr_comments,
+        "median_pr_comments": med_pr_comments,
+        "90_percentile_pr_comments": p90_pr_comments,
         "num_items_opened": num_issues_opened,
         "num_items_closed": num_issues_closed,
         "num_mentor_count": num_mentor_count,
@@ -184,6 +197,7 @@ def write_to_json(
                 "time_to_answer": str(issue.time_to_answer),
                 "time_in_draft": str(issue.time_in_draft),
                 "label_metrics": formatted_label_metrics,
+                "pr_comment_count": issue.pr_comment_count,
                 "created_at": str(issue.created_at),
             }
         )

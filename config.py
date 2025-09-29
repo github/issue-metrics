@@ -57,6 +57,7 @@ class EnvVars:
         rate_limit_bypass (bool): If set to TRUE, bypass the rate limit for the GitHub API
         draft_pr_tracking (bool): If set to TRUE, track PR time in draft state
             in addition to other metrics
+        hide_pr_statistics (bool): If set to TRUE, hide PR comment statistics in the output
     """
 
     def __init__(
@@ -88,6 +89,7 @@ class EnvVars:
         output_file: str,
         rate_limit_bypass: bool = False,
         draft_pr_tracking: bool = False,
+        hide_pr_statistics: bool = True,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -116,6 +118,7 @@ class EnvVars:
         self.output_file = output_file
         self.rate_limit_bypass = rate_limit_bypass
         self.draft_pr_tracking = draft_pr_tracking
+        self.hide_pr_statistics = hide_pr_statistics
 
     def __repr__(self):
         return (
@@ -147,6 +150,7 @@ class EnvVars:
             f"{self.output_file}"
             f"{self.rate_limit_bypass}"
             f"{self.draft_pr_tracking}"
+            f"{self.hide_pr_statistics}"
         )
 
 
@@ -244,6 +248,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     hide_time_to_first_response = get_bool_env_var("HIDE_TIME_TO_FIRST_RESPONSE", False)
     hide_created_at = get_bool_env_var("HIDE_CREATED_AT", True)
     hide_status = get_bool_env_var("HIDE_STATUS", True)
+    hide_pr_statistics = get_bool_env_var("HIDE_PR_STATISTICS", True)
     enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT", False)
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
@@ -278,4 +283,5 @@ def get_env_vars(test: bool = False) -> EnvVars:
         output_file,
         rate_limit_bypass,
         draft_pr_tracking,
+        hide_pr_statistics,
     )
