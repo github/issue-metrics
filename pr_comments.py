@@ -112,9 +112,4 @@ def get_stats_pr_comments(
         "90p": ninety_percentile_comment_count,
     }
 
-    # Print the statistics
-    print(f"Average number of comments per PR: {average_comment_count}")
-    print(f"Median number of comments per PR: {median_comment_count}")
-    print(f"90th percentile of comments per PR: {ninety_percentile_comment_count}")
-
     return stats

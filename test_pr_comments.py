@@ -5,7 +5,6 @@ functions.
 """
 
 import unittest
-from datetime import timedelta
 from unittest.mock import MagicMock
 
 from classes import IssueWithMetrics
@@ -92,7 +91,9 @@ class TestCountPRComments(unittest.TestCase):
         mock_issue.issue.comments.side_effect = AttributeError("No comments")
 
         mock_pull_request = MagicMock()
-        mock_pull_request.review_comments.side_effect = AttributeError("No review comments")
+        mock_pull_request.review_comments.side_effect = AttributeError(
+            "No review comments"
+        )
 
         result = count_pr_comments(mock_issue, mock_pull_request, [])
         self.assertEqual(result, 0)

@@ -151,6 +151,7 @@ def write_to_markdown(
 
     """
     columns = get_non_hidden_columns(labels)
+    env_vars = get_env_vars()
     output_file_name = output_file if output_file else "issue_metrics.md"
     with open(output_file_name, "w", encoding="utf-8") as file:
         file.write(f"# {report_title}\n\n")
@@ -184,6 +185,7 @@ def write_to_markdown(
             hide_label_metrics,
             hide_items_closed_count,
             enable_mentor_count,
+            env_vars.hide_pr_statistics,
         )
 
         # Write second table with individual issue/pr/discussion metrics
@@ -274,9 +276,9 @@ def write_overall_metrics_tables(
     hide_label_metrics,
     hide_items_closed_count=False,
     enable_mentor_count=False,
+    hide_pr_statistics=True,
 ):
     """Write the overall metrics tables to the markdown file."""
-    env_vars = get_env_vars()
 
     if (
         any(
@@ -289,7 +291,7 @@ def write_overall_metrics_tables(
             ]
         )
         or (hide_label_metrics is False and len(labels) > 0)
-        or (not env_vars.hide_pr_statistics and stats_pr_comments is not None)
+        or (not hide_pr_statistics and stats_pr_comments is not None)
     ):
         file.write("| Metric | Average | Median | 90th percentile |\n")
         file.write("| --- | --- | --- | ---: |\n")
@@ -347,7 +349,7 @@ def write_overall_metrics_tables(
                     )
 
         # Add PR comment statistics if not hidden
-        if not env_vars.hide_pr_statistics and stats_pr_comments is not None:
+        if not hide_pr_statistics and stats_pr_comments is not None:
             file.write(
                 f"| Number of comments per PR "
                 f"| {stats_pr_comments['avg']} "

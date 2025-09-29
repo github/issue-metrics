@@ -21,7 +21,7 @@ Functions:
 import json
 import os
 from datetime import timedelta
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from classes import IssueWithMetrics
 
@@ -33,7 +33,7 @@ def write_to_json(
     stats_time_to_answer: Union[dict[str, timedelta], None],
     stats_time_in_draft: Union[dict[str, timedelta], None],
     stats_time_in_labels: Union[dict[str, dict[str, timedelta]], None],
-    stats_pr_comments: Union[dict[str, float], None],
+    stats_pr_comments: Union[Dict[str, float], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     num_mentor_count: Union[int, None],
