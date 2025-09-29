@@ -30,6 +30,7 @@ from labels import get_label_metrics, get_stats_time_in_labels
 from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_file
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
+from pr_comments import count_pr_comments, get_stats_pr_comments
 from search import get_owners_and_repositories, search_issues
 from time_in_draft import get_stats_time_in_draft, measure_time_in_draft
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
@@ -152,6 +153,12 @@ def get_per_issue_metrics(
                     print(
                         f"An error occurred processing review comments. Perhaps the review contains a ghost user. {e}"
                     )
+
+            # Count PR comments if this is a pull request and statistics are not hidden
+            if pull_request and not env_vars.hide_pr_statistics:
+                issue_with_metrics.pr_comment_count = count_pr_comments(
+                    issue, pull_request, ignore_users
+                )
 
             if env_vars.hide_time_to_first_response is False:
                 issue_with_metrics.time_to_first_response = (
@@ -302,6 +309,7 @@ def main():  # pragma: no cover
                 average_time_to_answer=None,
                 average_time_in_draft=None,
                 average_time_in_labels=None,
+                stats_pr_comments=None,
                 num_issues_opened=None,
                 num_issues_closed=None,
                 num_mentor_count=None,
@@ -329,6 +337,7 @@ def main():  # pragma: no cover
                 average_time_to_answer=None,
                 average_time_in_draft=None,
                 average_time_in_labels=None,
+                stats_pr_comments=None,
                 num_issues_opened=None,
                 num_issues_closed=None,
                 num_mentor_count=None,
@@ -362,6 +371,7 @@ def main():  # pragma: no cover
 
     stats_time_to_answer = get_stats_time_to_answer(issues_with_metrics)
     stats_time_in_draft = get_stats_time_in_draft(issues_with_metrics)
+    stats_pr_comments = get_stats_pr_comments(issues_with_metrics)
 
     num_mentor_count = 0
     if enable_mentor_count:
@@ -379,6 +389,7 @@ def main():  # pragma: no cover
         stats_time_to_answer=stats_time_to_answer,
         stats_time_in_draft=stats_time_in_draft,
         stats_time_in_labels=stats_time_in_labels,
+        stats_pr_comments=stats_pr_comments,
         num_issues_opened=num_issues_open,
         num_issues_closed=num_issues_closed,
         num_mentor_count=num_mentor_count,
@@ -393,6 +404,7 @@ def main():  # pragma: no cover
         average_time_to_answer=stats_time_to_answer,
         average_time_in_draft=stats_time_in_draft,
         average_time_in_labels=stats_time_in_labels,
+        stats_pr_comments=stats_pr_comments,
         num_issues_opened=num_issues_open,
         num_issues_closed=num_issues_closed,
         num_mentor_count=num_mentor_count,

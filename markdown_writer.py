@@ -91,6 +91,10 @@ def get_non_hidden_columns(labels) -> List[str]:
     if not hide_status:
         columns.append("Status")
 
+    hide_pr_statistics = env_vars.hide_pr_statistics
+    if not hide_pr_statistics:
+        columns.append("PR Comments")
+
     return columns
 
 
@@ -101,6 +105,7 @@ def write_to_markdown(
     average_time_to_answer: Union[dict[str, timedelta], None],
     average_time_in_draft: Union[dict[str, timedelta], None],
     average_time_in_labels: Union[dict, None],
+    stats_pr_comments: Union[dict[str, float], None],
     num_issues_opened: Union[int, None],
     num_issues_closed: Union[int, None],
     num_mentor_count: Union[int, None],
@@ -146,6 +151,7 @@ def write_to_markdown(
 
     """
     columns = get_non_hidden_columns(labels)
+    env_vars = get_env_vars()
     output_file_name = output_file if output_file else "issue_metrics.md"
     with open(output_file_name, "w", encoding="utf-8") as file:
         file.write(f"# {report_title}\n\n")
@@ -169,6 +175,7 @@ def write_to_markdown(
             average_time_to_answer,
             average_time_in_draft,
             average_time_in_labels,
+            stats_pr_comments,
             num_issues_opened,
             num_issues_closed,
             num_mentor_count,
@@ -178,6 +185,7 @@ def write_to_markdown(
             hide_label_metrics,
             hide_items_closed_count,
             enable_mentor_count,
+            env_vars.hide_pr_statistics,
         )
 
         # Write second table with individual issue/pr/discussion metrics
@@ -238,6 +246,8 @@ def write_to_markdown(
                 file.write(f" {issue.created_at} |")
             if "Status" in columns:
                 file.write(f" {issue.status} |")
+            if "PR Comments" in columns:
+                file.write(f" {issue.pr_comment_count or 'N/A'} |")
             file.write("\n")
         file.write(
             "\n_This report was generated with the \
@@ -256,6 +266,7 @@ def write_overall_metrics_tables(
     stats_time_to_answer,
     average_time_in_draft,
     stats_time_in_labels,
+    stats_pr_comments,
     num_issues_opened,
     num_issues_closed,
     num_mentor_count,
@@ -265,17 +276,23 @@ def write_overall_metrics_tables(
     hide_label_metrics,
     hide_items_closed_count=False,
     enable_mentor_count=False,
+    hide_pr_statistics=True,
 ):
     """Write the overall metrics tables to the markdown file."""
-    if any(
-        column in columns
-        for column in [
-            "Time to first response",
-            "Time to close",
-            "Time to answer",
-            "Time in draft",
-        ]
-    ) or (hide_label_metrics is False and len(labels) > 0):
+
+    if (
+        any(
+            column in columns
+            for column in [
+                "Time to first response",
+                "Time to close",
+                "Time to answer",
+                "Time in draft",
+            ]
+        )
+        or (hide_label_metrics is False and len(labels) > 0)
+        or (not hide_pr_statistics and stats_pr_comments is not None)
+    ):
         file.write("| Metric | Average | Median | 90th percentile |\n")
         file.write("| --- | --- | --- | ---: |\n")
         if "Time to first response" in columns:
@@ -330,6 +347,16 @@ def write_overall_metrics_tables(
                         f"| {stats_time_in_labels['med'][label]} "
                         f"| {stats_time_in_labels['90p'][label]} |\n"
                     )
+
+        # Add PR comment statistics if not hidden
+        if not hide_pr_statistics and stats_pr_comments is not None:
+            file.write(
+                f"| Number of comments per PR "
+                f"| {stats_pr_comments['avg']} "
+                f"| {stats_pr_comments['med']} "
+                f"| {stats_pr_comments['90p']} |\n"
+            )
+
         if "Status" in columns:  # Add logic for the 'status' column
             file.write("| Status | | | |\n")
 
