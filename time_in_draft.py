@@ -35,25 +35,23 @@ def measure_time_in_draft(
         if pull_request is None:
             pull_request = issue.issue.pull_request()
 
-        pr_created_at = datetime.fromisoformat(
-            issue.issue.created_at.replace("Z", "+00:00")
-        )
+        pr_created_at = issue.issue.created_at
 
         # Look for ready_for_review events to determine if PR was initially draft
         ready_for_review_events = []
-        converted_to_draft_events = []
+        convert_to_draft_events = []
         for event in events:
             if event.event == "ready_for_review":
                 ready_for_review_events.append(event)
-            elif event.event == "converted_to_draft":
-                converted_to_draft_events.append(event)
+            elif event.event == "convert_to_draft":
+                convert_to_draft_events.append(event)
 
         # If there are ready_for_review events, check if PR was initially draft
         if ready_for_review_events:
             first_ready_event = min(ready_for_review_events, key=lambda x: x.created_at)
             prior_draft_events = [
                 e
-                for e in converted_to_draft_events
+                for e in convert_to_draft_events
                 if e.created_at < first_ready_event.created_at
             ]
 
@@ -62,7 +60,7 @@ def measure_time_in_draft(
                 total_draft_time += first_ready_event.created_at - pr_created_at
 
         # If there are no ready_for_review events but the PR is currently draft, it might be initially draft and still open
-        elif not ready_for_review_events and not converted_to_draft_events:
+        elif not ready_for_review_events and not convert_to_draft_events:
             # Check if PR is currently draft and open
             if (
                 hasattr(pull_request, "draft")
@@ -77,7 +75,7 @@ def measure_time_in_draft(
         pass
 
     for event in events:
-        if event.event == "converted_to_draft":
+        if event.event == "convert_to_draft":
             draft_start = event.created_at
         elif event.event == "ready_for_review" and draft_start:
             # Calculate draft time for this interval
@@ -88,7 +86,12 @@ def measure_time_in_draft(
     if draft_start and issue.issue.state == "open":
         total_draft_time += datetime.now(pytz.utc) - draft_start
 
-    return total_draft_time if total_draft_time > timedelta(0) else None
+    # Round to the nearest second
+    return (
+        timedelta(seconds=round(total_draft_time.total_seconds()))
+        if total_draft_time > timedelta(0)
+        else None
+    )
 
 
 def get_stats_time_in_draft(
