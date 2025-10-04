@@ -531,6 +531,113 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
 
+    @patch.dict(
+        os.environ,
+        {
+            "SEARCH_QUERY": "is:open repo:user/repo",
+            "GH_TOKEN": "test_token",
+            "HIDE_CREATED_AT": "False",
+            "HIDE_TIME_TO_FIRST_RESPONSE": "True",
+            "HIDE_TIME_TO_CLOSE": "True",
+            "HIDE_TIME_TO_ANSWER": "True",
+            "HIDE_LABEL_METRICS": "True",
+            "NON_MENTIONING_LINKS": "True",
+            "GH_ENTERPRISE_URL": "https://ghe.com",
+            "HIDE_STATUS": "True",  # Status column should be hidden
+            "HIDE_ITEMS_LIST": "True",  # Hide the items list table
+        },
+    )
+    def test_writes_markdown_file_with_hidden_items_list(self):
+        """
+        Test that write_to_markdown writes the correct markdown file
+        when HIDE_ITEMS_LIST is set to True, ensuring the individual
+        items table is not present in the output.
+        """
+        # Create mock data
+        issues_with_metrics = [
+            IssueWithMetrics(
+                title="Issue 1",
+                html_url="https://ghe.com/user/repo/issues/1",
+                author="alice",
+                assignee="charlie",
+                assignees=["charlie"],
+                created_at=timedelta(days=-5),
+                time_to_first_response=timedelta(minutes=10),
+                time_to_close=timedelta(days=1),
+                time_to_answer=timedelta(hours=2),
+                time_in_draft=timedelta(days=1),
+                labels_metrics={
+                    "label1": timedelta(days=1),
+                },
+            ),
+            IssueWithMetrics(
+                title="Issue 2",
+                html_url="https://ghe.com/user/repo/issues/2",
+                author="bob",
+                assignee=None,
+                assignees=[],
+                created_at=timedelta(days=-5),
+                time_to_first_response=timedelta(minutes=20),
+                time_to_close=timedelta(days=2),
+                time_to_answer=timedelta(hours=4),
+                labels_metrics={
+                    "label1": timedelta(days=1),
+                },
+            ),
+        ]
+        average_time_to_first_response = timedelta(minutes=15)
+        average_time_to_close = timedelta(days=1.5)
+        average_time_to_answer = timedelta(hours=3)
+        average_time_in_draft = timedelta(days=1)
+        average_time_in_labels = {
+            "label1": timedelta(days=1),
+        }
+        num_issues_opened = 2
+        num_issues_closed = 2
+        num_mentor_count = 5
+        ghe = "https://ghe.com"
+
+        # Call the function
+        write_to_markdown(
+            issues_with_metrics=issues_with_metrics,
+            average_time_to_first_response=average_time_to_first_response,
+            average_time_to_close=average_time_to_close,
+            average_time_to_answer=average_time_to_answer,
+            average_time_in_draft=average_time_in_draft,
+            average_time_in_labels=average_time_in_labels,
+            stats_pr_comments=None,
+            num_issues_opened=num_issues_opened,
+            num_issues_closed=num_issues_closed,
+            num_mentor_count=num_mentor_count,
+            labels=["label1"],
+            search_query="repo:user/repo is:issue",
+            hide_label_metrics=True,
+            hide_items_closed_count=True,
+            enable_mentor_count=True,
+            non_mentioning_links=True,
+            report_title="Issue Metrics",
+            output_file="issue_metrics.md",
+            ghe=ghe,
+        )
+
+        # Check that the function writes the correct markdown file
+        with open("issue_metrics.md", "r", encoding="utf-8") as file:
+            content = file.read()
+
+        # Expected content should not include the individual items table
+        expected_content = (
+            "# Issue Metrics\n\n"
+            "| Metric | Count |\n"
+            "| --- | ---: |\n"
+            "| Number of items that remain open | 2 |\n"
+            "| Number of most active mentors | 5 |\n"
+            "| Total number of items created | 2 |\n\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "Search query used to find these items: `repo:user/repo is:issue`\n"
+        )
+        self.assertEqual(content, expected_content)
+        os.remove("issue_metrics.md")
+
 
 if __name__ == "__main__":
     unittest.main()

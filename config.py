@@ -58,6 +58,7 @@ class EnvVars:
         draft_pr_tracking (bool): If set to TRUE, track PR time in draft state
             in addition to other metrics
         hide_pr_statistics (bool): If set to TRUE, hide PR comment statistics in the output
+        hide_items_list (bool): If set to TRUE, hide the list of individual items in the report
     """
 
     def __init__(
@@ -90,6 +91,7 @@ class EnvVars:
         rate_limit_bypass: bool = False,
         draft_pr_tracking: bool = False,
         hide_pr_statistics: bool = True,
+        hide_items_list: bool = False,
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -119,6 +121,7 @@ class EnvVars:
         self.rate_limit_bypass = rate_limit_bypass
         self.draft_pr_tracking = draft_pr_tracking
         self.hide_pr_statistics = hide_pr_statistics
+        self.hide_items_list = hide_items_list
 
     def __repr__(self):
         return (
@@ -151,6 +154,7 @@ class EnvVars:
             f"{self.rate_limit_bypass}"
             f"{self.draft_pr_tracking}"
             f"{self.hide_pr_statistics}"
+            f"{self.hide_items_list}"
         )
 
 
@@ -249,6 +253,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
     hide_created_at = get_bool_env_var("HIDE_CREATED_AT", True)
     hide_status = get_bool_env_var("HIDE_STATUS", True)
     hide_pr_statistics = get_bool_env_var("HIDE_PR_STATISTICS", True)
+    hide_items_list = get_bool_env_var("HIDE_ITEMS_LIST", False)
     enable_mentor_count = get_bool_env_var("ENABLE_MENTOR_COUNT", False)
     min_mentor_comments = os.getenv("MIN_MENTOR_COMMENTS", "10")
     max_comments_eval = os.getenv("MAX_COMMENTS_EVAL", "20")
@@ -284,4 +289,5 @@ def get_env_vars(test: bool = False) -> EnvVars:
         rate_limit_bypass,
         draft_pr_tracking,
         hide_pr_statistics,
+        hide_items_list,
     )
