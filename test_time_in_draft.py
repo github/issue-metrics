@@ -211,7 +211,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         (as it does in the real GitHub API), which can only be consumed once.
         """
         # Set up issue created_at time
-        self.issue.issue.created_at = "2021-01-01T00:00:00Z"
+        self.issue.issue.created_at = datetime(2021, 1, 1, tzinfo=pytz.utc)
 
         # Create an iterator of events (simulating real GitHub API behavior)
         def events_iterator():
