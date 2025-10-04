@@ -241,6 +241,20 @@ class TestGetEnvVars(unittest.TestCase):
     @patch.dict(
         os.environ,
         {
+            "GH_TOKEN": TOKEN,
+            "SEARCH_QUERY": SEARCH_QUERY,
+            "HIDE_ITEMS_LIST": "true",
+        },
+        clear=True,
+    )
+    def test_get_env_vars_hide_items_list(self):
+        """Test that HIDE_ITEMS_LIST environment variable is properly read."""
+        result = get_env_vars(True)
+        self.assertTrue(result.hide_items_list)
+
+    @patch.dict(
+        os.environ,
+        {
             "GH_APP_ID": "",
             "GH_APP_INSTALLATION_ID": "",
             "GH_APP_PRIVATE_KEY": "",
@@ -293,6 +307,7 @@ class TestGetEnvVars(unittest.TestCase):
             rate_limit_bypass=True,
             draft_pr_tracking=True,
             hide_pr_statistics=True,
+            hide_items_list=False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
@@ -339,6 +354,7 @@ class TestGetEnvVars(unittest.TestCase):
             rate_limit_bypass=False,
             draft_pr_tracking=False,
             hide_pr_statistics=True,
+            hide_items_list=False,
         )
         result = get_env_vars(True)
         self.assertEqual(str(result), str(expected_result))
