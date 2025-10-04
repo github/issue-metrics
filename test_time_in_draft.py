@@ -28,7 +28,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         self.issue.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
             MagicMock(
@@ -46,7 +46,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         self.issue.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
         ]
@@ -63,7 +63,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         self.issue.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
             MagicMock(
@@ -71,7 +71,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
                 created_at=datetime(2021, 1, 3, tzinfo=pytz.utc),
             ),
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 5, tzinfo=pytz.utc),
             ),
             MagicMock(
@@ -89,7 +89,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         self.issue.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
         ]
@@ -117,7 +117,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         """
         self.issue.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
         ]
@@ -133,9 +133,9 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         Test measure_time_in_draft with a PR initially created as draft.
         """
         # Set up issue created_at time
-        self.issue.issue.created_at = "2021-01-01T00:00:00Z"
+        self.issue.issue.created_at = datetime(2021, 1, 1, tzinfo=pytz.utc)
 
-        # Mock events with only ready_for_review (no converted_to_draft)
+        # Mock events with only ready_for_review (no convert_to_draft)
         self.issue.issue.events.return_value = [
             MagicMock(
                 event="ready_for_review",
@@ -159,7 +159,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         Test measure_time_in_draft with a PR initially created as draft and still in draft.
         """
         # Set up issue created_at time
-        self.issue.issue.created_at = "2021-01-01T00:00:00Z"
+        self.issue.issue.created_at = datetime(2021, 1, 1, tzinfo=pytz.utc)
 
         # Mock events with no ready_for_review events (still draft)
         self.issue.issue.events.return_value = []
@@ -192,7 +192,7 @@ class TestMeasureTimeInDraft(unittest.TestCase):
         issue_search_result.issue.state = "open"
         issue_search_result.issue.events.return_value = [
             MagicMock(
-                event="converted_to_draft",
+                event="convert_to_draft",
                 created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
             ),
         ]
@@ -203,6 +203,40 @@ class TestMeasureTimeInDraft(unittest.TestCase):
             result = measure_time_in_draft(issue_search_result)
             expected = timedelta(days=3)
             self.assertEqual(result, expected, "The time in draft should be 3 days.")
+
+    def test_time_in_draft_with_iterator_events(self):
+        """
+        Test measure_time_in_draft with events() returning an iterator instead of a list.
+        This test ensures the function works correctly when events() returns an iterator
+        (as it does in the real GitHub API), which can only be consumed once.
+        """
+        # Set up issue created_at time
+        self.issue.issue.created_at = datetime(2021, 1, 1, tzinfo=pytz.utc)
+
+        # Create an iterator of events (simulating real GitHub API behavior)
+        def events_iterator():
+            return iter(
+                [
+                    MagicMock(
+                        event="convert_to_draft",
+                        created_at=datetime(2021, 1, 1, tzinfo=pytz.utc),
+                    ),
+                    MagicMock(
+                        event="ready_for_review",
+                        created_at=datetime(2021, 1, 3, tzinfo=pytz.utc),
+                    ),
+                ]
+            )
+
+        self.issue.issue.events = events_iterator
+
+        result = measure_time_in_draft(self.issue)
+        expected = timedelta(days=2)
+        self.assertEqual(
+            result,
+            expected,
+            "The time in draft should be 2 days when events() returns an iterator.",
+        )
 
 
 class TestGetStatsTimeInDraft(unittest.TestCase):
