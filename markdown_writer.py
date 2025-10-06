@@ -254,7 +254,6 @@ def write_to_markdown(
                     file.write(f" {issue.pr_comment_count or 'N/A'} |")
                 file.write("\n")
             file.write("\n")
-        file.write("\n")
         file.write(
             "_This report was generated with the \
 [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
