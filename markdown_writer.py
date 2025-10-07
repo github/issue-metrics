@@ -189,68 +189,73 @@ def write_to_markdown(
         )
 
         # Write second table with individual issue/pr/discussion metrics
-        # First write the header
-        file.write("|")
-        for column in columns:
-            file.write(f" {column} |")
-        file.write("\n")
+        # Skip this table if hide_items_list is True
+        if not env_vars.hide_items_list:
+            # First write the header
+            file.write("|")
+            for column in columns:
+                file.write(f" {column} |")
+            file.write("\n")
 
-        # Then write the column dividers
-        file.write("|")
-        for _ in columns:
-            file.write(" --- |")
-        file.write("\n")
+            # Then write the column dividers
+            file.write("|")
+            for _ in columns:
+                file.write(" --- |")
+            file.write("\n")
 
-        # Then write the issues/pr/discussions row by row
-        for issue in issues_with_metrics:
-            # Replace the vertical bar with the HTML entity
-            issue.title = issue.title.replace("|", "&#124;")
-            # Replace any whitespace
-            issue.title = issue.title.strip()
+            # Then write the issues/pr/discussions row by row
+            for issue in issues_with_metrics:
+                # Replace the vertical bar with the HTML entity
+                issue.title = issue.title.replace("|", "&#124;")
+                # Replace any whitespace
+                issue.title = issue.title.strip()
 
-            endpoint = ghe.removeprefix("https://") if ghe else "github.com"
-            if non_mentioning_links:
-                file.write(
-                    f"| {issue.title} | "
-                    f"{issue.html_url}".replace(
-                        f"https://{endpoint}", f"https://www.{endpoint}"
+                endpoint = ghe.removeprefix("https://") if ghe else "github.com"
+                if non_mentioning_links:
+                    file.write(
+                        f"| {issue.title} | "
+                        f"{issue.html_url}".replace(
+                            f"https://{endpoint}", f"https://www.{endpoint}"
+                        )
+                        + " |"
                     )
-                    + " |"
-                )
-            else:
-                file.write(f"| {issue.title} | {issue.html_url} |")
-            if "Assignee" in columns:
-                if issue.assignees:
-                    assignee_links = [
-                        f"[{assignee}](https://{endpoint}/{assignee})"
-                        for assignee in issue.assignees
-                    ]
-                    file.write(f" {', '.join(assignee_links)} |")
                 else:
-                    file.write(" None |")
-            if "Author" in columns:
-                file.write(f" [{issue.author}](https://{endpoint}/{issue.author}) |")
-            if "Time to first response" in columns:
-                file.write(f" {issue.time_to_first_response} |")
-            if "Time to close" in columns:
-                file.write(f" {issue.time_to_close} |")
-            if "Time to answer" in columns:
-                file.write(f" {issue.time_to_answer} |")
-            if "Time in draft" in columns:
-                file.write(f" {issue.time_in_draft} |")
-            if labels and issue.label_metrics:
-                for label in labels:
-                    if f"Time spent in {label}" in columns:
-                        file.write(f" {issue.label_metrics[label]} |")
-            if "Created At" in columns:
-                file.write(f" {issue.created_at} |")
-            if "Status" in columns:
-                file.write(f" {issue.status} |")
-            if "PR Comments" in columns:
-                file.write(f" {issue.pr_comment_count or 'N/A'} |")
+                    file.write(f"| {issue.title} | {issue.html_url} |")
+                if "Assignee" in columns:
+                    if issue.assignees:
+                        assignee_links = [
+                            f"[{assignee}](https://{endpoint}/{assignee})"
+                            for assignee in issue.assignees
+                        ]
+                        file.write(f" {', '.join(assignee_links)} |")
+                    else:
+                        file.write(" None |")
+                if "Author" in columns:
+                    file.write(
+                        f" [{issue.author}](https://{endpoint}/{issue.author}) |"
+                    )
+                if "Time to first response" in columns:
+                    file.write(f" {issue.time_to_first_response} |")
+                if "Time to close" in columns:
+                    file.write(f" {issue.time_to_close} |")
+                if "Time to answer" in columns:
+                    file.write(f" {issue.time_to_answer} |")
+                if "Time in draft" in columns:
+                    file.write(f" {issue.time_in_draft} |")
+                if labels and issue.label_metrics:
+                    for label in labels:
+                        if f"Time spent in {label}" in columns:
+                            file.write(f" {issue.label_metrics[label]} |")
+                if "Created At" in columns:
+                    file.write(f" {issue.created_at} |")
+                if "Status" in columns:
+                    file.write(f" {issue.status} |")
+                if "PR Comments" in columns:
+                    file.write(f" {issue.pr_comment_count or 'N/A'} |")
+                file.write("\n")
             file.write("\n")
         file.write(
-            "\n_This report was generated with the \
+            "_This report was generated with the \
 [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
         )
         if search_query:
