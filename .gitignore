@@ -7,6 +7,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# asdf
+.tool-versions
+
 # C extensions
 *.so
 
