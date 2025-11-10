@@ -5,5 +5,5 @@ mypy-extensions==1.1.0
 pylint==4.0.2
 pytest==9.0.0
 pytest-cov==7.0.0
-types-pytz==2025.2.0.20250809
+types-pytz==2025.2.0.20251108
 types-requests==2.32.4.20250913
