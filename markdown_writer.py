@@ -159,10 +159,8 @@ def write_to_markdown(
         # If all the metrics are None, then there are no issues
         if not issues_with_metrics or len(issues_with_metrics) == 0:
             file.write("no issues found for the given search criteria\n\n")
-            file.write(
-                "\n_This report was generated with the \
-[Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
-            )
+            file.write("\n_This report was generated with the \
+[Issue Metrics Action](https://github.com/github/issue-metrics)_\n")
             if search_query:
                 file.write(f"Search query used to find these items: `{search_query}`\n")
             return
@@ -254,10 +252,8 @@ def write_to_markdown(
                     file.write(f" {issue.pr_comment_count or 'N/A'} |")
                 file.write("\n")
             file.write("\n")
-        file.write(
-            "_This report was generated with the \
-[Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
-        )
+        file.write("_This report was generated with the \
+[Issue Metrics Action](https://github.com/github/issue-metrics)_\n")
         if search_query:
             file.write(f"Search query used to find these items: `{search_query}`\n")
 
