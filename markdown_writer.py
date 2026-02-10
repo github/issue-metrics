@@ -30,10 +30,21 @@ Functions:
         average_time_to_answer: timedelta
     ) -> List[str]:
         Get the columns that are not hidden.
+    sort_issues(
+        issues: List[IssueWithMetrics],
+        sort_by: str | None,
+        sort_order: str
+    ) -> List[IssueWithMetrics]:
+        Sort issues by the specified field.
+    group_issues(
+        issues: List[IssueWithMetrics],
+        group_by: str | None
+    ) -> dict[str, List[IssueWithMetrics]]:
+        Group issues by the specified field.
 """
 
 from datetime import timedelta
-from typing import List, Union
+from typing import Dict, List, Union
 
 from classes import IssueWithMetrics
 from config import get_env_vars
@@ -96,6 +107,85 @@ def get_non_hidden_columns(labels) -> List[str]:
         columns.append("PR Comments")
 
     return columns
+
+
+def sort_issues(
+    issues: List[IssueWithMetrics], sort_by: str | None, sort_order: str
+) -> List[IssueWithMetrics]:
+    """Sort issues by the specified field.
+
+    Args:
+        issues (List[IssueWithMetrics]): List of issues to sort.
+        sort_by (str | None): Field to sort by (e.g., 'time_to_close', 'time_to_first_response').
+        sort_order (str): Sort order, either 'asc' for ascending or 'desc' for descending.
+
+    Returns:
+        List[IssueWithMetrics]: Sorted list of issues.
+    """
+    if not sort_by or not issues:
+        return issues
+
+    # Map of valid sort fields
+    valid_fields = {
+        "time_to_close",
+        "time_to_first_response",
+        "time_to_answer",
+        "time_in_draft",
+        "created_at",
+    }
+
+    if sort_by not in valid_fields:
+        return issues
+
+    reverse = sort_order == "desc"
+
+    # Sort with None values at the end
+    def sort_key(issue):
+        value = getattr(issue, sort_by, None)
+        if value is None:
+            # Use a large value for None so they appear at the end
+            return (1, timedelta.max if sort_by.startswith("time_") else float("inf"))
+        return (0, value)
+
+    return sorted(issues, key=sort_key, reverse=reverse)
+
+
+def group_issues(
+    issues: List[IssueWithMetrics], group_by: str | None
+) -> Dict[str, List[IssueWithMetrics]]:
+    """Group issues by the specified field.
+
+    Args:
+        issues (List[IssueWithMetrics]): List of issues to group.
+        group_by (str | None): Field to group by (e.g., 'author', 'assignee').
+
+    Returns:
+        Dict[str, List[IssueWithMetrics]]: Dictionary of grouped issues.
+    """
+    if not group_by or not issues:
+        return {"": issues}
+
+    # Map of valid group fields
+    valid_fields = {"author", "assignee"}
+
+    if group_by not in valid_fields:
+        return {"": issues}
+
+    grouped: Dict[str, List[IssueWithMetrics]] = {}
+    for issue in issues:
+        if group_by == "author":
+            key = issue.author or "Unknown"
+        elif group_by == "assignee":
+            # Use the first assignee or "Unassigned"
+            key = issue.assignees[0] if issue.assignees else "Unassigned"
+        else:
+            key = "Unknown"
+
+        if key not in grouped:
+            grouped[key] = []
+        grouped[key].append(issue)
+
+    return grouped
 
 
 def write_to_markdown(
@@ -189,69 +279,81 @@ def write_to_markdown(
         # Write second table with individual issue/pr/discussion metrics
         # Skip this table if hide_items_list is True
         if not env_vars.hide_items_list:
-            # First write the header
-            file.write("|")
-            for column in columns:
-                file.write(f" {column} |")
-            file.write("\n")
+            # Apply sorting and grouping
+            sorted_issues = sort_issues(
+                issues_with_metrics, env_vars.sort_by, env_vars.sort_order
+            )
+            grouped_issues_dict = group_issues(sorted_issues, env_vars.group_by)
 
-            # Then write the column dividers
-            file.write("|")
-            for _ in columns:
-                file.write(" --- |")
-            file.write("\n")
+            # If grouping, write separate sections for each group
+            for group_name, group_issues_list in grouped_issues_dict.items():
+                # Write group header if grouping is enabled
+                if env_vars.group_by and group_name:
+                    file.write(f"\n### {group_name}\n\n")
 
-            # Then write the issues/pr/discussions row by row
-            for issue in issues_with_metrics:
-                # Replace the vertical bar with the HTML entity
-                issue.title = issue.title.replace("|", "&#124;")
-                # Replace any whitespace
-                issue.title = issue.title.strip()
-
-                endpoint = ghe.removeprefix("https://") if ghe else "github.com"
-                if non_mentioning_links:
-                    file.write(
-                        f"| {issue.title} | "
-                        f"{issue.html_url}".replace(
-                            f"https://{endpoint}", f"https://www.{endpoint}"
-                        )
-                        + " |"
-                    )
-                else:
-                    file.write(f"| {issue.title} | {issue.html_url} |")
-                if "Assignee" in columns:
-                    if issue.assignees:
-                        assignee_links = [
-                            f"[{assignee}](https://{endpoint}/{assignee})"
-                            for assignee in issue.assignees
-                        ]
-                        file.write(f" {', '.join(assignee_links)} |")
-                    else:
-                        file.write(" None |")
-                if "Author" in columns:
-                    file.write(
-                        f" [{issue.author}](https://{endpoint}/{issue.author}) |"
-                    )
-                if "Time to first response" in columns:
-                    file.write(f" {issue.time_to_first_response} |")
-                if "Time to close" in columns:
-                    file.write(f" {issue.time_to_close} |")
-                if "Time to answer" in columns:
-                    file.write(f" {issue.time_to_answer} |")
-                if "Time in draft" in columns:
-                    file.write(f" {issue.time_in_draft} |")
-                if labels and issue.label_metrics:
-                    for label in labels:
-                        if f"Time spent in {label}" in columns:
-                            file.write(f" {issue.label_metrics[label]} |")
-                if "Created At" in columns:
-                    file.write(f" {issue.created_at} |")
-                if "Status" in columns:
-                    file.write(f" {issue.status} |")
-                if "PR Comments" in columns:
-                    file.write(f" {issue.pr_comment_count or 'N/A'} |")
+                # First write the header
+                file.write("|")
+                for column in columns:
+                    file.write(f" {column} |")
                 file.write("\n")
-            file.write("\n")
+
+                # Then write the column dividers
+                file.write("|")
+                for _ in columns:
+                    file.write(" --- |")
+                file.write("\n")
+
+                # Then write the issues/pr/discussions row by row
+                for issue in group_issues_list:
+                    # Replace the vertical bar with the HTML entity
+                    issue.title = issue.title.replace("|", "&#124;")
+                    # Replace any whitespace
+                    issue.title = issue.title.strip()
+
+                    endpoint = ghe.removeprefix("https://") if ghe else "github.com"
+                    if non_mentioning_links:
+                        file.write(
+                            f"| {issue.title} | "
+                            f"{issue.html_url}".replace(
+                                f"https://{endpoint}", f"https://www.{endpoint}"
+                            )
+                            + " |"
+                        )
+                    else:
+                        file.write(f"| {issue.title} | {issue.html_url} |")
+                    if "Assignee" in columns:
+                        if issue.assignees:
+                            assignee_links = [
+                                f"[{assignee}](https://{endpoint}/{assignee})"
+                                for assignee in issue.assignees
+                            ]
+                            file.write(f" {', '.join(assignee_links)} |")
+                        else:
+                            file.write(" None |")
+                    if "Author" in columns:
+                        file.write(
+                            f" [{issue.author}](https://{endpoint}/{issue.author}) |"
+                        )
+                    if "Time to first response" in columns:
+                        file.write(f" {issue.time_to_first_response} |")
+                    if "Time to close" in columns:
+                        file.write(f" {issue.time_to_close} |")
+                    if "Time to answer" in columns:
+                        file.write(f" {issue.time_to_answer} |")
+                    if "Time in draft" in columns:
+                        file.write(f" {issue.time_in_draft} |")
+                    if labels and issue.label_metrics:
+                        for label in labels:
+                            if f"Time spent in {label}" in columns:
+                                file.write(f" {issue.label_metrics[label]} |")
+                    if "Created At" in columns:
+                        file.write(f" {issue.created_at} |")
+                    if "Status" in columns:
+                        file.write(f" {issue.status} |")
+                    if "PR Comments" in columns:
+                        file.write(f" {issue.pr_comment_count or 'N/A'} |")
+                    file.write("\n")
+                file.write("\n")
         file.write("_This report was generated with the \
 [Issue Metrics Action](https://github.com/github/issue-metrics)_\n")
         if search_query:
