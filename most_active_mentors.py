@@ -13,7 +13,7 @@ Open questions:
    - should there be a limit to how many comments per PR we consider to avoid
      having the statistic dominated by contested PRs?
    - should this metric count consecutive comments coming from the same user as
-     only one to avoid people unnessesarily splitting their comments to game the
+     only one to avoid people unnecessarily splitting their comments to game the
      metric?
    - instead of PR comments should we count PRs on which a username was seen as
      commenter?

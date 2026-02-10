@@ -81,17 +81,13 @@ def search_issues(
                 wait_for_api_refresh(issues_iterator, rate_limit_bypass)
 
     except github3.exceptions.ForbiddenError as e:
-        print(
-            f"You do not have permission to view a repository \
-from: '{repos_and_owners_string}'; Check your API Token."
-        )
+        print(f"You do not have permission to view a repository \
+from: '{repos_and_owners_string}'; Check your API Token.")
         print_error_messages(e)
         sys.exit(1)
     except github3.exceptions.NotFoundError as e:
-        print(
-            f"The repository could not be found; \
-Check the repository owner and names: '{repos_and_owners_string}"
-        )
+        print(f"The repository could not be found; \
+Check the repository owner and names: '{repos_and_owners_string}")
         print_error_messages(e)
         sys.exit(1)
     except github3.exceptions.ConnectionError as e:

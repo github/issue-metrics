@@ -112,10 +112,10 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        with unittest.mock.patch(  # type:ignore
+        with unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_first_response",
             measure_time_to_first_response,
-        ), unittest.mock.patch(  # type:ignore
+        ), unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_close", measure_time_to_close
         ):
             (
@@ -221,10 +221,10 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        with unittest.mock.patch(  # type:ignore
+        with unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_first_response",
             measure_time_to_first_response,
-        ), unittest.mock.patch(  # type:ignore
+        ), unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_close", measure_time_to_close
         ):
             (
@@ -326,10 +326,10 @@ class TestGetPerIssueMetrics(unittest.TestCase):
         ]
 
         # Call the function and check the result
-        with unittest.mock.patch(  # type:ignore
+        with unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_first_response",
             measure_time_to_first_response,
-        ), unittest.mock.patch(  # type:ignore
+        ), unittest.mock.patch(  # type: ignore
             "issue_metrics.measure_time_to_close", measure_time_to_close
         ):
             (
