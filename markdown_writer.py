@@ -278,7 +278,7 @@ def write_to_markdown(
 
         # Write second table with individual issue/pr/discussion metrics
         # Skip this table if hide_items_list is True
-        if not env_vars.hide_items_list:
+        if not env_vars.hide_items_list:  # pylint: disable=too-many-nested-blocks
             # Apply sorting and grouping
             sorted_issues = sort_issues(
                 issues_with_metrics, env_vars.sort_by, env_vars.sort_order
