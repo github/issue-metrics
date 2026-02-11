@@ -139,17 +139,24 @@ def sort_issues(
 
     reverse = sort_order == "desc"
 
-    # Sort with None values at the end
-    def sort_key(issue):
+    # Sort with None values at the end, regardless of sort order
+    non_none_issues: List[IssueWithMetrics] = []
+    none_issues: List[IssueWithMetrics] = []
+
+    for issue in issues:
         value = getattr(issue, sort_by, None)
         if value is None:
-            # Use a large value for None so they appear at the end
-            return (1, timedelta.max if sort_by.startswith("time_") else float("inf"))
-        return (0, value)
+            none_issues.append(issue)
+        else:
+            non_none_issues.append(issue)
 
-    return sorted(issues, key=sort_key, reverse=reverse)
+    sorted_non_none = sorted(
+        non_none_issues,
+        key=lambda issue: getattr(issue, sort_by),
+        reverse=reverse,
+    )
 
-
+    return sorted_non_none + none_issues
 def group_issues(
     issues: List[IssueWithMetrics], group_by: str | None
 ) -> Dict[str, List[IssueWithMetrics]]:
