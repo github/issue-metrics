@@ -59,6 +59,9 @@ class EnvVars:
             in addition to other metrics
         hide_pr_statistics (bool): If set to TRUE, hide PR comment statistics in the output
         hide_items_list (bool): If set to TRUE, hide the list of individual items in the report
+        group_by (str | None): If set, group items by the specified field (e.g., 'author')
+        sort_by (str | None): If set, sort items by the specified field (e.g., 'time_to_close')
+        sort_order (str): Sort order, either 'asc' for ascending or 'desc' for descending
     """
 
     def __init__(
@@ -92,6 +95,9 @@ class EnvVars:
         draft_pr_tracking: bool = False,
         hide_pr_statistics: bool = True,
         hide_items_list: bool = False,
+        group_by: str | None = None,
+        sort_by: str | None = None,
+        sort_order: str = "asc",
     ):
         self.gh_app_id = gh_app_id
         self.gh_app_installation_id = gh_app_installation_id
@@ -122,6 +128,9 @@ class EnvVars:
         self.draft_pr_tracking = draft_pr_tracking
         self.hide_pr_statistics = hide_pr_statistics
         self.hide_items_list = hide_items_list
+        self.group_by = group_by
+        self.sort_by = sort_by
+        self.sort_order = sort_order
 
     def __repr__(self):
         return (
@@ -155,6 +164,9 @@ class EnvVars:
             f"{self.draft_pr_tracking}"
             f"{self.hide_pr_statistics}"
             f"{self.hide_items_list}"
+            f"{self.group_by}"
+            f"{self.sort_by}"
+            f"{self.sort_order}"
         )
 
 
@@ -242,6 +254,13 @@ def get_env_vars(test: bool = False) -> EnvVars:
     rate_limit_bypass = get_bool_env_var("RATE_LIMIT_BYPASS", False)
     draft_pr_tracking = get_bool_env_var("DRAFT_PR_TRACKING", False)
 
+    # Grouping and sorting options
+    group_by = os.getenv("GROUP_BY", "").strip().lower() or None
+    sort_by = os.getenv("SORT_BY", "").strip().lower() or None
+    sort_order = os.getenv("SORT_ORDER", "asc").strip().lower()
+    if sort_order not in ["asc", "desc"]:
+        sort_order = "asc"
+
     # Hidden columns
     hide_assignee = get_bool_env_var("HIDE_ASSIGNEE", False)
     hide_author = get_bool_env_var("HIDE_AUTHOR", False)
@@ -290,4 +309,7 @@ def get_env_vars(test: bool = False) -> EnvVars:
         draft_pr_tracking,
         hide_pr_statistics,
         hide_items_list,
+        group_by,
+        sort_by,
+        sort_order,
     )
