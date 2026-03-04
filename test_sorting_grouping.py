@@ -106,6 +106,13 @@ class TestSortIssues(unittest.TestCase):
         self.assertEqual(sorted_issues[1].title, "Issue 1")
         self.assertEqual(sorted_issues[2].title, "Issue 2")
 
+        # Verify descending order also places None values at the end
+        sorted_issues_desc = sort_issues(issues, "time_to_close", "desc")
+
+        self.assertEqual(sorted_issues_desc[0].title, "Issue 1")
+        self.assertEqual(sorted_issues_desc[1].title, "Issue 3")
+        self.assertEqual(sorted_issues_desc[2].title, "Issue 2")
+
     def test_sort_by_invalid_field(self):
         """Test that sorting by an invalid field returns the original list."""
         issues = [
