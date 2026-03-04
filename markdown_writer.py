@@ -157,6 +157,8 @@ def sort_issues(
     )
 
     return sorted_non_none + none_issues
+
+
 def group_issues(
     issues: List[IssueWithMetrics], group_by: str | None
 ) -> Dict[str, List[IssueWithMetrics]]:
