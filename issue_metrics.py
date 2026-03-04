@@ -39,6 +39,7 @@ from time_to_first_response import (
     get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
+from time_to_first_review import measure_time_to_first_review
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
 
@@ -159,7 +160,10 @@ def get_per_issue_metrics(
                 issue_with_metrics.pr_comment_count = count_pr_comments(
                     issue, pull_request, ignore_users
                 )
-
+            if pull_request:
+                issue_with_metrics.time_to_first_review = measure_time_to_first_review(
+                    issue, pull_request, ready_for_review_at, ignore_users
+            )
             if env_vars.hide_time_to_first_response is False:
                 issue_with_metrics.time_to_first_response = (
                     measure_time_to_first_response(
