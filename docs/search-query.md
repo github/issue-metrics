@@ -59,34 +59,33 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-        pull-requests: read
+      pull-requests: read
 
     steps:
+      - name: Run issue-metrics tool for issues and prs opened in May 2023
+        uses: github-community-projects/issue-metrics@v4
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:owner/repo created:2023-05-01..2023-05-31 -reason:"not planned"'
 
-    - name: Run issue-metrics tool for issues and prs opened in May 2023
-      uses: github-community-projects/issue-metrics@v4
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SEARCH_QUERY: 'repo:owner/repo created:2023-05-01..2023-05-31 -reason:"not planned"'
+      - name: Create issue for opened issues and prs
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Monthly issue metrics report for opened issues and prs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          content-filepath: ./issue_metrics.md
+          assignees: <YOUR_GITHUB_HANDLE_HERE>
 
-    - name: Create issue for opened issues and prs
-      uses: peter-evans/create-issue-from-file@v4
-      with:
-        title: Monthly issue metrics report for opened issues and prs
-        token: ${{ secrets.GITHUB_TOKEN }}
-        content-filepath: ./issue_metrics.md
-        assignees: <YOUR_GITHUB_HANDLE_HERE>
+      - name: Run issue-metrics tool for issues and prs closed in May 2023
+        uses: github-community-projects/issue-metrics@v4
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:owner/repo closed:2023-05-01..2023-05-31 -reason:"not planned"'
 
-    - name: Run issue-metrics tool for issues and prs closed in May 2023
-      uses: github-community-projects/issue-metrics@v4
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SEARCH_QUERY: 'repo:owner/repo closed:2023-05-01..2023-05-31 -reason:"not planned"'
-
-    - name: Create issue for closed issues and prs
-      uses: peter-evans/create-issue-from-file@v4
-      with:
-        title: Monthly issue metrics report for closed issues and prs
-        content-filepath: ./issue_metrics.md
+      - name: Create issue for closed issues and prs
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Monthly issue metrics report for closed issues and prs
+          content-filepath: ./issue_metrics.md
         assignees: <YOUR_GITHUB_HANDLE_HERE>
 ```
