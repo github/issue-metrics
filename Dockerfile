@@ -16,7 +16,7 @@ LABEL com.github.actions.name="issue-metrics" \
 WORKDIR /action/workspace
 COPY requirements.txt *.py /action/workspace/
 
-RUN python3 -m pip install --no-cache-dir -r requirements.txt \
+RUN python3 -m pip install --no-cache-dir --no-deps -r requirements.txt \
     && apt-get -y update \
     && apt-get -y install --no-install-recommends git=1:2.47.3-0+deb13u1 \
     && rm -rf /var/lib/apt/lists/*
