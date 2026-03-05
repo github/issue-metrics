@@ -38,7 +38,7 @@ jobs:
         echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
     - name: Run issue-metrics tool
-      uses: github/issue-metrics@v3
+      uses: github-community-projects/issue-metrics@v4
       env:
         GH_APP_ID: ${{ secrets.GH_APP_ID }}
         GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}

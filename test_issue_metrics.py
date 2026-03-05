@@ -593,7 +593,7 @@ class TestEvaluateMarkdownFileSize(unittest.TestCase):
             "Issue metrics markdown file is too large for GitHub issue body and has been \
 split into multiple files. ie. test_issue_metrics.md, test_issue_metrics_1.md, etc. \
 The full file is saved as test_issue_metrics_full.md\n\
-See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+See https://github.com/github-community-projects/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
         )
 
 

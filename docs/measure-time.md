@@ -2,7 +2,7 @@
 
 **Note**: The discussions API currently doesn't support the `LabeledEvent` so this action cannot measure the time spent in a label for discussions.
 
-Sometimes it is helpful to know how long an issue or pull request spent in a particular label. This action can be configured to measure the time spent in a label. This is different from only wanting to measure issues with a specific label. If that is what you want, see the section on [configuring your search query](https://github.com/github/issue-metrics/blob/main/README.md#search_query-issues-or-pull-requests-open-or-closed).
+Sometimes it is helpful to know how long an issue or pull request spent in a particular label. This action can be configured to measure the time spent in a label. This is different from only wanting to measure issues with a specific label. If that is what you want, see the section on [configuring your search query](https://github.com/github-community-projects/issue-metrics/blob/main/README.md#search_query-issues-or-pull-requests-open-or-closed).
 
 Here is an example workflow that does this:
 
@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Run issue-metrics tool
-        uses: github/issue-metrics@v3
+        uses: github-community-projects/issue-metrics@v4
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LABELS_TO_MEASURE: "waiting-for-manager-approval,waiting-for-security-review"

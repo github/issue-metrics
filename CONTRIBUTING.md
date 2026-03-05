@@ -19,11 +19,11 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 ## I Have a Question
 
-Before you ask a question, it is best to search for existing [Issues](https://github.com/github/issue-metrics/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue.
+Before you ask a question, it is best to search for existing [Issues](https://github.com/github-community-projects/issue-metrics/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue.
 
 If you then still feel the need to ask a question and need clarification, we recommend the following:
 
-- Open an [Issue](https://github.com/github/issue-metrics/issues/new).
+- Open an [Issue](https://github.com/github-community-projects/issue-metrics/issues/new).
 - Provide as much context as you can about what you're running into.
 - Provide project and platform versions (Node.js, npm, etc), depending on what seems relevant.
 
@@ -45,7 +45,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 
 - Make sure that you are using the latest version.
 - Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions (Make sure that you have read the documentation. If you are looking for support, you might want to check [this section](#i-have-a-question)).
-- To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](https://github.com/github/issue-metrics/issues).
+- To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](https://github.com/github-community-projects/issue-metrics/issues).
 - Collect information about the bug:
   - Stack trace (Traceback)
   - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
@@ -57,7 +57,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 
 ### How Do I Submit a Good Bug Report?
 
-Please submit a bug report using our [GitHub Issues template](https://github.com/github/issue-metrics/issues/new?template=bug_report.yml).
+Please submit a bug report using our [GitHub Issues template](https://github.com/github-community-projects/issue-metrics/issues/new?template=bug_report.yml).
 
 ## Suggesting Enhancements
 
@@ -69,14 +69,14 @@ This section guides you through submitting an enhancement suggestion for issue-m
 
 - Make sure that you are using the latest version.
 - Read the documentation carefully and find out if the functionality is already covered, maybe by an individual configuration.
-- Perform a [search](https://github.com/github/issue-metrics/issues) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
+- Perform a [search](https://github.com/github-community-projects/issue-metrics/issues) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 - Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature or to develop the feature yourself and contribute it to the project.
 
 <!-- omit in toc -->
 
 ### How Do I Submit a Good Enhancement Suggestion?
 
-Please submit an enhancement suggestion using our [GitHub Issues template](https://github.com/github/issue-metrics/issues/new?template=feature_request.yml).
+Please submit an enhancement suggestion using our [GitHub Issues template](https://github.com/github-community-projects/issue-metrics/issues/new?template=feature_request.yml).
 
 ### Pull Request Standards
 
@@ -86,4 +86,4 @@ We are using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.
 
 Releases are automated if a pull request is labelled with our [SemVer related labels](.github/release-drafter.yml) or with the `vuln` or `release` labels.
 
-You can also manually initiate a release you can do so through the GitHub Actions UI. If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button. This will allow you to select the branch to release from and the version to release.
+You can also manually initiate a release you can do so through the GitHub Actions UI. If you have permissions to do so, you can navigate to the [Actions tab](https://github.com/github-community-projects/issue-metrics/actions/workflows/release.yml) and select the `Run workflow` button. This will allow you to select the branch to release from and the version to release.

@@ -27,12 +27,12 @@ jobs:
           echo "END_DATE=$end_date" >> "$GITHUB_ENV"
 
       - name: Run contributor action
-        uses: github-community-projects/contributors@0d5adc3833e89ee1f4145744f5d69313cf5ea238 # v1.7.8
+        uses: github-community-projects/contributors@aff93cf32786e5eb578185bdeb52b96f341ba79b # v2.0.2
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           START_DATE: ${{ env.START_DATE }}
           END_DATE: ${{ env.END_DATE }}
-          REPOSITORY: github/issue-metrics
+          REPOSITORY: github-community-projects/issue-metrics
           SPONSOR_INFO: "true"
 
       - name: Create issue
