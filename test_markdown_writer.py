@@ -145,7 +145,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "1 day, 0:00:00 | 4 days, 0:00:00 | -5 days, 0:00:00 | None |\n"
             "| Issue 2 | https://github.com/user/repo/issues/2 | None | [bob](https://github.com/bob) | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | 1 day, 0:00:00 | 2 days, 0:00:00 | -5 days, 0:00:00 | None |\n\n"
-            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n"
             "Search query used to find these items: `is:issue is:open label:bug`\n"
         )
         self.assertEqual(content, expected_content)
@@ -264,7 +264,7 @@ class TestWriteToMarkdown(unittest.TestCase):
             "| feat&#124; Issue 2 | https://github.com/user/repo/issues/2 | None | "
             "[bob](https://github.com/bob) | 3 days, 0:00:00 | "
             "4 days, 0:00:00 | 5 days, 0:00:00 | None | 2 days, 0:00:00 | -5 days, 0:00:00 | None |\n\n"
-            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n"
         )
         self.assertEqual(content, expected_content)
         os.remove("issue_metrics.md")
@@ -291,7 +291,7 @@ class TestWriteToMarkdown(unittest.TestCase):
         expected_output = [
             "# Issue Metrics\n\n",
             "no issues found for the given search criteria\n\n",
-            "\n_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n",
+            "\n_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n",
         ]
         # Check that the markdown file was written with the three calls in expected output
         mock_open_file.assert_has_calls(
@@ -415,7 +415,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "[alice](https://ghe.com/alice) | -5 days, 0:00:00 | None |\n"
             "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | None | "
             "[bob](https://ghe.com/bob) | -5 days, 0:00:00 | None |\n\n"
-            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
         self.assertEqual(content, expected_content)
@@ -525,7 +525,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Issue 1 | https://www.ghe.com/user/repo/issues/1 | [charlie](https://ghe.com/charlie) | "
             "[alice](https://ghe.com/alice) | -5 days, 0:00:00 |\n"
             "| Issue 2 | https://www.ghe.com/user/repo/issues/2 | None | [bob](https://ghe.com/bob) | -5 days, 0:00:00 |\n\n"
-            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
         self.assertEqual(content, expected_content)
@@ -632,7 +632,7 @@ class TestWriteToMarkdownWithEnv(unittest.TestCase):
             "| Number of items that remain open | 2 |\n"
             "| Number of most active mentors | 5 |\n"
             "| Total number of items created | 2 |\n\n"
-            "_This report was generated with the [Issue Metrics Action](https://github.com/github/issue-metrics)_\n"
+            "_This report was generated with the [Issue Metrics Action](https://github.com/github-community-projects/issue-metrics)_\n"
             "Search query used to find these items: `repo:user/repo is:issue`\n"
         )
         self.assertEqual(content, expected_content)

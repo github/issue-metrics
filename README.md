@@ -1,9 +1,12 @@
 # Issue Metrics Action
 
-[![CodeQL](https://github.com/github/issue-metrics/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/github-code-scanning/codeql)
-[![Docker Image CI](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/docker-image.yml)
-[![Python package](https://github.com/github/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github/issue-metrics/actions/workflows/python-package.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/github/issue-metrics/badge)](https://scorecard.dev/viewer/?uri=github.com/github/issue-metrics)
+> [!IMPORTANT]
+> This repository has been transferred from `github/issue-metrics` to `github-community-projects/issue-metrics`. Please update any references to the old repository location.
+
+[![CodeQL](https://github.com/github-community-projects/issue-metrics/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/github-community-projects/issue-metrics/actions/workflows/github-code-scanning/codeql)
+[![Docker Image CI](https://github.com/github-community-projects/issue-metrics/actions/workflows/docker-image.yml/badge.svg)](https://github.com/github-community-projects/issue-metrics/actions/workflows/docker-image.yml)
+[![Python package](https://github.com/github-community-projects/issue-metrics/actions/workflows/python-package.yml/badge.svg)](https://github.com/github-community-projects/issue-metrics/actions/workflows/python-package.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/github-community-projects/issue-metrics/badge)](https://scorecard.dev/viewer/?uri=github.com/github-community-projects/issue-metrics)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9501/badge)](https://www.bestpractices.dev/projects/9501)
 
 This is a GitHub Action that searches for issues/pull requests/discussions in a repository, measures several metrics, and generates a report in form of a GitHub issue.
@@ -74,7 +77,7 @@ jobs:
           echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
       - name: Run issue-metrics tool
-        uses: github/issue-metrics@v3
+        uses: github-community-projects/issue-metrics@v4
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SEARCH_QUERY: 'repo:owner/repo is:issue created:${{ env.last_month }} -reason:"not planned"'
@@ -96,7 +99,7 @@ jobs:
 
 ## Support
 
-If you need support using this project or have questions about it, please [open up an issue in this repository](https://github.com/github/issue-metrics/issues). Requests made directly to GitHub staff or support team will be redirected here to open an issue. GitHub SLA's and support/services contracts do not apply to this repository.
+If you need support using this project or have questions about it, please [open up an issue in this repository](https://github.com/github-community-projects/issue-metrics/issues). Requests made directly to GitHub staff or support team will be redirected here to open an issue. GitHub SLA's and support/services contracts do not apply to this repository.
 
 ### OSPO GitHub Actions as a Whole
 

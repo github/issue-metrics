@@ -220,7 +220,7 @@ def evaluate_markdown_file_size(output_file: str) -> None:
             f"Issue metrics markdown file is too large for GitHub issue body and has been \
 split into multiple files. ie. {output_file_name}, {file_name_without_extension}_1.md, etc. \
 The full file is saved as {file_name_without_extension}_full.md\n\
-See https://github.com/github/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
+See https://github.com/github-community-projects/issue-metrics/blob/main/docs/dealing-with-large-issue-metrics.md"
         )
 
 
