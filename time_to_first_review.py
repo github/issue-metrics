@@ -1,3 +1,5 @@
+"""Utilities for measuring time to first review for pull requests."""
+
 from datetime import datetime, timedelta
 from typing import List, Union
 
@@ -56,7 +58,7 @@ def measure_time_to_first_review(
 def get_stats_time_to_first_review(
     issues: List[IssueWithMetrics],
 ) -> Union[dict[str, timedelta], None]:
-
+    """Compute statistics (average, median, 90th percentile) for time to first review."""
     review_times = []
     none_count = 0
     for issue in issues:

@@ -21,13 +21,15 @@ from typing import List, Union
 
 import github3
 import github3.structs
+
 from auth import auth_to_github, get_github_app_installation_token
 from classes import IssueWithMetrics
 from config import EnvVars, get_env_vars
 from discussions import get_discussions
 from json_writer import write_to_json
 from labels import get_label_metrics, get_stats_time_in_labels
-from markdown_helpers import markdown_too_large_for_issue_body, split_markdown_file
+from markdown_helpers import (markdown_too_large_for_issue_body,
+                              split_markdown_file)
 from markdown_writer import write_to_markdown
 from most_active_mentors import count_comments_per_user, get_mentor_count
 from pr_comments import count_pr_comments, get_stats_pr_comments
@@ -35,10 +37,8 @@ from search import get_owners_and_repositories, search_issues
 from time_in_draft import get_stats_time_in_draft, measure_time_in_draft
 from time_to_answer import get_stats_time_to_answer, measure_time_to_answer
 from time_to_close import get_stats_time_to_close, measure_time_to_close
-from time_to_first_response import (
-    get_stats_time_to_first_response,
-    measure_time_to_first_response,
-)
+from time_to_first_response import (get_stats_time_to_first_response,
+                                    measure_time_to_first_response)
 from time_to_first_review import measure_time_to_first_review
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
@@ -162,8 +162,11 @@ def get_per_issue_metrics(
                 )
             if pull_request:
                 issue_with_metrics.time_to_first_review = measure_time_to_first_review(
-                    issue, pull_request, ready_for_review_at, ignore_users
-            )
+                    issue,
+                    pull_request,
+                    ready_for_review_at,
+                    ignore_users,
+                )
             if env_vars.hide_time_to_first_response is False:
                 issue_with_metrics.time_to_first_response = (
                     measure_time_to_first_response(
