@@ -22,7 +22,7 @@ def measure_time_to_first_review(
     if ignore_users is None:
         ignore_users = []
 
-    """first_review_time = None"""
+    first_review_time = None
 
     try:
         reviews = pull_request.reviews(number=50)
@@ -42,7 +42,7 @@ def measure_time_to_first_review(
     except TypeError:
         return None
 
-    if not first_review_time:
+    if first_review_time is None:
         return None
 
     if ready_for_review_at:
