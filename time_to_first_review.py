@@ -5,7 +5,6 @@ from typing import List, Union
 
 import github3
 import numpy
-
 from classes import IssueWithMetrics
 from time_to_first_response import ignore_comment
 

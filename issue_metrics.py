@@ -21,7 +21,6 @@ from typing import List, Union
 
 import github3
 import github3.structs
-
 from auth import auth_to_github, get_github_app_installation_token
 from classes import IssueWithMetrics
 from config import EnvVars, get_env_vars
