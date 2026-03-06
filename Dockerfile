@@ -7,16 +7,16 @@ LABEL com.github.actions.name="issue-metrics" \
     com.github.actions.icon="check-square" \
     com.github.actions.color="white" \
     maintainer="@zkoppert" \
-    org.opencontainers.image.url="https://github.com/github/issue-metrics" \
-    org.opencontainers.image.source="https://github.com/github/issue-metrics" \
-    org.opencontainers.image.documentation="https://github.com/github/issue-metrics" \
+    org.opencontainers.image.url="https://github.com/github-community-projects/issue-metrics" \
+    org.opencontainers.image.source="https://github.com/github-community-projects/issue-metrics" \
+    org.opencontainers.image.documentation="https://github.com/github-community-projects/issue-metrics" \
     org.opencontainers.image.vendor="GitHub" \
     org.opencontainers.image.description="Gather metrics on issues/prs/discussions such as time to first response, count of issues opened, closed, etc."
 
 WORKDIR /action/workspace
 COPY requirements.txt *.py /action/workspace/
 
-RUN python3 -m pip install --no-cache-dir -r requirements.txt \
+RUN python3 -m pip install --no-cache-dir --no-deps -r requirements.txt \
     && apt-get -y update \
     && apt-get -y install --no-install-recommends git=1:2.47.3-0+deb13u1 \
     && rm -rf /var/lib/apt/lists/*

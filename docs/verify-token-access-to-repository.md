@@ -4,7 +4,7 @@ GitHub PAT token access can be confusing. Here's a quick way to test if the toke
 
 **Remove this snippet after you've verified your token.**
 
-- Make sure you follow the token setup instructions [in the `README.md`](https://github.com/github/issue-metrics/tree/main?tab=readme-ov-file#use-as-a-github-action) first.
+- Make sure you follow the token setup instructions [in the `README.md`](https://github.com/github-community-projects/issue-metrics/tree/main?tab=readme-ov-file#use-as-a-github-action) first.
 
 - Replace `{owner/repo}` with your own repository information.
 
@@ -58,7 +58,7 @@ jobs:
           echo "last_month=$first_day..$last_day" >> "$GITHUB_ENV"
 
       - name: Run issue-metrics tool
-        uses: github/issue-metrics@v3
+        uses: github-community-projects/issue-metrics@v4
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           SEARCH_QUERY: "repo:{owner/repo} is:issue created:${{ env.last_month }}"
