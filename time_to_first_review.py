@@ -3,6 +3,7 @@ from typing import List, Union
 
 import github3
 import numpy
+
 from classes import IssueWithMetrics
 from time_to_first_response import ignore_comment
 
@@ -13,7 +14,7 @@ def measure_time_to_first_review(
     ready_for_review_at: Union[datetime, None] = None,
     ignore_users: Union[List[str], None] = None,
 ) -> Union[timedelta, None]:
-    '''Measures duration between pull request creation time and the timestamp when the first review is submitted'''
+    """Measures duration between pull request creation time and the timestamp when the first review is submitted"""
 
     if not issue or not pull_request:
         return None
@@ -21,7 +22,7 @@ def measure_time_to_first_review(
     if ignore_users is None:
         ignore_users = []
 
-    '''first_review_time = None'''
+    """first_review_time = None"""
 
     try:
         reviews = pull_request.reviews(number=50)
@@ -51,10 +52,11 @@ def measure_time_to_first_review(
 
     return first_review_time - pr_created_time
 
+
 def get_stats_time_to_first_review(
     issues: List[IssueWithMetrics],
 ) -> Union[dict[str, timedelta], None]:
-    
+
     review_times = []
     none_count = 0
     for issue in issues:
@@ -68,7 +70,9 @@ def get_stats_time_to_first_review(
 
     average_seconds_to_first_review = numpy.round(numpy.average(review_times))
     med_seconds_to_first_review = numpy.round(numpy.median(review_times))
-    ninety_percentile_seconds_to_first_review = numpy.round(numpy.percentile(review_times, 90, axis=0))
+    ninety_percentile_seconds_to_first_review = numpy.round(
+        numpy.percentile(review_times, 90, axis=0)
+    )
 
     stats = {
         "avg": timedelta(seconds=average_seconds_to_first_review),

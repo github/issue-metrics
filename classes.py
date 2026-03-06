@@ -36,7 +36,6 @@ class IssueWithMetrics:
         html_url,
         author,
         time_to_first_response=None,
-        # time_to_first_review=None,
         time_to_close=None,
         time_to_answer=None,
         time_in_draft=None,
