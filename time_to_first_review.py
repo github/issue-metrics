@@ -5,6 +5,7 @@ from typing import List, Union
 
 import github3
 import numpy
+
 from classes import IssueWithMetrics
 from time_to_first_response import ignore_comment
 
@@ -40,7 +41,10 @@ def measure_time_to_first_review(
             first_review_time = review.submitted_at
             break
 
-    except TypeError:
+    except TypeError as e:
+        print(
+            f"An error occurred processing review comments. Perhaps the review contains a ghost user. {e}"
+        )
         return None
 
     if first_review_time is None:

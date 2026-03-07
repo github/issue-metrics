@@ -21,6 +21,7 @@ from typing import List, Union
 
 import github3
 import github3.structs
+
 from auth import auth_to_github, get_github_app_installation_token
 from classes import IssueWithMetrics
 from config import EnvVars, get_env_vars
@@ -39,7 +40,10 @@ from time_to_first_response import (
     get_stats_time_to_first_response,
     measure_time_to_first_response,
 )
-from time_to_first_review import measure_time_to_first_review
+from time_to_first_review import (
+    get_stats_time_to_first_review,
+    measure_time_to_first_review,
+)
 from time_to_merge import measure_time_to_merge
 from time_to_ready_for_review import get_time_to_ready_for_review
 
@@ -160,7 +164,7 @@ def get_per_issue_metrics(
                 issue_with_metrics.pr_comment_count = count_pr_comments(
                     issue, pull_request, ignore_users
                 )
-            if pull_request:
+            if not env_vars.hide_time_to_first_review and pull_request:
                 issue_with_metrics.time_to_first_review = measure_time_to_first_review(
                     issue,
                     pull_request,
@@ -312,6 +316,7 @@ def main():  # pragma: no cover
             write_to_markdown(
                 issues_with_metrics=None,
                 average_time_to_first_response=None,
+                average_time_to_first_review=None,
                 average_time_to_close=None,
                 average_time_to_answer=None,
                 average_time_in_draft=None,
@@ -340,6 +345,7 @@ def main():  # pragma: no cover
             write_to_markdown(
                 issues_with_metrics=None,
                 average_time_to_first_response=None,
+                average_time_to_first_review=None,
                 average_time_to_close=None,
                 average_time_to_answer=None,
                 average_time_in_draft=None,
@@ -372,6 +378,7 @@ def main():  # pragma: no cover
     )
 
     stats_time_to_first_response = get_stats_time_to_first_response(issues_with_metrics)
+    stats_time_to_first_review = get_stats_time_to_first_review(issues_with_metrics)
     stats_time_to_close = None
     if num_issues_closed > 0:
         stats_time_to_close = get_stats_time_to_close(issues_with_metrics)
@@ -392,6 +399,7 @@ def main():  # pragma: no cover
     write_to_json(
         issues_with_metrics=issues_with_metrics,
         stats_time_to_first_response=stats_time_to_first_response,
+        stats_time_to_first_review=stats_time_to_first_review,
         stats_time_to_close=stats_time_to_close,
         stats_time_to_answer=stats_time_to_answer,
         stats_time_in_draft=stats_time_in_draft,
@@ -407,6 +415,7 @@ def main():  # pragma: no cover
     write_to_markdown(
         issues_with_metrics=issues_with_metrics,
         average_time_to_first_response=stats_time_to_first_response,
+        average_time_to_first_review=stats_time_to_first_review,
         average_time_to_close=stats_time_to_close,
         average_time_to_answer=stats_time_to_answer,
         average_time_in_draft=stats_time_in_draft,
