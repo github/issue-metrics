@@ -2,21 +2,21 @@
 This module provides functions for working with discussions in a GitHub repository.
 
 Functions:
-    get_discussions(repo_url: str, token: str, search_query: str) -> List[Dict]:
+    get_discussions(github_connection: github.Github, search_query: str) -> List[Dict]:
         Get a list of discussions in a GitHub repository that match the search query.
 
 """
 
-import requests
+from github import Github
 
 
-def get_discussions(token: str, search_query: str, ghe: str):
+def get_discussions(github_connection: Github, search_query: str):
     """Get a list of discussions in a GitHub repository that match the search query.
 
     Args:
-        token (str): A personal access token for GitHub.
+        github_connection (github.Github): An authenticated PyGithub connection.
+            GitHub Enterprise routing is handled by the connection's base URL.
         search_query (str): The search query to filter discussions by.
-        ghe (str): GitHub Enterprise URL if applicable, or None for github.com.
 
     Returns:
         list: A list of discussions in the repository that match the search query.
@@ -64,10 +64,9 @@ def get_discussions(token: str, search_query: str, ghe: str):
     # Remove the type:discussions filter from the search query
     search_query = search_query.replace("type:discussions ", "")
 
-    # Send the GraphQL request
-    api_endpoint = f"{ghe}/api" if ghe else "https://api.github.com"
-    headers = {"Authorization": f"Bearer {token}"}
-
+    # PyGithub's graphql_query reuses the connection's auth, base URL, and
+    # GitHub Enterprise /api/graphql handling, and raises GithubException on
+    # HTTP or GraphQL errors.
     discussions = []
     cursor = None
 
@@ -76,22 +75,7 @@ def get_discussions(token: str, search_query: str, ghe: str):
         variables = {"query": search_query, "cursor": cursor}
 
         # Send the GraphQL request
-        response = requests.post(
-            f"{api_endpoint}/graphql",
-            json={"query": query, "variables": variables},
-            headers=headers,
-            timeout=60,
-        )
-
-        # Check for errors in the GraphQL response
-        if response.status_code != 200:
-            raise ValueError(
-                f"GraphQL query failed with status code {response.status_code}"
-            )
-
-        response_json = response.json()
-        if "errors" in response_json:
-            raise ValueError(f"GraphQL query failed: {response_json['errors']}")
+        _, response_json = github_connection.requester.graphql_query(query, variables)
 
         data = response_json["data"]
 

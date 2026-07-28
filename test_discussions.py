@@ -6,9 +6,10 @@ Classes:
 """
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 from discussions import get_discussions
+from github import GithubException
 
 
 class TestGetDiscussions(unittest.TestCase):
@@ -17,7 +18,7 @@ class TestGetDiscussions(unittest.TestCase):
     def _create_mock_response(
         self, discussions, has_next_page=False, end_cursor="cursor123"
     ):
-        """Helper method to create a mock GraphQL response."""
+        """Helper method to create a mock GraphQL response body."""
         return {
             "data": {
                 "search": {
@@ -27,8 +28,7 @@ class TestGetDiscussions(unittest.TestCase):
             }
         }
 
-    @patch("requests.post")
-    def test_get_discussions_single_page(self, mock_post):
+    def test_get_discussions_single_page(self):
         """Test the get_discussions function with a single page of results."""
         # Mock data for two discussions
         mock_discussions = [
@@ -50,13 +50,15 @@ class TestGetDiscussions(unittest.TestCase):
             },
         ]
 
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = self._create_mock_response(
-            mock_discussions, has_next_page=False
+        github_connection = MagicMock()
+        # graphql_query returns (headers, response_json)
+        github_connection.requester.graphql_query.return_value = (
+            {},
+            self._create_mock_response(mock_discussions, has_next_page=False),
         )
 
         discussions = get_discussions(
-            "token", "repo:user/repo type:discussions query", ""
+            github_connection, "repo:user/repo type:discussions query"
         )
 
         # Check that the function returns the expected discussions
@@ -65,10 +67,9 @@ class TestGetDiscussions(unittest.TestCase):
         self.assertEqual(discussions[1]["title"], "Discussion 2")
 
         # Verify only one API call was made
-        self.assertEqual(mock_post.call_count, 1)
+        self.assertEqual(github_connection.requester.graphql_query.call_count, 1)
 
-    @patch("requests.post")
-    def test_get_discussions_multiple_pages(self, mock_post):
+    def test_get_discussions_multiple_pages(self):
         """Test the get_discussions function with multiple pages of results."""
         # Mock data for pagination
         page1_discussions = [
@@ -93,17 +94,20 @@ class TestGetDiscussions(unittest.TestCase):
             }
         ]
 
-        # Configure mock to return different responses for each call
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.side_effect = [
-            self._create_mock_response(
-                page1_discussions, has_next_page=True, end_cursor="cursor123"
+        github_connection = MagicMock()
+        # Return a different page for each call
+        github_connection.requester.graphql_query.side_effect = [
+            (
+                {},
+                self._create_mock_response(
+                    page1_discussions, has_next_page=True, end_cursor="cursor123"
+                ),
             ),
-            self._create_mock_response(page2_discussions, has_next_page=False),
+            ({}, self._create_mock_response(page2_discussions, has_next_page=False)),
         ]
 
         discussions = get_discussions(
-            "token", "repo:user/repo type:discussions query", ""
+            github_connection, "repo:user/repo type:discussions query"
         )
 
         # Check that all discussions were returned
@@ -112,29 +116,20 @@ class TestGetDiscussions(unittest.TestCase):
         self.assertEqual(discussions[1]["title"], "Discussion 2")
 
         # Verify that two API calls were made
-        self.assertEqual(mock_post.call_count, 2)
+        self.assertEqual(github_connection.requester.graphql_query.call_count, 2)
 
-    @patch("requests.post")
-    def test_get_discussions_error_status_code(self, mock_post):
-        """Test the get_discussions function with a failed HTTP response."""
-        mock_post.return_value.status_code = 500
+        # Verify the second call paginated using the first page's end cursor
+        second_call_variables = (
+            github_connection.requester.graphql_query.call_args_list[1].args[1]
+        )
+        self.assertEqual(second_call_variables["cursor"], "cursor123")
 
-        with self.assertRaises(ValueError) as context:
-            get_discussions("token", "repo:user/repo type:discussions query", "")
-
-        self.assertIn(
-            "GraphQL query failed with status code 500", str(context.exception)
+    def test_get_discussions_propagates_github_exception(self):
+        """A GithubException raised by graphql_query propagates to the caller."""
+        github_connection = MagicMock()
+        github_connection.requester.graphql_query.side_effect = GithubException(
+            500, "boom", None
         )
 
-    @patch("requests.post")
-    def test_get_discussions_graphql_error(self, mock_post):
-        """Test the get_discussions function with GraphQL errors in response."""
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {
-            "errors": [{"message": "GraphQL Error"}]
-        }
-
-        with self.assertRaises(ValueError) as context:
-            get_discussions("token", "repo:user/repo type:discussions query", "")
-
-        self.assertIn("GraphQL query failed:", str(context.exception))
+        with self.assertRaises(GithubException):
+            get_discussions(github_connection, "repo:user/repo type:discussions query")
