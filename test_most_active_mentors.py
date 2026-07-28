@@ -201,3 +201,185 @@ class TestMostActiveMentorsExtraBranches(unittest.TestCase):
             mock_issue, pull_request=mock_pr, max_comments_to_eval=5
         )
         self.assertEqual(result, {"reviewer": 5})
+
+
+class TestCountCommentsDiscussions(unittest.TestCase):
+    """Covers the discussion branch of count_comments_per_user.
+
+    Before the fix for #774 this branch was dead code because:
+      1. The GraphQL query fetched no comment author data.
+      2. Attribute access on dict nodes would raise AttributeError.
+      3. The ignore_comment call passed comment.user as both issue_user
+         and comment_user, so every comment was silently skipped.
+    """
+
+    def _make_discussion(self, author_login, comments):
+        """Return a minimal discussion dict as returned by get_discussions."""
+        return {
+            "title": "Test discussion",
+            "url": "https://github.com/org/repo/discussions/1",
+            "createdAt": "2024-01-01T00:00:00Z",
+            "author": {"login": author_login, "__typename": "User"},
+            "comments": {"nodes": comments},
+            "answerChosenAt": None,
+            "closedAt": None,
+        }
+
+    def test_counts_commenter(self):
+        """A comment by a user other than the author is counted."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "mentor", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {"mentor": 1})
+
+    def test_ignores_discussion_author_self_comment(self):
+        """Comments by the discussion author are not counted."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "op", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_ignores_bot_commenter(self):
+        """Comments from Bot actors are not counted."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "github-actions", "__typename": "Bot"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_ignores_user_in_ignore_list(self):
+        """Comments by explicitly ignored users are not counted."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "spammer", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(
+            None, discussion=discussion, ignore_users=["spammer"]
+        )
+        self.assertEqual(result, {})
+
+    def test_multiple_commenters(self):
+        """Multiple distinct commenters each get their own count."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "alice", "__typename": "User"},
+                },
+                {
+                    "createdAt": "2024-01-03T00:00:00Z",
+                    "author": {"login": "bob", "__typename": "User"},
+                },
+                {
+                    "createdAt": "2024-01-04T00:00:00Z",
+                    "author": {"login": "alice", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {"alice": 2, "bob": 1})
+
+    def test_no_comments(self):
+        """A discussion with an empty comments list returns an empty dict."""
+        discussion = self._make_discussion("op", [])
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_respects_max_comments_to_eval(self):
+        """Comments beyond max_comments_to_eval are not evaluated."""
+        comments = [
+            {
+                "createdAt": f"2024-01-{i + 2:02d}T00:00:00Z",
+                "author": {"login": f"mentor{i}", "__typename": "User"},
+            }
+            for i in range(5)
+        ]
+        discussion = self._make_discussion("op", comments)
+        result = count_comments_per_user(
+            None, discussion=discussion, max_comments_to_eval=2
+        )
+        self.assertEqual(result, {"mentor0": 1, "mentor1": 1})
+
+    def test_caps_count_at_heavily_involved(self):
+        """A single commenter is capped at heavily_involved comments."""
+        comments = [
+            {
+                "createdAt": f"2024-01-{i + 2:02d}T00:00:00Z",
+                "author": {"login": "mentor", "__typename": "User"},
+            }
+            for i in range(5)
+        ]
+        discussion = self._make_discussion("op", comments)
+        result = count_comments_per_user(
+            None, discussion=discussion, heavily_involved=3
+        )
+        self.assertEqual(result, {"mentor": 3})
+
+    def test_null_author_skipped(self):
+        """A comment with a null author (deleted account) is skipped gracefully."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": None,
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_null_created_at_skipped(self):
+        """A comment with a null createdAt (pending) is skipped."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": None,
+                    "author": {"login": "mentor", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_null_discussion_author(self):
+        """A discussion whose author is null (deleted OP) is handled."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "mentor", "__typename": "User"},
+                },
+            ],
+        )
+        discussion["author"] = None
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {"mentor": 1})

@@ -56,8 +56,13 @@ def count_comments_per_user(
 
     Args:
         issue (Union[Issue, None]): A GitHub issue.
+        discussion (Union[dict, None]): A GitHub discussion as returned by
+        discussions.get_discussions (a plain GraphQL dict, not a PyGithub
+        object).
         pull_request (Union[PullRequest, None]): A GitHub pull
         request.
+        ready_for_review_at (Union[datetime, None]): When the item became
+        ready for review; comments before this are ignored.
         ignore_users (List[str]): A list of GitHub usernames to ignore.
         max_comments_to_eval: Maximum number of comments per item to look at.
         heavily_involved: Maximum number of comments to count for one
@@ -118,27 +123,41 @@ def count_comments_per_user(
                 else:
                     mentor_count[review_comment.user.login] = 1
 
-        # The discussion branch below is dead in production (tracked in #774):
-        # the GraphQL query in discussions.get_discussions fetches no comment
-        # author data, attribute access on dict nodes would AttributeError,
-        # and the ignore_comment call below passes comment.user as both
-        # issue_user and comment_user (self-reference always True).
-        if discussion and len(discussion["comments"]["nodes"]) > 0:  # pragma: no cover
-            for comment in discussion["comments"]["nodes"]:
-                if ignore_comment(
-                    comment.user,
-                    comment.user,
-                    ignore_users,
-                    comment.submitted_at,
-                    comment.ready_for_review_at,
-                ):
-                    continue
+    # The discussion branch: use dict access because GraphQL returns plain
+    # dicts (not PyGithub objects). Filtering is inlined here (rather than
+    # reusing ignore_comment, which expects PyGithub objects): the discussion
+    # author's login is compared against each comment author to drop
+    # self-comments.
+    if discussion and len(discussion["comments"]["nodes"]) > 0:
+        discussion_author_login = (discussion.get("author") or {}).get("login", "")
+        comment_count = 0
+        for comment in discussion["comments"]["nodes"]:
+            if comment_count >= max_comments_to_eval:
+                break
+            comment_count += 1
+            comment_author = comment.get("author") or {}
+            comment_login = comment_author.get("login", "")
+            comment_type = comment_author.get("__typename", "")
+            comment_created_at = comment.get("createdAt")
 
-                # increase the number of comments left by current user by 1
-                if comment.user.login in mentor_count:
-                    mentor_count[comment.user.login] += 1
-                else:
-                    mentor_count[comment.user.login] = 1
+            if (
+                not comment_login
+                # ignore bots
+                or comment_type == "Bot"
+                # ignore comments by the discussion author
+                or comment_login == discussion_author_login
+                # ignore users in the ignore list
+                or comment_login in ignore_users
+                # ignore comments without a timestamp
+                or not comment_created_at
+            ):
+                continue
+
+            if comment_login in mentor_count:
+                if mentor_count[comment_login] < heavily_involved:
+                    mentor_count[comment_login] += 1
+            else:
+                mentor_count[comment_login] = 1
 
     return mentor_count
 
