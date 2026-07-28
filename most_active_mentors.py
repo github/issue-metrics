@@ -56,8 +56,13 @@ def count_comments_per_user(
 
     Args:
         issue (Union[Issue, None]): A GitHub issue.
+        discussion (Union[dict, None]): A GitHub discussion as returned by
+        discussions.get_discussions (a plain GraphQL dict, not a PyGithub
+        object).
         pull_request (Union[PullRequest, None]): A GitHub pull
         request.
+        ready_for_review_at (Union[datetime, None]): When the item became
+        ready for review; comments before this are ignored.
         ignore_users (List[str]): A list of GitHub usernames to ignore.
         max_comments_to_eval: Maximum number of comments per item to look at.
         heavily_involved: Maximum number of comments to count for one
@@ -119,8 +124,10 @@ def count_comments_per_user(
                     mentor_count[review_comment.user.login] = 1
 
     # The discussion branch: use dict access because GraphQL returns plain
-    # dicts (not github3 objects). Thread the discussion author as
-    # issue_user so we can filter out self-comments correctly.
+    # dicts (not PyGithub objects). Filtering is inlined here (rather than
+    # reusing ignore_comment, which expects PyGithub objects): the discussion
+    # author's login is compared against each comment author to drop
+    # self-comments.
     if discussion and len(discussion["comments"]["nodes"]) > 0:
         discussion_author_login = (discussion.get("author") or {}).get("login", "")
         comment_count = 0

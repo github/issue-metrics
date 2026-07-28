@@ -354,3 +354,32 @@ class TestCountCommentsDiscussions(unittest.TestCase):
         )
         result = count_comments_per_user(None, discussion=discussion)
         self.assertEqual(result, {})
+
+    def test_null_created_at_skipped(self):
+        """A comment with a null createdAt (pending) is skipped."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": None,
+                    "author": {"login": "mentor", "__typename": "User"},
+                },
+            ],
+        )
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {})
+
+    def test_null_discussion_author(self):
+        """A discussion whose author is null (deleted OP) is handled."""
+        discussion = self._make_discussion(
+            "op",
+            [
+                {
+                    "createdAt": "2024-01-02T00:00:00Z",
+                    "author": {"login": "mentor", "__typename": "User"},
+                },
+            ],
+        )
+        discussion["author"] = None
+        result = count_comments_per_user(None, discussion=discussion)
+        self.assertEqual(result, {"mentor": 1})

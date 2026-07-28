@@ -35,6 +35,10 @@ def get_discussions(token: str, search_query: str, ghe: str):
                             login
                             __typename
                         }
+                        # Only the first 100 comments are fetched (no
+                        # pagination). MAX_COMMENTS_EVAL defaults to 20, so
+                        # this ceiling is not hit in practice; setting it above
+                        # 100 would silently cap discussion mentor counts.
                         comments(first: 100) {
                             nodes {
                                 createdAt
