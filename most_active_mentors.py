@@ -123,7 +123,11 @@ def count_comments_per_user(
     # issue_user so we can filter out self-comments correctly.
     if discussion and len(discussion["comments"]["nodes"]) > 0:
         discussion_author_login = (discussion.get("author") or {}).get("login", "")
+        comment_count = 0
         for comment in discussion["comments"]["nodes"]:
+            if comment_count >= max_comments_to_eval:
+                break
+            comment_count += 1
             comment_author = comment.get("author") or {}
             comment_login = comment_author.get("login", "")
             comment_type = comment_author.get("__typename", "")
@@ -143,7 +147,8 @@ def count_comments_per_user(
                 continue
 
             if comment_login in mentor_count:
-                mentor_count[comment_login] += 1
+                if mentor_count[comment_login] < heavily_involved:
+                    mentor_count[comment_login] += 1
             else:
                 mentor_count[comment_login] = 1
 

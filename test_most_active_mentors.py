@@ -311,6 +311,36 @@ class TestCountCommentsDiscussions(unittest.TestCase):
         result = count_comments_per_user(None, discussion=discussion)
         self.assertEqual(result, {})
 
+    def test_respects_max_comments_to_eval(self):
+        """Comments beyond max_comments_to_eval are not evaluated."""
+        comments = [
+            {
+                "createdAt": f"2024-01-{i + 2:02d}T00:00:00Z",
+                "author": {"login": f"mentor{i}", "__typename": "User"},
+            }
+            for i in range(5)
+        ]
+        discussion = self._make_discussion("op", comments)
+        result = count_comments_per_user(
+            None, discussion=discussion, max_comments_to_eval=2
+        )
+        self.assertEqual(result, {"mentor0": 1, "mentor1": 1})
+
+    def test_caps_count_at_heavily_involved(self):
+        """A single commenter is capped at heavily_involved comments."""
+        comments = [
+            {
+                "createdAt": f"2024-01-{i + 2:02d}T00:00:00Z",
+                "author": {"login": "mentor", "__typename": "User"},
+            }
+            for i in range(5)
+        ]
+        discussion = self._make_discussion("op", comments)
+        result = count_comments_per_user(
+            None, discussion=discussion, heavily_involved=3
+        )
+        self.assertEqual(result, {"mentor": 3})
+
     def test_null_author_skipped(self):
         """A comment with a null author (deleted account) is skipped gracefully."""
         discussion = self._make_discussion(
