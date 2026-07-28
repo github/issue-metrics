@@ -2,7 +2,7 @@
 This module provides functions for working with discussions in a GitHub repository.
 
 Functions:
-    get_discussions(github_connection: github.Github, search_query: str) -> List[Dict]:
+    get_discussions(github_connection: Github, search_query: str) -> list:
         Get a list of discussions in a GitHub repository that match the search query.
 
 """
@@ -14,7 +14,7 @@ def get_discussions(github_connection: Github, search_query: str):
     """Get a list of discussions in a GitHub repository that match the search query.
 
     Args:
-        github_connection (github.Github): An authenticated PyGithub connection.
+        github_connection (Github): An authenticated PyGithub connection.
             GitHub Enterprise routing is handled by the connection's base URL.
         search_query (str): The search query to filter discussions by.
 
