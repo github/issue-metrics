@@ -128,7 +128,7 @@ class TestGetDiscussions(unittest.TestCase):
         """A GithubException raised by graphql_query propagates to the caller."""
         github_connection = MagicMock()
         github_connection.requester.graphql_query.side_effect = GithubException(
-            500, "boom", None
+            500, {"message": "server error"}, None
         )
 
         with self.assertRaises(GithubException):
