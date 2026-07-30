@@ -230,3 +230,29 @@ class TestGetDiscussions(unittest.TestCase):
 
         self.assertEqual(len(discussions[0]["comments"]["nodes"]), 1)
         self.assertEqual(github_connection.requester.graphql_query.call_count, 1)
+
+    def test_get_discussions_with_no_comments(self):
+        """A discussion without a comments connection triggers no extra request."""
+        discussion = {
+            "id": "D_kwDO",
+            "title": "Discussion 1",
+            "url": "https://github.com/user/repo/discussions/1",
+            "createdAt": "2021-01-01T00:00:00Z",
+            "author": {"login": "author", "__typename": "User"},
+            "comments": None,
+            "answerChosenAt": None,
+            "closedAt": None,
+        }
+
+        github_connection = MagicMock()
+        github_connection.requester.graphql_query.return_value = (
+            {},
+            self._create_mock_response([discussion], has_next_page=False),
+        )
+
+        discussions = get_discussions(
+            github_connection, "repo:user/repo type:discussions query", max_comments=150
+        )
+
+        self.assertIsNone(discussions[0]["comments"])
+        self.assertEqual(github_connection.requester.graphql_query.call_count, 1)
