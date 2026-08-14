@@ -7,7 +7,7 @@ dependencies = [
     "PyGithub==2.9.1",
     "numpy==2.4.6",
     "python-dotenv==1.2.2",
-    "pytz==2026.2",
+    "pytz==2026.3.post1",
 ]
 
 [dependency-groups]
@@ -20,5 +20,5 @@ dev = [
     "pylint==4.0.6",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
-    "types-pytz==2026.2.0.20260518",
+    "types-pytz==2026.3.1.20260727",
 ]
