@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 dependencies = [
     "PyGithub==2.9.1",
     "numpy==2.4.6",
-    "python-dotenv==1.2.2",
+    "python-dotenv==1.2.3",
     "pytz==2026.3.post1",
 ]
 
@@ -15,7 +15,7 @@ dev = [
     "black==26.5.1",
     "flake8==7.3.0",
     "isort==8.0.1",
-    "mypy==2.3.0",
+    "mypy==2.3.1",
     "mypy-extensions==1.1.0",
     "pylint==4.0.7",
     "pytest==9.1.1",
