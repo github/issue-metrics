@@ -256,3 +256,88 @@ class TestGetDiscussions(unittest.TestCase):
 
         self.assertIsNone(discussions[0]["comments"])
         self.assertEqual(github_connection.requester.graphql_query.call_count, 1)
+
+    def test_get_discussions_stops_when_followup_page_has_no_nodes(self):
+        """An empty follow-up page bounds the loop instead of spinning forever."""
+        discussion = {
+            "id": "D_kwDO",
+            "title": "Discussion 1",
+            "url": "https://github.com/user/repo/discussions/1",
+            "createdAt": "2021-01-01T00:00:00Z",
+            "author": {"login": "author", "__typename": "User"},
+            "comments": {
+                "nodes": [{"createdAt": "2021-01-01T00:01:00Z"}],
+                "pageInfo": {"hasNextPage": True, "endCursor": "comment1"},
+            },
+            "answerChosenAt": None,
+            "closedAt": None,
+        }
+
+        github_connection = MagicMock()
+        github_connection.requester.graphql_query.side_effect = [
+            ({}, self._create_mock_response([discussion], has_next_page=False)),
+            (
+                {},
+                {
+                    "data": {
+                        "node": {
+                            "comments": {
+                                "nodes": None,
+                                "pageInfo": {
+                                    "hasNextPage": True,
+                                    "endCursor": "comment1",
+                                },
+                            }
+                        }
+                    }
+                },
+            ),
+        ]
+
+        discussions = get_discussions(
+            github_connection, "repo:user/repo type:discussions query", max_comments=150
+        )
+
+        # The single first-page comment is kept; the empty page broke the loop
+        self.assertEqual(len(discussions[0]["comments"]["nodes"]), 1)
+        self.assertEqual(github_connection.requester.graphql_query.call_count, 2)
+
+    def test_get_discussions_tolerates_deleted_discussion_during_pagination(self):
+        """A discussion deleted mid-run degrades to its first page of comments."""
+
+        def comment(index):
+            return {
+                "createdAt": "2021-01-01T00:00:00Z",
+                "author": {"login": f"user{index}", "__typename": "User"},
+            }
+
+        first_page = [comment(index) for index in range(100)]
+
+        discussion = {
+            "id": "D_kwDO",
+            "title": "Discussion 1",
+            "url": "https://github.com/user/repo/discussions/1",
+            "createdAt": "2021-01-01T00:00:00Z",
+            "author": {"login": "author", "__typename": "User"},
+            "comments": {
+                "nodes": first_page,
+                "pageInfo": {"hasNextPage": True, "endCursor": "comment100"},
+            },
+            "answerChosenAt": None,
+            "closedAt": None,
+        }
+
+        github_connection = MagicMock()
+        github_connection.requester.graphql_query.side_effect = [
+            ({}, self._create_mock_response([discussion], has_next_page=False)),
+            ({}, {"data": {"node": None}}),
+        ]
+
+        discussions = get_discussions(
+            github_connection, "repo:user/repo type:discussions query", max_comments=150
+        )
+
+        # The run is not aborted; the discussion keeps its first 100 comments
+        self.assertEqual(len(discussions), 1)
+        self.assertEqual(len(discussions[0]["comments"]["nodes"]), 100)
+        self.assertEqual(github_connection.requester.graphql_query.call_count, 2)

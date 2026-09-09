@@ -2,7 +2,7 @@
 This module provides functions for working with discussions in a GitHub repository.
 
 Functions:
-    get_discussions(github_connection: Github, search_query: str) -> list:
+    get_discussions(github_connection: Github, search_query: str, max_comments: int = 20) -> list:
         Get a list of discussions in a GitHub repository that match the search query.
 
 """
@@ -65,8 +65,18 @@ def _fetch_remaining_comments(
         _, response_json = github_connection.requester.graphql_query(
             COMMENTS_QUERY, variables
         )
-        page = response_json["data"]["node"]["comments"]
-        nodes.extend(page.get("nodes", []))
+        # The discussion may have been deleted or hidden between the search
+        # response and this follow-up query, leaving data.node null. Degrade
+        # gracefully to the comments already collected instead of aborting
+        # the whole run.
+        node = (response_json.get("data") or {}).get("node") or {}
+        page = node.get("comments")
+        if not page:
+            break
+        page_nodes = page.get("nodes") or []
+        if not page_nodes:
+            break
+        nodes.extend(page_nodes)
         page_info = page.get("pageInfo") or {}
 
     comments["pageInfo"] = page_info
